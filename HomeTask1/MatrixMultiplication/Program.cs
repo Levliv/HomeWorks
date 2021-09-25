@@ -36,9 +36,9 @@ namespace MatrixMultiplication
             using var sWriter = new StreamWriter("Experiment_results.txt");
             for (int j = 0; j < 10; ++j)
             {
-                int numberOfStringsFirst = random.Next(100 * (j + 1));
-                int numberOfColumnsFirst = random.Next(100);
-                int numberOfColunmsSecond = random.Next(300);
+                int numberOfStringsFirst = 100 * (j + 1);
+                int numberOfColumnsFirst = 150;
+                int numberOfColunmsSecond = 180;
                 var firstMatrix = new Matrix(numberOfStringsFirst, numberOfColumnsFirst, true);
                 var secondMatrix = new Matrix(numberOfColumnsFirst, numberOfColunmsSecond, true);
                 var resultMatrix = new Matrix();
@@ -58,7 +58,7 @@ namespace MatrixMultiplication
                 resultsNonParallel[j] = stopwatch.Elapsed.TotalSeconds;
                 AvgAndDispersionCount(resultsParallel, out double averageParallel, out double dispertionParallel);
                 AvgAndDispersionCount(resultsNonParallel, out double averageNonParallel, out double dispertionNonParallel);
-                sWriter.WriteLine($"Matrix [{100 * (j + 1)} * 100] * [100 * 300]");
+                sWriter.WriteLine($"Matrix [{100 * (j + 1)} * 150] * [150 * 180]");
                 sWriter.WriteLine($"Parallel: Average: {averageParallel} +- {dispertionParallel}");
                 sWriter.WriteLine($"NonParallel: Average: {averageNonParallel} +- {dispertionNonParallel}");
                 sWriter.WriteLine();

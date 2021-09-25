@@ -1,47 +1,40 @@
-#-----------------------
-Matrix.Tests - Tests
-MAtrixMultiplication
-* Matrix - class with matrix
-* Program - creates outputs for placement in task assignment
-#-----------------------
+Matrix [100 * 150] * [150 * 180]
+Parallel: Average: 0,01743604 +- 0,05230812
+NonParallel: Average: 0,03858459 +- 0,11575376999999999
 
-Matrix [100 * 100] * [100 * 300]
-Parallel: Average: 0,0033141900000000003 +- 0,009942569999999998
-NonParallel: Average: 9,837999999999999E-05 +- 0,00029514000000000005
+Matrix [200 * 150] * [150 * 180]
+Parallel: Average: 0,08788547 +- 0,21200830395280293
+NonParallel: Average: 0,11786906999999999 +- 0,25269522330412203
 
-Matrix [200 * 100] * [100 * 300]
-Parallel: Average: 0,00783461 +- 0,015899666961068717
-NonParallel: Average: 0,0019403899999999997 +- 0,005501061833219108
+Matrix [300 * 150] * [150 * 180]
+Parallel: Average: 0,20532756000000002 +- 0,3852770625435576
+NonParallel: Average: 0,38000299000000004 +- 0,7877103790607999
 
-Matrix [300 * 100] * [100 * 300]
-Parallel: Average: 0,02105182 +- 0,04022372185481597
-NonParallel: Average: 0,0331648 +- 0,09318669773141444
+Matrix [400 * 150] * [150 * 180]
+Parallel: Average: 0,57007571 +- 1,093628655426497
+NonParallel: Average: 0,6689541800000001 +- 1,073460814736028
 
-Matrix [400 * 100] * [100 * 300]
-Parallel: Average: 0,05718989 +- 0,10885790940580706
-NonParallel: Average: 0,034654239999999996 +- 0,0927627757146389
+Matrix [500 * 150] * [150 * 180]
+Parallel: Average: 0,92737631 +- 1,3919843096660087
+NonParallel: Average: 0,9946147 +- 1,2927130993085139
 
-Matrix [500 * 100] * [100 * 300]
-Parallel: Average: 0,06645646 +- 0,10753120513754322
-NonParallel: Average: 0,048999179999999996 +- 0,09727642213622788
+Matrix [600 * 150] * [150 * 180]
+Parallel: Average: 1,3998991 +- 1,7523434364355073
+NonParallel: Average: 1,34686598 +- 1,4446893206205056
 
-Matrix [600 * 100] * [100 * 300]
-Parallel: Average: 0,08596961 +- 0,11133857166201164
-NonParallel: Average: 0,05465141999999999 +- 0,09589745776848103
+Matrix [700 * 150] * [150 * 180]
+Parallel: Average: 1,8462590900000002 +- 1,9010851608278323
+NonParallel: Average: 1,9250872600000002 +- 1,8811200729965043
 
-Matrix [700 * 100] * [100 * 300]
-Parallel: Average: 0,10593288999999999 +- 0,11202945899682323
-NonParallel: Average: 0,11282579 +- 0,18247195530908003
+Matrix [800 * 150] * [150 * 180]
+Parallel: Average: 2,61546672 +- 2,4696022014085637
+NonParallel: Average: 2,48817367 +- 2,0552928080520045
 
-Matrix [800 * 100] * [100 * 300]
-Parallel: Average: 0,19425457 +- 0,2530706037476737
-NonParallel: Average: 0,17321719 +- 0,2291128333191899
+Matrix [900 * 150] * [150 * 180]
+Parallel: Average: 3,4014012800000004 +- 2,747180710304271
+NonParallel: Average: 3,13494308 +- 2,1841417813844317
 
-Matrix [900 * 100] * [100 * 300]
-Parallel: Average: 0,26916428 +- 0,2923094342336894
-NonParallel: Average: 0,18761262 +- 0,22219512633860267
-
-Matrix [1000 * 100] * [100 * 300]
-Parallel: Average: 0,30720023999999996 +- 0,2792661276365188
-NonParallel: Average: 0,24167694 +- 0,23535278412364788
+Matrix [1000 * 150] * [150 * 180]
+Parallel: Average: 4,288536540000001 +- 2,9317361005197964
+NonParallel: Average: 3,8701047199999996 +- 2,2417090046519554
 
