@@ -1,45 +1,47 @@
 #-----------------------
-The users part is called "example":
-You can create 2 matrixes and provide the paths to them, you will get 
-the results in the file path to that you also need to provide.
+Matrix.Tests - Tests
+MAtrixMultiplication
+* Matrix - class with matrix
+* Program - creates outputs for placement in task assignment
 #-----------------------
-In the project called "Lessons":
-You can find code for research dedicated to the time consumption of parallel and non-parallel computation.
-You can also find here some useful methods that were you to read/print/create random or create and print random matrixes.
-#-----------------------
-In the project called "parallel":
-2 methods of matrix multiplications:
-  parallel
-  non-parallel
-They were mainly used in part Lessons to explore the time difference between two ways of computing.
-#------------------------
-In the project called "Tests":
-You can find tests that cover only and the parallel method, it was built on the assumption that a non-parallel algorithm is simple enough not to make mistakes in it.
-What is more, it opened up a favourable opportunity not to write tests by hand and to generate test sets automatically using an already written solution that is supposed to be the right one. 
 
+Matrix [100 * 100] * [100 * 300]
+Parallel: Average: 0,0033141900000000003 +- 0,009942569999999998
+NonParallel: Average: 9,837999999999999E-05 +- 0,00029514000000000005
 
-We have observed the results of parallel matrixes multiplication.
-Please, find the test result in the file "experiment_results.txt".
-We ran both non-parallel and parallel matrix multiplication for the same matrixes
-one by one ten times for each kind of matrixes multiplication. 
-The sizes of matrixes were between [1*32] * [32 * 70] and [10000*32] * [32 * 70].
-For this we got the following results:
-(computational time for 1 multiplication)
-Non parallel     Parallel
-0,150298        0,1496756
-0,0838984        0,0822233
-0,0899497        0,0701308
-0,2956629        0,1269111
-3,5171408        1,1495734
+Matrix [200 * 100] * [100 * 300]
+Parallel: Average: 0,00783461 +- 0,015899666961068717
+NonParallel: Average: 0,0019403899999999997 +- 0,005501061833219108
 
-We have found for small data sets Parallel computation does not have any noticeable effect,
-whereas for large data sets parallel computation was more than 2 times faster.
+Matrix [300 * 100] * [100 * 300]
+Parallel: Average: 0,02105182 +- 0,04022372185481597
+NonParallel: Average: 0,0331648 +- 0,09318669773141444
 
+Matrix [400 * 100] * [100 * 300]
+Parallel: Average: 0,05718989 +- 0,10885790940580706
+NonParallel: Average: 0,034654239999999996 +- 0,0927627757146389
 
-We also have to mention results about dispertion
-Non parallel           Parallel
-0,001841839836736      0,001825554979161
-0,000637739599396      0,0006137625649
-0,000578921635161      0,000343826258689
-0,007060478008336      0,001274069790009
-1,07733002916244       0,115126505008800
+Matrix [500 * 100] * [100 * 300]
+Parallel: Average: 0,06645646 +- 0,10753120513754322
+NonParallel: Average: 0,048999179999999996 +- 0,09727642213622788
+
+Matrix [600 * 100] * [100 * 300]
+Parallel: Average: 0,08596961 +- 0,11133857166201164
+NonParallel: Average: 0,05465141999999999 +- 0,09589745776848103
+
+Matrix [700 * 100] * [100 * 300]
+Parallel: Average: 0,10593288999999999 +- 0,11202945899682323
+NonParallel: Average: 0,11282579 +- 0,18247195530908003
+
+Matrix [800 * 100] * [100 * 300]
+Parallel: Average: 0,19425457 +- 0,2530706037476737
+NonParallel: Average: 0,17321719 +- 0,2291128333191899
+
+Matrix [900 * 100] * [100 * 300]
+Parallel: Average: 0,26916428 +- 0,2923094342336894
+NonParallel: Average: 0,18761262 +- 0,22219512633860267
+
+Matrix [1000 * 100] * [100 * 300]
+Parallel: Average: 0,30720023999999996 +- 0,2792661276365188
+NonParallel: Average: 0,24167694 +- 0,23535278412364788
+

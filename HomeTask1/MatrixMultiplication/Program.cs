@@ -82,8 +82,8 @@ namespace MatrixMultiplication
         }
         static void Main(string[] args)
         {
-            //Task();
-            //CheckingTheEffectiveness();
+            Task();
+            CheckingTheEffectiveness();
 
 
         }
