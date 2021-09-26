@@ -4,7 +4,7 @@ namespace InterTask
 {
     /// <summary>
     /// Lazy factory
-    /// </summary>
+    /// </summary>  
     public class LazyFactory
     {
         public static ILazy<T> CreateOneThreadLazy<T>(Func<T> supplier)
@@ -17,13 +17,15 @@ namespace InterTask
         }
     }
 
+
+
     /// <summary>
     /// One thread LazyFactory
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class OneThereadLazyFactory<T>: ILazy<T>
     {
-        private Func<T> _supplier;
+        public Func<T> _supplier { get; set; }
         public T _recordedResult { get; set; }
         private bool _isRecorded = false;
 
@@ -33,7 +35,13 @@ namespace InterTask
         /// <param name="supplier"></param>
         public OneThereadLazyFactory(Func<T> supplier)
         {
-            _supplier = supplier;
+            if (supplier != null) {
+                _supplier = supplier;
+            }
+            else
+            {
+                throw new Exception("Not ptr is not allowed");
+            }
         }
 
         /// <summary>
@@ -43,12 +51,13 @@ namespace InterTask
         public T Get() {
             if (!_isRecorded)
             {
-                _recordedResult = _supplier();
+                _recordedResult = _supplier.Invoke();
                 _isRecorded = true;
             }
             return _recordedResult;
         }
     }
+
     /// <summary>
     /// Multi thread LazyFactory
     /// </summary>
@@ -65,7 +74,14 @@ namespace InterTask
         /// <param name="supplier"></param>
         public MultiThreadLazyFactory(Func<T> supplier)
         {
-            _supplier = supplier;
+            if (supplier != null)
+            {
+                _supplier = supplier;
+            }
+            else
+            {
+                throw new Exception("null ptr is not allowed");
+            }
         }
 
         /// <summary>
