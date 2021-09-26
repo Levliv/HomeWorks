@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace InterTask
 {
@@ -90,8 +91,11 @@ namespace InterTask
         /// <returns></returns>
         public T Get()
         {
-            _recordedResult = _supplier();
-            _isRecorded = true;
+            if (!_isRecorded)
+            {
+                _recordedResult = _supplier.Invoke();
+                _isRecorded = true;
+            }
             return _recordedResult;
         }
     }
