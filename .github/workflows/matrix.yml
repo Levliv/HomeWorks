@@ -32,7 +32,13 @@ jobs:
      # check for dotnet
     - name: dotnet check
       run:  dotnet --version
-    - name: smth
+    - name: Move1
+      run: dir
+    - name: Move2
+      run: cd HomeTask1
+    - name: Move3
+      run: dir
+    - name: Restore
       run: nuget restore MatrixMultiplication.sln
     - name: building
       run: dotnet build MatrixMultiplication.sln
