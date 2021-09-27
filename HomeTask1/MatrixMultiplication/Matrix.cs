@@ -22,18 +22,10 @@ namespace MatrixMultiplication
         {
             get 
             {
-                if (Strings < 0 || Strings >= _strings)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
                 return _strings; 
             }
             set 
             {
-                if (Strings < 0 || Strings >= _strings)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
                 _strings = value; 
             }
         }
@@ -44,20 +36,12 @@ namespace MatrixMultiplication
         /// </summary>
         public int Columns
         {
-            get 
-            {
-                if (Columns < 0 || Columns >= _columns)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
+            get
+            { 
                 return _columns; 
             }
             set 
             {
-                if (Columns < 0 || Columns >= _columns)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
                 _columns = value; 
             }
         }
@@ -140,6 +124,7 @@ namespace MatrixMultiplication
             }
             mas[stringIndex, columnIndex] = value;
         }
+
         /// <summary>
         /// Печатаем матрицу в файл. Адрес файла: path
         /// </summary>

@@ -114,14 +114,14 @@ namespace Matrix.Tests
         [Test]
         public void BigMatrix()
         {
-            var firstMatrix = new MatrixMultiplication.Matrix(45, 43, true);
+            var firstMatrix = new MatrixMultiplication.Matrix(43, 43, true);
             var secondMatrix = new MatrixMultiplication.Matrix(43, 50, true);
             TestParallel(firstMatrix, secondMatrix);
         }
         [Test]
         public void HugeMatrix()
         {
-            var firstMatrix = new MatrixMultiplication.Matrix(184, 123, true);
+            var firstMatrix = new MatrixMultiplication.Matrix(111, 123, true);
             var secondMatrix = new MatrixMultiplication.Matrix(123, 345, true);
             TestParallel(firstMatrix, secondMatrix);
         }
