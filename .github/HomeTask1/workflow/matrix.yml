@@ -34,9 +34,9 @@ jobs:
       run:  dotnet --version
     #- name: DIR
     #  run: dir
-    #- name: Restore
-    #  run: nuget restore --project HomeTask1/MatrixMultiplication.sln
+    - name: Restore
+      run: nuget restore
     - name: building
       run: dotnet build
     - name: test
-      run: dotnet test --project HomeTask1/MatrixMultiplication.sln
+      run: dotnet test
