@@ -39,4 +39,4 @@ jobs:
     - name: building
       run: dotnet build HomeTask1/MatrixMultiplication/MatrixMultiplication.sln
     - name: test
-      run: dotnet test --project HomeTask1/MatrixMultiplication/MatrixMultiplication.sln
+      run: dotnet test HomeTask1/MatrixMultiplication/MatrixMultiplication.sln
