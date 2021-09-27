@@ -32,10 +32,10 @@ jobs:
      # check for dotnet
     - name: dotnet check
       run:  dotnet --version
-    - name: DIR
-      run: dir
-    - name: Restore
-      run: nuget restore --project HomeTask1/MatrixMultiplication.sln
+    #- name: DIR
+    #  run: dir
+    #- name: Restore
+    #  run: nuget restore --project HomeTask1/MatrixMultiplication.sln
     - name: building
       run: dotnet build --project HomeTask1/MatrixMultiplication.sln
     - name: test
