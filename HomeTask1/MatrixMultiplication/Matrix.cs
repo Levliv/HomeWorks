@@ -20,8 +20,22 @@ namespace MatrixMultiplication
         /// </summary>
         public int Strings
         {
-            get { return _strings; }
-            set { _strings = value; }
+            get 
+            {
+                if (Strings < 0 || Strings >= _strings)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+                return _strings; 
+            }
+            set 
+            {
+                if (Strings < 0 || Strings >= _strings)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+                _strings = value; 
+            }
         }
 
         private int _columns;
@@ -30,8 +44,22 @@ namespace MatrixMultiplication
         /// </summary>
         public int Columns
         {
-            get { return _columns; }
-            set { _columns = value; }
+            get 
+            {
+                if (Columns < 0 || Columns >= _columns)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+                return _columns; 
+            }
+            set 
+            {
+                if (Columns < 0 || Columns >= _columns)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+                _columns = value; 
+            }
         }
         /// <summary>
         /// Конструктор по умолчанию
@@ -98,10 +126,18 @@ namespace MatrixMultiplication
         /// <returns></returns>
         public int GetElement(int stringIndex, int columnIndex)
         {
+            if (stringIndex < 0 || stringIndex >= _strings || columnIndex < 0 || columnIndex >= _columns)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
             return mas[stringIndex, columnIndex];
         }
         public void SetElement(int stringIndex, int columnIndex, int value)
         {
+            if (stringIndex < 0 || stringIndex >= _strings || columnIndex < 0 || columnIndex >= _columns)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
             mas[stringIndex, columnIndex] = value;
         }
         /// <summary>
@@ -148,6 +184,10 @@ namespace MatrixMultiplication
         /// <returns></returns>
         public Matrix ParallelMultiplication(Matrix rhsMatrix)
         {
+            if (Columns != rhsMatrix.Strings)
+            {
+                throw new Exception("Sizes are not appropriate");
+            }
             var resultMatrix = new Matrix(Strings, rhsMatrix.Columns);
             var numberOfThreads = Environment.ProcessorCount;
             var threads = new Thread[numberOfThreads];
@@ -190,6 +230,10 @@ namespace MatrixMultiplication
         /// <returns></returns>
         public Matrix NonParallelMultiplication(Matrix rhsMatrix)
         {
+            if (Columns != rhsMatrix.Strings)
+            {
+                throw new Exception("Sizes are not appropriate");
+            }
             Matrix resultMatrix = new Matrix(Strings, rhsMatrix.Columns);
             for (int i = 0; i < Strings; ++i)
             {
