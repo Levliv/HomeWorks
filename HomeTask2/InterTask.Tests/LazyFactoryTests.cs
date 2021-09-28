@@ -34,17 +34,19 @@ namespace InterTask.Tests
         }
 
         [Test]
-        public void FirstTry()
+        public void MultiThreadLazy()
         {
             Func<int> func = () => 5;
-            var lazy = LazyFactory.CreateOneThreadLazy<int>(func);
-            var numberOfThreads = Environment.ProcessorCount;
+            var lazy = LazyFactory.CreateMultiThreadLazy<int>(func);
+            var numberOfThreads = Environment.ProcessorCount * 10;
             var threads = new Thread[numberOfThreads];
             var numbers = new int[numberOfThreads];
-            int varNumber = 3;
+            int varNumber = 0;
             for (int i = 0; i < numberOfThreads; ++i)
             {
-                threads[i] = new Thread(() => varNumber = lazy.Get());
+                threads[i] = new Thread(
+                    () => Interlocked.Add(ref varNumber, lazy.Get())
+                    );
                 threads[i].Start();
             }
             
@@ -52,13 +54,12 @@ namespace InterTask.Tests
             {
                 threads[i].Join();
             }
-            Console.WriteLine(numberOfThreads);
+            //Console.WriteLine(numberOfThreads);
             for (int i = 0; i < numberOfThreads; ++i)
             {
                 Console.WriteLine($"number = {varNumber}");
-                //Assert.AreEqual(1, 5);
+                Assert.AreEqual(varNumber, numberOfThreads*5);
             }
-            Assert.AreEqual(1, 5);
         }
     }
 }

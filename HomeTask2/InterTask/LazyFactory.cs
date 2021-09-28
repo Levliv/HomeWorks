@@ -12,13 +12,12 @@ namespace InterTask
         {
             return new OneThereadLazyFactory<T>(supplier);
         }
+
         public static ILazy<T> CreateMultiThreadLazy<T>(Func<T> supplier)
         {
             return new MultiThreadLazyFactory<T>(supplier);
         }
     }
-
-
 
     /// <summary>
     /// One thread LazyFactory
@@ -68,6 +67,7 @@ namespace InterTask
         private Func<T> _supplier;
         public T _recordedResult { get; set; }
         private bool _isRecorded = false;
+        private readonly object balanceLock = new object();
 
         /// <summary>
         /// Constructor for MutiThread
@@ -93,8 +93,11 @@ namespace InterTask
         {
             if (!_isRecorded)
             {
-                _recordedResult = _supplier.Invoke();
-                _isRecorded = true;
+                lock (balanceLock)
+                {
+                    _recordedResult = _supplier.Invoke();
+                    _isRecorded = true;
+                }
             }
             return _recordedResult;
         }
