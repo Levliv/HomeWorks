@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Threading;
 
@@ -16,16 +12,6 @@ namespace MatrixMultiplication
         private int[,] dataIn2DArray;
         public int Rows { get; set; }
         public int Columns { get; set; }
-
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public Matrix()
-        {
-            Rows = 0;
-            Columns = 0;
-            dataIn2DArray = new int[Rows, Columns];
-        }
 
         /// <summary>
         /// Matrix generator
