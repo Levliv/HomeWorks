@@ -7,9 +7,6 @@ namespace Matrix.Tests
         /// <summary>
         /// Метод для тестирования корректности параллельного умножения матриц
         /// </summary>
-        /// <param name="numberOfStrings1"></param>
-        /// <param name="numberOfColumns1"></param>
-        /// <param name="numberOfColumns2"></param>
         static void TestParallel(MatrixMultiplication.Matrix firstMatrix,
                                  MatrixMultiplication.Matrix secondMatrix)
         {
