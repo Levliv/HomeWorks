@@ -194,7 +194,7 @@ namespace MatrixMultiplication
         {
             if (Columns != rhsMatrix.Rows)
             {
-                throw new Exception("Sizes are not appropriate");
+                throw new ArgumentOutOfRangeException("Sizes are not appropriate");
             }
             Matrix resultMatrix = new Matrix(Rows, rhsMatrix.Columns);
             for (int i = 0; i < Rows; ++i)
