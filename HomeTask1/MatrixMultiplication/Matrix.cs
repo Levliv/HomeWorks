@@ -13,65 +13,37 @@ namespace MatrixMultiplication
     /// </summary>
     public class Matrix
     {
-        private int[,] mas;
-        private int _strings;
-        /// <summary>
-        /// Кколичество строк в матрице
-        /// </summary>
-        public int Strings
-        {
-            get 
-            {
-                return _strings; 
-            }
-            set 
-            {
-                _strings = value; 
-            }
-        }
+        private int[,] dataIn2DArray;
+        public int Rows { get; set; }
+        public int Columns { get; set; }
 
-        private int _columns;
         /// <summary>
-        /// Количество столбцов в матрице
-        /// </summary>
-        public int Columns
-        {
-            get
-            { 
-                return _columns; 
-            }
-            set 
-            {
-                _columns = value; 
-            }
-        }
-        /// <summary>
-        /// Конструктор по умолчанию
+        /// Default constructor
         /// </summary>
         public Matrix()
         {
-            Strings = 0;
+            Rows = 0;
             Columns = 0;
-            mas = new int[Strings, Columns];
+            dataIn2DArray = new int[Rows, Columns];
         }
+
         /// <summary>
-        /// Геренрация случайной матрицы заданного размера
+        /// Matrix generator
         /// </summary>
-        /// <param name="numberOfStrings"></param>
-        /// <param name="numberOfColumns"></param>
+        /// <param name="isRandom">Do you want the elements to be generated randomly?</param>
         public Matrix(int numberOfStrings, int numberOfColumns, bool isRandom = false)
         {
-            Strings = numberOfStrings;
+            Rows = numberOfStrings;
             Columns = numberOfColumns;
-            mas = new int[Strings, Columns];
+            dataIn2DArray = new int[Rows, Columns];
             if (isRandom)
             {
                 var random = new Random();
-                for (int i = 0; i < Strings; ++i)
+                for (int i = 0; i < Rows; ++i)
                 {
                     for (int j = 0; j < Columns; ++j)
                     {
-                        mas[i, j] = random.Next(10);
+                        dataIn2DArray[i, j] = random.Next(10);
                     }
                 }
             }
@@ -79,66 +51,72 @@ namespace MatrixMultiplication
         }
 
         /// <summary>
-        /// Чтение из файла; Адрес файла: path
+        /// Reading matrix from file
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">File address</param>
         public Matrix(string path)
         {
-            using var sRider = new StreamReader(path);
-            var string1 = sRider.ReadLine();
-            var strings1 = string1.Split(' ');
-            Strings = int.Parse(strings1[0]);
+            using var streanRider = new StreamReader(path);
+            var stringOfMartixSize = streanRider.ReadLine();
+            var strings1 = stringOfMartixSize.Split(' ');
+            Rows = int.Parse(strings1[0]);
             Columns = int.Parse(strings1[1]);
-            mas = new int[Strings, Columns];
-            for (int i = 0; i < Strings; ++i)
+            dataIn2DArray = new int[Rows, Columns];
+            for (int i = 0; i < Rows; ++i)
             {
-                string string2 = sRider.ReadLine();
-                string[] strings2 = string2.Split(' ');
+                string lineFromFile = streanRider.ReadLine();
+                string[] strings2 = lineFromFile.Split(' ');
                 for (int j = 0; j < Columns; ++j)
                 {
-                    mas[i, j] = int.Parse(strings2[j]);
+                    dataIn2DArray[i, j] = int.Parse(strings2[j]);
                 }
             }
-            sRider.Close();
         }
 
         /// <summary>
-        /// Возвращает элемент с индексом i, j
+        /// Getter for [i, j] element from matrix
         /// </summary>
-        /// <param name="i"></param>
-        /// <param name="j"></param>
-        /// <returns></returns>
+        /// <param name="stringIndex"> Row number </param>
+        /// <param name="columnIndex"> Column number </param>
+        /// <returns> Returns element in the i-th row and j-th column </returns>
         public int GetElement(int stringIndex, int columnIndex)
         {
-            if (stringIndex < 0 || stringIndex >= _strings || columnIndex < 0 || columnIndex >= _columns)
+            if (stringIndex < 0 || stringIndex >= Rows || columnIndex < 0 || columnIndex >= Columns)
             {
                 throw new ArgumentOutOfRangeException();
             }
-            return mas[stringIndex, columnIndex];
-        }
-        public void SetElement(int stringIndex, int columnIndex, int value)
-        {
-            if (stringIndex < 0 || stringIndex >= _strings || columnIndex < 0 || columnIndex >= _columns)
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-            mas[stringIndex, columnIndex] = value;
+            return dataIn2DArray[stringIndex, columnIndex];
         }
 
         /// <summary>
-        /// Печатаем матрицу в файл. Адрес файла: path
+        /// Setter for [i, j] element from matrix
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="stringIndex"> Row number </param>
+        /// <param name="columnIndex"> Column number </param>
+        /// <param name="value"> value you wanna place at that position </param>
+        public void SetElement(int stringIndex, int columnIndex, int value)
+        {
+            if (stringIndex < 0 || stringIndex >= Rows || columnIndex < 0 || columnIndex >= Columns)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+            dataIn2DArray[stringIndex, columnIndex] = value;
+        }
+
+        /// <summary>
+        /// Printing into file
+        /// </summary>
+        /// <param name="path"> Path to the file you wanna see the matrix in</param>
         public void Print(string path)
         {
             using var sWriter = new StreamWriter(path);
-            sWriter.WriteLine(Strings + " " + Columns);
-            for (int i = 0; i < Strings; ++i)
+            sWriter.WriteLine(Rows + " " + Columns);
+            for (int i = 0; i < Rows; ++i)
             {
                 var str = string.Empty;
                 for (int j = 0; j < Columns; ++j)
                 {
-                    str += mas[i, j] + " ";
+                    str += dataIn2DArray[i, j] + " ";
                 }
                 sWriter.WriteLine(str);
             }
@@ -147,47 +125,47 @@ namespace MatrixMultiplication
         }
 
         /// <summary>
-        /// Выводим матрицу на экран
+        /// Showing matrix on the screen
         /// </summary>
         public void Print()
         {
-            for (int i = 0; i < Strings; ++i)
+            for (int i = 0; i < Rows; ++i)
             {
                 var str = string.Empty;
                 for (int j = 0; j < Columns; ++j)
                 {
-                    str += mas[i, j] + " ";
+                    str += dataIn2DArray[i, j] + " ";
                 }
                 Console.WriteLine(str);
             }
         }
 
         /// <summary>
-        /// Параллельное умножение матриц
+        /// Parallel matrix multiplication
         /// </summary>
-        /// <param name="rhsMatrix"></param>
-        /// <returns></returns>
+        /// <param name="rhsMatrix"> The right matrix that will be multiplied </param>
+        /// <returns> Matrix that equals the result of multiplication this 2 matrixes </returns>
         public Matrix ParallelMultiplication(Matrix rhsMatrix)
         {
-            if (Columns != rhsMatrix.Strings)
+            if (Columns != rhsMatrix.Rows)
             {
-                throw new Exception("Sizes are not appropriate");
+                throw new ArgumentOutOfRangeException("Sizes are not appropriate");
             }
-            var resultMatrix = new Matrix(Strings, rhsMatrix.Columns);
+            var resultMatrix = new Matrix(Rows, rhsMatrix.Columns);
             var numberOfThreads = Environment.ProcessorCount;
             var threads = new Thread[numberOfThreads];
-            int chunckSize = this.Strings / numberOfThreads + 1;
+            int chunkSize = this.Rows / numberOfThreads + 1;
             for (int i = 0; i < numberOfThreads; ++i)
             {
                 var localI = i;
                 threads[i] = new Thread(() =>
                 {
-                    for (int t = chunckSize * localI; t < chunckSize * (localI + 1) && t < this.Strings; ++t)
+                    for (int t = chunkSize * localI; t < chunkSize * (localI + 1) && t < this.Rows; ++t)
                     {
                         for (int j = 0; j < rhsMatrix.Columns; ++j)
                         {
                             var sum = 0;
-                            for (int k = 0; k < rhsMatrix.Strings; ++k)
+                            for (int k = 0; k < rhsMatrix.Rows; ++k)
                             {
                                 sum += this.GetElement(t, k) * rhsMatrix.GetElement(k, j);
                             }
@@ -208,24 +186,23 @@ namespace MatrixMultiplication
         }
 
         /// <summary>
-        /// НЕпараллельное умножение матриц
+        /// NON parallel matrix multiplication
         /// </summary>
-        /// <param name="firstMatrix"></param>
-        /// <param name="secondMatrix"></param>
-        /// <returns></returns>
+        /// <param name="rhsMatrix"> The right matrix that will be multiplied </param>
+        /// <returns> Matrix that equals the result of multiplication this 2 matrixes </returns>
         public Matrix NonParallelMultiplication(Matrix rhsMatrix)
         {
-            if (Columns != rhsMatrix.Strings)
+            if (Columns != rhsMatrix.Rows)
             {
                 throw new Exception("Sizes are not appropriate");
             }
-            Matrix resultMatrix = new Matrix(Strings, rhsMatrix.Columns);
-            for (int i = 0; i < Strings; ++i)
+            Matrix resultMatrix = new Matrix(Rows, rhsMatrix.Columns);
+            for (int i = 0; i < Rows; ++i)
             {
                 for (int j = 0; j < rhsMatrix.Columns; ++j)
                 {
                     var sum = 0;
-                    for (int k = 0; k < rhsMatrix.Strings; ++k)
+                    for (int k = 0; k < rhsMatrix.Rows; ++k)
                     {
                         sum += GetElement(i, k) * rhsMatrix.GetElement(k, j);
                     }

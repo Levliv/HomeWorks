@@ -6,19 +6,14 @@ namespace Matrix.Tests
     public class Tests
     {
         /// <summary>
-        /// Метод для тестирования корректности параллельного умножения матриц
+        /// Main method for testing parallel multiplication
         /// </summary>
-        /// <param name="numberOfStrings1"></param>
-        /// <param name="numberOfColumns1"></param>
-        /// <param name="numberOfColumns2"></param>
         static void TestParallel(MatrixMultiplication.Matrix firstMatrix,
                                  MatrixMultiplication.Matrix secondMatrix)
         {
-            var matrix3 = new MatrixMultiplication.Matrix(firstMatrix.Strings, firstMatrix.Columns);
-            var matrix4 = new MatrixMultiplication.Matrix(secondMatrix.Strings, secondMatrix.Columns);
-            matrix3 = firstMatrix.ParallelMultiplication(secondMatrix);
-            matrix4 = firstMatrix.NonParallelMultiplication(secondMatrix);
-            for (int i = 0; i < matrix3.Strings; ++i)
+            var matrix3 = firstMatrix.ParallelMultiplication(secondMatrix);
+            var matrix4 = firstMatrix.NonParallelMultiplication(secondMatrix);
+            for (int i = 0; i < matrix3.Rows; ++i)
             {
                 for (int j = 0; j < matrix3.Columns; ++j)
                 {
@@ -28,11 +23,10 @@ namespace Matrix.Tests
         }
 
         [Test]
-        public void ItDoesWork()
+        public void CorectnessOfMatrixMultiplicationAlgorithmTested()
         {
             var firstMatrix = new MatrixMultiplication.Matrix(2, 2);
             var secondMatrix = new MatrixMultiplication.Matrix(2, 3);
-            var resultMatrix = new MatrixMultiplication.Matrix(2, 3);
             var rightMatrix = new MatrixMultiplication.Matrix(2, 3);
             for (int i = 0; i < 2; ++i)
             {
@@ -69,7 +63,7 @@ namespace Matrix.Tests
             rightMatrix.SetElement(1, 0, 8);
             rightMatrix.SetElement(1, 1, 16);
             rightMatrix.SetElement(1, 2, 30);
-            resultMatrix = firstMatrix.ParallelMultiplication(secondMatrix);
+            var resultMatrix = firstMatrix.ParallelMultiplication(secondMatrix);
             for (int i = 0; i < 2; ++i)
             {
                 for (int j = 0; j < 2; ++j)
@@ -85,7 +79,7 @@ namespace Matrix.Tests
         {
             var firstMatrix = new MatrixMultiplication.Matrix(3, 3);
             var secondMatrix = new MatrixMultiplication.Matrix(4, 5);
-            Assert.Throws<Exception>(() => firstMatrix.NonParallelMultiplication(secondMatrix));
+            Assert.Throws<ArgumentOutOfRangeException>(() => firstMatrix.NonParallelMultiplication(secondMatrix));
         }
 
         [Test]
@@ -93,7 +87,7 @@ namespace Matrix.Tests
         {
             var firstMatrix = new MatrixMultiplication.Matrix(3, 3);
             var secondMatrix = new MatrixMultiplication.Matrix(4, 5);
-            Assert.Throws<Exception>(() => firstMatrix.ParallelMultiplication(secondMatrix));
+            Assert.Throws<ArgumentOutOfRangeException>(() => firstMatrix.ParallelMultiplication(secondMatrix));
         }
 
         [Test]
@@ -111,6 +105,7 @@ namespace Matrix.Tests
             var secondMatrix = new MatrixMultiplication.Matrix(18, 8, true);
             TestParallel(firstMatrix, secondMatrix);
         }
+
         [Test]
         public void BigMatrix()
         {
@@ -118,6 +113,7 @@ namespace Matrix.Tests
             var secondMatrix = new MatrixMultiplication.Matrix(43, 50, true);
             TestParallel(firstMatrix, secondMatrix);
         }
+
         [Test]
         public void HugeMatrix()
         {

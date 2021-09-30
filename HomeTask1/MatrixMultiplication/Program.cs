@@ -4,78 +4,73 @@ using System.Diagnostics;
 
 namespace MatrixMultiplication
 {
-    class Program
+    static class Program
     {
         /// <summary>
-        /// Считаем среденее и дисперсию в массиве данных
+        /// Counting average and standart deviation
         /// </summary>
-        /// <param name="data"></param>
-        static void AvgAndDispersionCount(double[] data, out double average, out double dispersion)
+        /// <param name="data"> array with measured results </param>
+        static (double average, double standardSquareDeviation) AvgAndstandardSquareDeviationCount(double[] data)
         {
-            average = 0;
+            var average = .0;
             foreach (var item in data)
             {
                 average += item;
             }
             average /= data.Length;
-            double standardSquareDeviation = 0;
+            var dispersion = .0;
             for (int i = 0; i < data.Length; ++i)
             {
-                standardSquareDeviation += (data[i] - average) * (data[i] - average);
+                dispersion += (data[i] - average) * (data[i] - average);
             }
-            standardSquareDeviation /= data.Length;
-            dispersion = Math.Sqrt(standardSquareDeviation);
-
+            dispersion /= data.Length;
+            var standardSquareDeviation = Math.Sqrt(dispersion);
+            return (average, standardSquareDeviation);
         }
         static void CheckingTheEffectiveness()
         {
             var stopwatch = new Stopwatch();
-            double[] resultsParallel = new double[10];
-            double[] resultsNonParallel = new double[10];
-            var random = new Random();
-            using var sWriter = new StreamWriter("Experiment_results.txt");
+            using var steramWriter = new StreamWriter("Experiment_results.txt");
+            steramWriter.WriteLine("(All results are in seconds)");
             for (int j = 0; j < 10; ++j)
             {
+                var resultsParallel = new double[10];
+                var resultsNonParallel = new double[10];
                 int numberOfStringsFirst = 100 * (j + 1);
-                int numberOfColumnsFirst = 150;
-                int numberOfColunmsSecond = 180;
+                int numberOfColumnsFirst = 300;
+                int numberOfColunmsSecond = 500;
                 var firstMatrix = new Matrix(numberOfStringsFirst, numberOfColumnsFirst, true);
                 var secondMatrix = new Matrix(numberOfColumnsFirst, numberOfColunmsSecond, true);
-                var resultMatrix = new Matrix();
-                stopwatch.Start();
                 for (int i = 0; i < 10; ++i)
                 {
-                    resultMatrix = firstMatrix.ParallelMultiplication(secondMatrix);
+                    stopwatch.Start();
+                    firstMatrix.ParallelMultiplication(secondMatrix);
+                    stopwatch.Stop();
+                    resultsParallel[i] = stopwatch.Elapsed.TotalSeconds;
+                    stopwatch.Reset();
                 }
-                stopwatch.Stop();
-                resultsParallel[j] = stopwatch.Elapsed.TotalSeconds;
-                stopwatch.Restart();
                 for (int i = 0; i < 10; ++i)
                 {
-                    resultMatrix = firstMatrix.NonParallelMultiplication(secondMatrix);
+                    stopwatch.Start();
+                    firstMatrix.NonParallelMultiplication(secondMatrix);
+                    stopwatch.Stop();
+                    resultsNonParallel[i] = stopwatch.Elapsed.TotalSeconds;
+                    stopwatch.Reset();
                 }
-                stopwatch.Stop();
-                resultsNonParallel[j] = stopwatch.Elapsed.TotalSeconds;
-                AvgAndDispersionCount(resultsParallel, out double averageParallel, out double dispertionParallel);
-                AvgAndDispersionCount(resultsNonParallel, out double averageNonParallel, out double dispertionNonParallel);
-                sWriter.WriteLine($"Matrix [{100 * (j + 1)} * 150] * [150 * 180]");
-                sWriter.WriteLine($"Parallel: Average: {averageParallel} +- {dispertionParallel}");
-                sWriter.WriteLine($"NonParallel: Average: {averageNonParallel} +- {dispertionNonParallel}");
-                sWriter.WriteLine();
+                (var averageParallel, var standardSquareDeviationParallel) = AvgAndstandardSquareDeviationCount(resultsParallel);
+                (var averageNonParallel, var standardSquareDeviationNonParallel) = AvgAndstandardSquareDeviationCount(resultsNonParallel);
+                steramWriter.WriteLine($"Matrix [{numberOfStringsFirst} * {numberOfColumnsFirst}] * [{numberOfColumnsFirst} * {numberOfColunmsSecond}]");
+                steramWriter.WriteLine("Parallel: Average: {0:f4} +- {1:f4}", averageParallel, standardSquareDeviationParallel);
+                steramWriter.WriteLine("NonParallel: Average: {0:f4} +- {1:f4}", averageNonParallel, standardSquareDeviationNonParallel);
+                steramWriter.WriteLine();
                 Console.Write(".");
             }
         }
         static void Task()
         {
-            var mat1 = new Matrix(300, 50, true);
-            mat1.Print("first.txt");
-            var mat2 = new Matrix(50, 80, true);
-            mat2.Print("second.txt");
-
             var matrix1 = new Matrix("first.txt");
             var matrix2 = new Matrix("second.txt");
-            var matrix3 = new Matrix();
-            matrix3 = matrix1.ParallelMultiplication(matrix2);
+            var matrix3 = matrix1.ParallelMultiplication(matrix2);
             string resultFileName = "multiplication_result.txt";
             matrix3.Print(resultFileName);
             Console.WriteLine("Matrix has been successfully written in file: " + Environment.CurrentDirectory + "\\" + resultFileName);
@@ -83,7 +78,7 @@ namespace MatrixMultiplication
         static void Main(string[] args)
         {
             //Task();
-            //CheckingTheEffectiveness();
+            CheckingTheEffectiveness();
 
 
         }

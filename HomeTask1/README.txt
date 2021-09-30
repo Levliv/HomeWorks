@@ -1,40 +1,41 @@
-Matrix [100 * 150] * [150 * 180]
-Parallel: Average: 0,01743604 +- 0,05230812
-NonParallel: Average: 0,03858459 +- 0,11575376999999999
+(All results are in seconds)
+Matrix [100 * 300] * [300 * 500]
+Parallel: Average: 0,5663 +- 0,1083
+NonParallel: Average: 0,8437 +- 0,3027
 
-Matrix [200 * 150] * [150 * 180]
-Parallel: Average: 0,08788547 +- 0,21200830395280293
-NonParallel: Average: 0,11786906999999999 +- 0,25269522330412203
+Matrix [200 * 300] * [300 * 500]
+Parallel: Average: 0,6827 +- 0,0336
+NonParallel: Average: 1,6594 +- 0,5800
 
-Matrix [300 * 150] * [150 * 180]
-Parallel: Average: 0,20532756000000002 +- 0,3852770625435576
-NonParallel: Average: 0,38000299000000004 +- 0,7877103790607999
+Matrix [300 * 300] * [300 * 500]
+Parallel: Average: 0,8540 +- 0,1979
+NonParallel: Average: 2,8504 +- 0,7090
 
-Matrix [400 * 150] * [150 * 180]
-Parallel: Average: 0,57007571 +- 1,093628655426497
-NonParallel: Average: 0,6689541800000001 +- 1,073460814736028
+Matrix [400 * 300] * [300 * 500]
+Parallel: Average: 1,1855 +- 0,3575
+NonParallel: Average: 4,5360 +- 0,8216
 
-Matrix [500 * 150] * [150 * 180]
-Parallel: Average: 0,92737631 +- 1,3919843096660087
-NonParallel: Average: 0,9946147 +- 1,2927130993085139
+Matrix [500 * 300] * [300 * 500]
+Parallel: Average: 1,6547 +- 0,0386
+NonParallel: Average: 5,4274 +- 1,0986
 
-Matrix [600 * 150] * [150 * 180]
-Parallel: Average: 1,3998991 +- 1,7523434364355073
-NonParallel: Average: 1,34686598 +- 1,4446893206205056
+Matrix [600 * 300] * [300 * 500]
+Parallel: Average: 1,7687 +- 0,4309
+NonParallel: Average: 6,9202 +- 0,8395
 
-Matrix [700 * 150] * [150 * 180]
-Parallel: Average: 1,8462590900000002 +- 1,9010851608278323
-NonParallel: Average: 1,9250872600000002 +- 1,8811200729965043
+Matrix [700 * 300] * [300 * 500]
+Parallel: Average: 2,2467 +- 0,1472
+NonParallel: Average: 8,1832 +- 0,6102
 
-Matrix [800 * 150] * [150 * 180]
-Parallel: Average: 2,61546672 +- 2,4696022014085637
-NonParallel: Average: 2,48817367 +- 2,0552928080520045
+Matrix [800 * 300] * [300 * 500]
+Parallel: Average: 2,5292 +- 0,3445
+NonParallel: Average: 8,4452 +- 1,1749
 
-Matrix [900 * 150] * [150 * 180]
-Parallel: Average: 3,4014012800000004 +- 2,747180710304271
-NonParallel: Average: 3,13494308 +- 2,1841417813844317
+Matrix [900 * 300] * [300 * 500]
+Parallel: Average: 2,5843 +- 0,0780
+NonParallel: Average: 8,6144 +- 1,3042
 
-Matrix [1000 * 150] * [150 * 180]
-Parallel: Average: 4,288536540000001 +- 2,9317361005197964
-NonParallel: Average: 3,8701047199999996 +- 2,2417090046519554
+Matrix [1000 * 300] * [300 * 500]
+Parallel: Average: 3,2961 +- 0,2416
+NonParallel: Average: 11,8239 +- 0,3077
 
