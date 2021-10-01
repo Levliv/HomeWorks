@@ -10,7 +10,7 @@ namespace MatrixMultiplication
         /// Counting average and standart deviation
         /// </summary>
         /// <param name="data"> array with measured results </param>
-        static (double average, double standardSquareDeviation) AvgAndstandardSquareDeviationCount(double[] data)
+        private static (double average, double standardSquareDeviation) AvgAndstandardSquareDeviationCount(double[] data)
         {
             var average = .0;
             foreach (var item in data)
@@ -27,7 +27,8 @@ namespace MatrixMultiplication
             var standardSquareDeviation = Math.Sqrt(dispersion);
             return (average, standardSquareDeviation);
         }
-        static void CheckingTheEffectiveness()
+
+        private static void CheckingTheEffectiveness()
         {
             var stopwatch = new Stopwatch();
             using var steramWriter = new StreamWriter("Experiment_results.txt");
@@ -66,7 +67,7 @@ namespace MatrixMultiplication
                 Console.Write(".");
             }
         }
-        static void Task()
+        private static void Task()
         {
             try
             {
@@ -84,12 +85,11 @@ namespace MatrixMultiplication
                 Console.WriteLine("Matrixes have wrong sizes");
             }
         }
+
         static void Main(string[] args)
         {
             Task();
             CheckingTheEffectiveness();
-
-
         }
     }
 }
