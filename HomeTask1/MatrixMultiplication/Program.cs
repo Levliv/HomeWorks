@@ -67,6 +67,7 @@ namespace MatrixMultiplication
                 Console.Write(".");
             }
         }
+
         private static void Task()
         {
             try
