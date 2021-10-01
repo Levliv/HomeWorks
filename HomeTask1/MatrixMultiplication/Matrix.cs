@@ -9,10 +9,6 @@ namespace MatrixMultiplication
     /// </summary>
     public class Matrix
     {
-        private int[,] dataIn2DArray;
-        public int Rows { get; set; }
-        public int Columns { get; set; }
-
         /// <summary>
         /// Matrix generator
         /// </summary>
@@ -58,34 +54,28 @@ namespace MatrixMultiplication
             }
         }
 
-        /// <summary>
-        /// Getter for [i, j] element from matrix
-        /// </summary>
-        /// <param name="stringIndex"> Row number </param>
-        /// <param name="columnIndex"> Column number </param>
-        /// <returns> Returns element in the i-th row and j-th column </returns>
-        public int GetElement(int stringIndex, int columnIndex)
-        {
-            if (stringIndex < 0 || stringIndex >= Rows || columnIndex < 0 || columnIndex >= Columns)
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-            return dataIn2DArray[stringIndex, columnIndex];
-        }
+        private int[,] dataIn2DArray;
 
         /// <summary>
-        /// Setter for [i, j] element from matrix
+        /// Number of rows in the matrix
         /// </summary>
-        /// <param name="stringIndex"> Row number </param>
-        /// <param name="columnIndex"> Column number </param>
-        /// <param name="value"> value you wanna place at that position </param>
-        public void SetElement(int stringIndex, int columnIndex, int value)
+        public int Rows { get; set; }
+        
+        /// <summary>
+        /// Number of columns in the matrix 
+        /// </summary>
+        public int Columns { get; set; }
+
+        /// <summary>
+        /// Indexer for class matrix
+        /// </summary>
+        /// <param name="i"> number of row </param>
+        /// <param name="j"> number of column </param>
+        /// <returns> element on i, j position </returns>
+        public int this[int i, int j]
         {
-            if (stringIndex < 0 || stringIndex >= Rows || columnIndex < 0 || columnIndex >= Columns)
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-            dataIn2DArray[stringIndex, columnIndex] = value;
+            get { return dataIn2DArray[i, j]; }
+            set { dataIn2DArray[i, j] = value; }
         }
 
         /// <summary>
@@ -152,9 +142,9 @@ namespace MatrixMultiplication
                             var sum = 0;
                             for (int k = 0; k < rhsMatrix.Rows; ++k)
                             {
-                                sum += this.GetElement(t, k) * rhsMatrix.GetElement(k, j);
+                                sum += this[t, k] * rhsMatrix[k, j];
                             }
-                            resultMatrix.SetElement(t, j, sum);
+                            resultMatrix[t, j] = sum;
                         }
                     }
                 });
@@ -189,9 +179,9 @@ namespace MatrixMultiplication
                     var sum = 0;
                     for (int k = 0; k < rhsMatrix.Rows; ++k)
                     {
-                        sum += GetElement(i, k) * rhsMatrix.GetElement(k, j);
+                        sum += this[i, k] * rhsMatrix[k, j];
                     }
-                    resultMatrix.SetElement(i, j, sum);
+                    resultMatrix[i, j] = sum;
                 }
             }
             return resultMatrix;

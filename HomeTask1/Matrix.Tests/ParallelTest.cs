@@ -17,7 +17,7 @@ namespace Matrix.Tests
             {
                 for (int j = 0; j < matrix3.Columns; ++j)
                 {
-                    Assert.AreEqual(matrix3.GetElement(i, j), matrix4.GetElement(i, j), $"Error in element [{i}, {j}]");
+                    Assert.AreEqual(matrix3[i, j], matrix4[i, j], $"Error in element [{i}, {j}]");
                 }
             }
         }
@@ -32,21 +32,21 @@ namespace Matrix.Tests
             {
                 for (int j = 0; j < 2; ++j) 
                 {
-                    firstMatrix.SetElement(i, j, i + j + 1);
+                    firstMatrix[i, j] = i + j + 1;
                 }
             }
             for (int i = 0; i < 2; ++i)
             {
                 for (int j = 0; j < 3; ++j)
                 {
-                    secondMatrix.SetElement(i, j, (i + 1) * (j + 1));
+                    secondMatrix[i, j] = (i + 1) * (j + 1);
                 }
             }
             for (int i = 0; i < 2; ++i)
             {
                 for (int j = 0; j < 2; ++j)
                 {
-                    Console.Write(firstMatrix.GetElement(i, j) + " ");
+                    Console.Write(firstMatrix[i, j] + " ");
                 }
                 Console.WriteLine();
             }
@@ -54,23 +54,23 @@ namespace Matrix.Tests
             {
                 for (int j = 0; j < 3; ++j)
                 {
-                    Console.Write(secondMatrix.GetElement(i, j) + " ");
+                    Console.Write(secondMatrix[i, j] + " ");
                 }
                 Console.WriteLine();
             }
-            rightMatrix.SetElement(0, 0, 5);
-            rightMatrix.SetElement(0, 1, 10);
-            rightMatrix.SetElement(0, 2, 15);
-            rightMatrix.SetElement(1, 0, 8);
-            rightMatrix.SetElement(1, 1, 16);
-            rightMatrix.SetElement(1, 2, 30);
+            rightMatrix[0, 0] =  5;
+            rightMatrix[0, 1] =  10;
+            rightMatrix[0, 2] =  15;
+            rightMatrix[1, 0] =  8;
+            rightMatrix[1, 1] =  16;
+            rightMatrix[1, 2] =  30;
             var resultMatrix = firstMatrix.ParallelMultiplication(secondMatrix);
             for (int i = 0; i < 2; ++i)
             {
                 for (int j = 0; j < 2; ++j)
                 {
-                    Console.WriteLine(resultMatrix.GetElement(i, j));
-                    Assert.AreEqual(resultMatrix.GetElement(i, j), rightMatrix.GetElement(i, j));
+                    Console.WriteLine(resultMatrix[i, j]);
+                    Assert.AreEqual(resultMatrix[i, j], rightMatrix[i, j]);
                 }
             }
         }
