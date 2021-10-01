@@ -33,7 +33,6 @@ namespace MatrixMultiplication
                     }
                 }
             }
-
         }
 
         /// <summary>
