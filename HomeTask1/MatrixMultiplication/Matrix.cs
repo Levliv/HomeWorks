@@ -42,15 +42,15 @@ namespace MatrixMultiplication
         /// <param name="path">File address</param>
         public Matrix(string path)
         {
-            using var streanRider = new StreamReader(path);
-            var stringOfMartixSize = streanRider.ReadLine();
+            using var streamRider = new StreamReader(path);
+            var stringOfMartixSize = streamRider.ReadLine();
             var strings1 = stringOfMartixSize.Split(' ');
             Rows = int.Parse(strings1[0]);
             Columns = int.Parse(strings1[1]);
             dataIn2DArray = new int[Rows, Columns];
             for (int i = 0; i < Rows; ++i)
             {
-                string lineFromFile = streanRider.ReadLine();
+                string lineFromFile = streamRider.ReadLine();
                 string[] strings2 = lineFromFile.Split(' ');
                 for (int j = 0; j < Columns; ++j)
                 {

@@ -68,16 +68,25 @@ namespace MatrixMultiplication
         }
         static void Task()
         {
-            var matrix1 = new Matrix("first.txt");
-            var matrix2 = new Matrix("second.txt");
-            var matrix3 = matrix1.ParallelMultiplication(matrix2);
-            string resultFileName = "multiplication_result.txt";
-            matrix3.Print(resultFileName);
-            Console.WriteLine("Matrix has been successfully written in file: " + Environment.CurrentDirectory + "\\" + resultFileName);
+            try
+            {
+                var matrix1 = new Matrix("first.txt");
+                var matrix2 = new Matrix("second.txt");
+                var matrix3 = matrix1.ParallelMultiplication(matrix2);
+                string resultFileName = "multiplication_result.txt";
+                matrix3.Print(resultFileName);
+                Console.WriteLine("Matrix has been successfully written in file: " + Environment.CurrentDirectory + "\\" + resultFileName);
+            } catch (FileNotFoundException eFileNotFound)
+            {
+                Console.WriteLine($"File {eFileNotFound.FileName} wasn't found");
+            } catch (ArgumentOutOfRangeException)
+            {
+                Console.WriteLine("Matrixes have wrong sizes");
+            }
         }
         static void Main(string[] args)
         {
-            //Task();
+            Task();
             CheckingTheEffectiveness();
 
 
