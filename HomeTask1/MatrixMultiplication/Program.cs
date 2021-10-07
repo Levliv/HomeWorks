@@ -6,6 +6,7 @@ namespace MatrixMultiplication
 {
     static class Program
     {
+
         /// <summary>
         /// Counting average and standart deviation
         /// </summary>
@@ -31,8 +32,8 @@ namespace MatrixMultiplication
         private static void CheckingTheEffectiveness()
         {
             var stopwatch = new Stopwatch();
-            using var steramWriter = new StreamWriter("Experiment_results.txt");
-            steramWriter.WriteLine("(All results are in seconds)");
+            using var streamWriter = new StreamWriter("Experiment_results.txt");
+            streamWriter.WriteLine("(All results are in seconds)");
             for (int j = 0; j < 10; ++j)
             {
                 var resultsParallel = new double[10];
@@ -60,10 +61,10 @@ namespace MatrixMultiplication
                 }
                 (var averageParallel, var standardSquareDeviationParallel) = AvgAndstandardSquareDeviationCount(resultsParallel);
                 (var averageNonParallel, var standardSquareDeviationNonParallel) = AvgAndstandardSquareDeviationCount(resultsNonParallel);
-                steramWriter.WriteLine($"Matrix [{numberOfStringsFirst} * {numberOfColumnsFirst}] * [{numberOfColumnsFirst} * {numberOfColunmsSecond}]");
-                steramWriter.WriteLine("Parallel: Average: {0:f4} +- {1:f4}", averageParallel, standardSquareDeviationParallel);
-                steramWriter.WriteLine("NonParallel: Average: {0:f4} +- {1:f4}", averageNonParallel, standardSquareDeviationNonParallel);
-                steramWriter.WriteLine();
+                streamWriter.WriteLine($"Matrix [{numberOfStringsFirst} * {numberOfColumnsFirst}] * [{numberOfColumnsFirst} * {numberOfColunmsSecond}]");
+                streamWriter.WriteLine("Parallel: Average: {0:f4} +- {1:f4}", averageParallel, standardSquareDeviationParallel);
+                streamWriter.WriteLine("NonParallel: Average: {0:f4} +- {1:f4}", averageNonParallel, standardSquareDeviationNonParallel);
+                streamWriter.WriteLine();
                 Console.Write(".");
             }
         }
@@ -78,10 +79,12 @@ namespace MatrixMultiplication
                 string resultFileName = "multiplication_result.txt";
                 matrix3.Print(resultFileName);
                 Console.WriteLine("Matrix has been successfully written in file: " + Environment.CurrentDirectory + "\\" + resultFileName);
-            } catch (FileNotFoundException eFileNotFound)
+            } 
+            catch (FileNotFoundException eFileNotFound)
             {
                 Console.WriteLine($"File {eFileNotFound.FileName} wasn't found");
-            } catch (ArgumentOutOfRangeException)
+            } 
+            catch (ArgumentOutOfRangeException)
             {
                 Console.WriteLine("Matrixes have wrong sizes");
             }

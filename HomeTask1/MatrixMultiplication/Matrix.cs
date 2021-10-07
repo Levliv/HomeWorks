@@ -4,6 +4,7 @@ using System.Threading;
 
 namespace MatrixMultiplication
 {
+
     /// <summary>
     /// Матрицы типа int размера n * m
     /// </summary>
@@ -37,15 +38,15 @@ namespace MatrixMultiplication
         /// <param name="path">File address</param>
         public Matrix(string path)
         {
-            using var streamRider = new StreamReader(path);
-            var stringOfMartixSize = streamRider.ReadLine();
+            using var streamReader = new StreamReader(path);
+            var stringOfMartixSize = streamReader.ReadLine();
             var strings1 = stringOfMartixSize.Split(' ');
             Rows = int.Parse(strings1[0]);
             Columns = int.Parse(strings1[1]);
             dataIn2DArray = new int[Rows, Columns];
             for (int i = 0; i < Rows; ++i)
             {
-                string lineFromFile = streamRider.ReadLine();
+                string lineFromFile = streamReader.ReadLine();
                 string[] strings2 = lineFromFile.Split(' ');
                 for (int j = 0; j < Columns; ++j)
                 {
@@ -59,12 +60,12 @@ namespace MatrixMultiplication
         /// <summary>
         /// Number of rows in the matrix
         /// </summary>
-        public int Rows { get; set; }
+        public int Rows { get; }
         
         /// <summary>
         /// Number of columns in the matrix 
         /// </summary>
-        public int Columns { get; set; }
+        public int Columns { get; }
 
         /// <summary>
         /// Indexer for class matrix
@@ -74,7 +75,7 @@ namespace MatrixMultiplication
         /// <returns> element on i, j position </returns>
         public int this[int i, int j]
         {
-            get { return dataIn2DArray[i, j]; }
+            get => dataIn2DArray[i, j];
             set { dataIn2DArray[i, j] = value; }
         }
 
@@ -84,8 +85,8 @@ namespace MatrixMultiplication
         /// <param name="path"> Path to the file you wanna see the matrix in</param>
         public void Print(string path)
         {
-            using var sWriter = new StreamWriter(path);
-            sWriter.WriteLine(Rows + " " + Columns);
+            using var streamWriter = new StreamWriter(path);
+            streamWriter.WriteLine(Rows + " " + Columns);
             for (int i = 0; i < Rows; ++i)
             {
                 var str = string.Empty;
@@ -93,10 +94,9 @@ namespace MatrixMultiplication
                 {
                     str += dataIn2DArray[i, j] + " ";
                 }
-                sWriter.WriteLine(str);
+                streamWriter.WriteLine(str);
             }
-            sWriter.WriteLine();
-            sWriter.Close();
+            streamWriter.WriteLine();
         }
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace MatrixMultiplication
             {
                 throw new ArgumentOutOfRangeException("Sizes are not appropriate");
             }
-            Matrix resultMatrix = new Matrix(Rows, rhsMatrix.Columns);
+            var resultMatrix = new Matrix(Rows, rhsMatrix.Columns);
             for (int i = 0; i < Rows; ++i)
             {
                 for (int j = 0; j < rhsMatrix.Columns; ++j)
