@@ -67,6 +67,8 @@ namespace MatrixMultiplication
         /// </summary>
         public int Columns { get; }
 
+        delegate void T(string str);
+
         /// <summary>
         /// Indexer for class matrix
         /// </summary>
@@ -78,32 +80,24 @@ namespace MatrixMultiplication
             get => dataIn2DArray[i, j];
             set { dataIn2DArray[i, j] = value; }
         }
-
+        
         /// <summary>
         /// Printing into file
         /// </summary>
         /// <param name="path"> Path to the file you wanna see the matrix in</param>
-        public void Print(string path)
+        public void Print(string path = "")
         {
-            using var streamWriter = new StreamWriter(path);
-            streamWriter.WriteLine(Rows + " " + Columns);
-            for (int i = 0; i < Rows; ++i)
+            T t;
+            if (path == "")
             {
-                var str = string.Empty;
-                for (int j = 0; j < Columns; ++j)
-                {
-                    str += dataIn2DArray[i, j] + " ";
-                }
-                streamWriter.WriteLine(str);
+                t = Console.WriteLine;
             }
-            streamWriter.WriteLine();
-        }
-
-        /// <summary>
-        /// Showing matrix on the screen
-        /// </summary>
-        public void Print()
-        {
+            else
+            {
+                using var streamWriter = new StreamWriter(path);
+                streamWriter.WriteLine(Rows + " " + Columns);
+                t = streamWriter.WriteLine;
+            }
             for (int i = 0; i < Rows; ++i)
             {
                 var str = string.Empty;
@@ -111,7 +105,15 @@ namespace MatrixMultiplication
                 {
                     str += dataIn2DArray[i, j] + " ";
                 }
-                Console.WriteLine(str);
+                t(str);
+            }
+            if (path == "")
+            {
+                Console.WriteLine("The result has been shown on the screen");
+            }
+            else
+            {
+                Console.WriteLine("Matrix has been successfully written in file: " + Environment.CurrentDirectory + "\\" + path);
             }
         }
 

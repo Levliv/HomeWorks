@@ -78,7 +78,6 @@ namespace MatrixMultiplication
                 var matrix3 = matrix1.ParallelMultiplication(matrix2);
                 string resultFileName = "multiplication_result.txt";
                 matrix3.Print(resultFileName);
-                Console.WriteLine("Matrix has been successfully written in file: " + Environment.CurrentDirectory + "\\" + resultFileName);
             } 
             catch (FileNotFoundException eFileNotFound)
             {
@@ -93,7 +92,7 @@ namespace MatrixMultiplication
         static void Main(string[] args)
         {
             Task();
-            CheckingTheEffectiveness();
+            //CheckingTheEffectiveness();
         }
     }
 }

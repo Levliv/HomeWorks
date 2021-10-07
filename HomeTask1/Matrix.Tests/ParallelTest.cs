@@ -1,15 +1,15 @@
 using NUnit.Framework;
 using System;
+using MatrixMultiplication;
 
-namespace Matrix.Tests
+namespace MatrixMultiplication.Tests
 {
     public class Tests
     {
         /// <summary>
         /// Main method for testing parallel multiplication
         /// </summary>
-        static void TestParallel(MatrixMultiplication.Matrix firstMatrix,
-                                 MatrixMultiplication.Matrix secondMatrix)
+        static void TestParallel(Matrix firstMatrix, Matrix secondMatrix)
         {
             var matrix3 = firstMatrix.ParallelMultiplication(secondMatrix);
             var matrix4 = firstMatrix.NonParallelMultiplication(secondMatrix);
@@ -25,9 +25,9 @@ namespace Matrix.Tests
         [Test]
         public void CorectnessOfMatrixMultiplicationAlgorithmTested()
         {
-            var firstMatrix = new MatrixMultiplication.Matrix(2, 2);
-            var secondMatrix = new MatrixMultiplication.Matrix(2, 3);
-            var rightMatrix = new MatrixMultiplication.Matrix(2, 3);
+            var firstMatrix = new Matrix(2, 2);
+            var secondMatrix = new Matrix(2, 3);
+            var rightMatrix = new Matrix(2, 3);
             for (int i = 0; i < 2; ++i)
             {
                 for (int j = 0; j < 2; ++j) 
@@ -78,48 +78,48 @@ namespace Matrix.Tests
         [Test]
         public void NotCorrectSizesNonParallel()
         {
-            var firstMatrix = new MatrixMultiplication.Matrix(3, 3);
-            var secondMatrix = new MatrixMultiplication.Matrix(4, 5);
+            var firstMatrix = new Matrix(3, 3);
+            var secondMatrix = new Matrix(4, 5);
             Assert.Throws<ArgumentOutOfRangeException>(() => firstMatrix.NonParallelMultiplication(secondMatrix));
         }
 
         [Test]
         public void NotCorrectSizesParallel()
         {
-            var firstMatrix = new MatrixMultiplication.Matrix(3, 3);
-            var secondMatrix = new MatrixMultiplication.Matrix(4, 5);
+            var firstMatrix = new Matrix(3, 3);
+            var secondMatrix = new Matrix(4, 5);
             Assert.Throws<ArgumentOutOfRangeException>(() => firstMatrix.ParallelMultiplication(secondMatrix));
         }
 
         [Test]
         public void SimpleMatrix()
         {
-            var firstMatrix = new MatrixMultiplication.Matrix(3, 4, true);
-            var secondMatrix = new MatrixMultiplication.Matrix(4, 5, true);
+            var firstMatrix = new Matrix(3, 4, true);
+            var secondMatrix = new Matrix(4, 5, true);
             TestParallel(firstMatrix, secondMatrix);
         }
 
         [Test]
         public void NormMatrix()
         {
-            var firstMatrix = new MatrixMultiplication.Matrix(12, 18, true);
-            var secondMatrix = new MatrixMultiplication.Matrix(18, 8, true);
+            var firstMatrix = new Matrix(12, 18, true);
+            var secondMatrix = new Matrix(18, 8, true);
             TestParallel(firstMatrix, secondMatrix);
         }
 
         [Test]
         public void BigMatrix()
         {
-            var firstMatrix = new MatrixMultiplication.Matrix(43, 43, true);
-            var secondMatrix = new MatrixMultiplication.Matrix(43, 50, true);
+            var firstMatrix = new Matrix(43, 43, true);
+            var secondMatrix = new Matrix(43, 50, true);
             TestParallel(firstMatrix, secondMatrix);
         }
 
         [Test]
         public void HugeMatrix()
         {
-            var firstMatrix = new MatrixMultiplication.Matrix(111, 123, true);
-            var secondMatrix = new MatrixMultiplication.Matrix(123, 345, true);
+            var firstMatrix = new Matrix(111, 123, true);
+            var secondMatrix = new Matrix(123, 345, true);
             TestParallel(firstMatrix, secondMatrix);
         }
     }
