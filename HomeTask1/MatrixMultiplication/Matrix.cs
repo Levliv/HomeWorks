@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
+using System.Text;
 
 namespace MatrixMultiplication
 {
@@ -67,8 +68,6 @@ namespace MatrixMultiplication
         /// </summary>
         public int Columns { get; }
 
-        delegate void T(string str);
-
         /// <summary>
         /// Indexer for class matrix
         /// </summary>
@@ -87,32 +86,25 @@ namespace MatrixMultiplication
         /// <param name="path"> Path to the file you wanna see the matrix in</param>
         public void Print(string path = "")
         {
-            T t;
+            var stringBuilder = new StringBuilder(2 * (Columns + 1) * (Rows + 1));
+            for (int i = 0; i < Rows; ++i)
+            {
+                for (int j = 0; j < Columns; ++j)
+                {
+                    stringBuilder.Append(dataIn2DArray[i, j] + " ");
+                }
+                stringBuilder.Append('\n');
+            }
             if (path == "")
             {
-                t = Console.WriteLine;
+                Console.WriteLine(stringBuilder.ToString());
+                Console.WriteLine("The result has been shown on the screen");
             }
             else
             {
                 using var streamWriter = new StreamWriter(path);
                 streamWriter.WriteLine(Rows + " " + Columns);
-                t = streamWriter.WriteLine;
-            }
-            for (int i = 0; i < Rows; ++i)
-            {
-                var str = string.Empty;
-                for (int j = 0; j < Columns; ++j)
-                {
-                    str += dataIn2DArray[i, j] + " ";
-                }
-                t(str);
-            }
-            if (path == "")
-            {
-                Console.WriteLine("The result has been shown on the screen");
-            }
-            else
-            {
+                streamWriter.WriteLine(stringBuilder.ToString());
                 Console.WriteLine("Matrix has been successfully written in file: " + Environment.CurrentDirectory + "\\" + path);
             }
         }
