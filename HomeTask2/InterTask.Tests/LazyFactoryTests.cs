@@ -2,26 +2,23 @@ using NUnit.Framework;
 using System;
 using InterTask;
 using System.Threading;
+using System.Collections;
 
 namespace InterTask.Tests
 {
     public class Tests
     {
-        [SetUp]
-        public void Setup()
-        {
-        }
 
         [Test]
         public void DelegateIsNullOneThreadFactory()
         {
-            Assert.Throws<Exception>(() => LazyFactory.CreateOneThreadLazy<object>(null));
+            Assert.Throws<ArgumentNullException>(() => LazyFactory.CreateOneThreadLazy<object>(null));
         }
 
         [Test]
         public void DelegateIsNullMultiThreadFactory()
         {
-            Assert.Throws<Exception>(() => LazyFactory.CreateMultiThreadLazy<object>(null));
+            Assert.Throws<ArgumentNullException>(() => LazyFactory.CreateMultiThreadLazy<object>(null));
         }
 
         [Test]
@@ -29,7 +26,7 @@ namespace InterTask.Tests
         {
             var random = new Random();
             Func<int> func = () => random.Next();
-            var lazy = LazyFactory.CreateOneThreadLazy<int>(func);
+            var lazy = LazyFactory.CreateOneThreadLazy(func);
             Assert.AreEqual(lazy.Get(), lazy.Get());
         }
 
@@ -54,11 +51,9 @@ namespace InterTask.Tests
             {
                 threads[i].Join();
             }
-            //Console.WriteLine(numberOfThreads);
             for (int i = 0; i < numberOfThreads; ++i)
             {
-                Console.WriteLine($"number = {varNumber}");
-                Assert.AreEqual(varNumber, numberOfThreads*5);
+                Assert.AreEqual(varNumber, numberOfThreads * 5);
             }
         }
     }
