@@ -8,16 +8,10 @@ namespace InterTask.Tests
 {
     public class Tests
     {
-
         [Test]
-        public void DelegateIsNullOneThreadFactory()
+        public void DelegateIsNullTest()
         {
             Assert.Throws<ArgumentNullException>(() => LazyFactory.CreateOneThreadLazy<object>(null));
-        }
-
-        [Test]
-        public void DelegateIsNullMultiThreadFactory()
-        {
             Assert.Throws<ArgumentNullException>(() => LazyFactory.CreateMultiThreadLazy<object>(null));
         }
 
@@ -30,31 +24,41 @@ namespace InterTask.Tests
             Assert.AreEqual(lazy.Get(), lazy.Get());
         }
 
+
+        [Test]
+        public void OneThreadLazyTest()
+        {
+            Func<int> func = () => 5;
+            var lazy = LazyFactory.CreateOneThreadLazy(func);
+            for (int i = 0; i < 10; ++i)
+            {
+                lazy.Get();
+            }
+        }
+
         [Test]
         public void MultiThreadLazy()
         {
+            int counter = 0;
             Func<int> func = () => 5;
-            var lazy = LazyFactory.CreateMultiThreadLazy<int>(func);
+            Func<int> func2 = () => Interlocked.Increment(ref counter);
+            func += func2;
+            var lazy = LazyFactory.CreateMultiThreadLazy(func);
             var numberOfThreads = Environment.ProcessorCount * 10;
             var threads = new Thread[numberOfThreads];
             var numbers = new int[numberOfThreads];
-            int varNumber = 0;
             for (int i = 0; i < numberOfThreads; ++i)
             {
                 threads[i] = new Thread(
-                    () => Interlocked.Add(ref varNumber, lazy.Get())
+                    () => lazy.Get()
                     );
                 threads[i].Start();
             }
-            
             for (int i = 0; i < numberOfThreads; ++i)
             {
                 threads[i].Join();
             }
-            for (int i = 0; i < numberOfThreads; ++i)
-            {
-                Assert.AreEqual(varNumber, numberOfThreads * 5);
-            }
+            Assert.AreEqual(counter, 1);
         }
     }
 }
