@@ -2,7 +2,7 @@ using NUnit.Framework;
 using System;
 using System.Threading;
 
-namespace InterTask.Tests
+namespace LazyFactoryNamespace.Tests
 {
     public class Tests
     {

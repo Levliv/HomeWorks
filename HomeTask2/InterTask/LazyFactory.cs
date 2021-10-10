@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace InterTask
+namespace LazyFactoryNamespace
 {
     /// <summary>
     /// Lazy factory

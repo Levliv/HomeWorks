@@ -1,5 +1,5 @@
 ﻿using System;
-namespace InterTask
+namespace LazyFactoryNamespace
 {
     /// <summary>
     /// One thread LazyFactory

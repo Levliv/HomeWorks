@@ -1,4 +1,4 @@
-﻿namespace InterTask
+﻿namespace LazyFactoryNamespace
 {
     /// <summary>
     /// Interface ILazy
