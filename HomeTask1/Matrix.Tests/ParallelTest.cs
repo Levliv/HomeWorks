@@ -42,22 +42,6 @@ namespace MatrixMultiplication.Tests
                     secondMatrix[i, j] = (i + 1) * (j + 1);
                 }
             }
-            for (int i = 0; i < 2; ++i)
-            {
-                for (int j = 0; j < 2; ++j)
-                {
-                    Console.Write(firstMatrix[i, j] + " ");
-                }
-                Console.WriteLine();
-            }
-            for (int i = 0; i < 2; ++i)
-            {
-                for (int j = 0; j < 3; ++j)
-                {
-                    Console.Write(secondMatrix[i, j] + " ");
-                }
-                Console.WriteLine();
-            }
             rightMatrix[0, 0] =  5;
             rightMatrix[0, 1] =  10;
             rightMatrix[0, 2] =  15;
@@ -69,7 +53,6 @@ namespace MatrixMultiplication.Tests
             {
                 for (int j = 0; j < 2; ++j)
                 {
-                    Console.WriteLine(resultMatrix[i, j]);
                     Assert.AreEqual(resultMatrix[i, j], rightMatrix[i, j]);
                 }
             }

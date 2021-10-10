@@ -40,8 +40,8 @@ namespace MatrixMultiplication
         public Matrix(string path)
         {
             using var streamReader = new StreamReader(path);
-            var stringOfMartixSize = streamReader.ReadLine();
-            var strings1 = stringOfMartixSize.Split(' ');
+            var stringOfMatrixSize = streamReader.ReadLine();
+            var strings1 = stringOfMatrixSize.Split(' ');
             Rows = int.Parse(strings1[0]);
             Columns = int.Parse(strings1[1]);
             dataIn2DArray = new int[Rows, Columns];

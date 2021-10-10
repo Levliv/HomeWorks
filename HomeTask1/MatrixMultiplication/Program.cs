@@ -92,7 +92,7 @@ namespace MatrixMultiplication
         static void Main(string[] args)
         {
             Task();
-            //CheckingTheEffectiveness();
+            CheckingTheEffectiveness();
         }
     }
 }
