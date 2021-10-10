@@ -1,8 +1,6 @@
 using NUnit.Framework;
 using System;
-using InterTask;
 using System.Threading;
-using System.Collections;
 
 namespace InterTask.Tests
 {
@@ -23,7 +21,6 @@ namespace InterTask.Tests
             var lazy = LazyFactory.CreateOneThreadLazy(func);
             Assert.AreEqual(lazy.Get(), lazy.Get());
         }
-
 
         [Test]
         public void OneThreadLazyTest()
