@@ -12,8 +12,8 @@ namespace LazyFactoryNamespace.Tests
             Assert.Throws<ArgumentNullException>(() => LazyFactory.CreateMultiThreadLazy<object>(null));
         }
 
-        [TestCase(10, 10)]
-        [TestCase(20, 20)]
+        [TestCase(10, ExpectedResult=10)]
+        [TestCase(20, ExpectedResult=20)]
         public int MultiThreadLazyTest(int funcValue)
         {
             Func<int> func = () => funcValue;

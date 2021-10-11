@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InterTask\LazyFactory.csproj" />
+    <ProjectReference Include="..\LazyFactory\LazyFactory.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using System;
-using System.Threading;
 
 namespace LazyFactoryNamespace.Tests
 {
@@ -12,8 +11,8 @@ namespace LazyFactoryNamespace.Tests
             Assert.Throws<ArgumentNullException>(() => LazyFactory.CreateOneThreadLazy<object>(null));
         }
 
-        [TestCase(10, 10)]
-        [TestCase(20, 20)]
+        [TestCase(10, ExpectedResult=10)]
+        [TestCase(20, ExpectedResult=20)]
         public int OneThreadLazyTest(int funcValue)
         {
             Func<int> func =() => funcValue;
