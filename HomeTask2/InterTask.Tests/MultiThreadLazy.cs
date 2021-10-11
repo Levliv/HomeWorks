@@ -1,40 +1,28 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.Threading;
 
 namespace LazyFactoryNamespace.Tests
 {
-    public class Tests
+    class MultiThreadLazy
     {
         [Test]
         public void DelegateIsNullTest()
         {
-            Assert.Throws<ArgumentNullException>(() => LazyFactory.CreateOneThreadLazy<object>(null));
             Assert.Throws<ArgumentNullException>(() => LazyFactory.CreateMultiThreadLazy<object>(null));
         }
 
-        [Test]
-        public void OneThreadLazyGet()
+        [TestCase(10, 10)]
+        [TestCase(20, 20)]
+        public int MultiThreadLazyTest(int funcValue)
         {
-            var random = new Random();
-            Func<int> func = () => random.Next();
+            Func<int> func = () => funcValue;
             var lazy = LazyFactory.CreateOneThreadLazy(func);
-            Assert.AreEqual(lazy.Get(), lazy.Get());
+            return lazy.Get();
         }
 
         [Test]
-        public void OneThreadLazyTest()
-        {
-            Func<int> func = () => 5;
-            var lazy = LazyFactory.CreateOneThreadLazy(func);
-            for (int i = 0; i < 10; ++i)
-            {
-                lazy.Get();
-            }
-        }
-
-        [Test]
-        public void MultiThreadLazy()
+        public void RaceMultiThreadLazyTest()
         {
             int counter = 0;
             Func<int> func = () => 5;
