@@ -1,21 +1,49 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using System;
 using System.Threading;
 
 namespace LazyFactoryNamespace.Tests
 {
-    class MultiThreadLazy
+    public class Tests
     {
         [Test]
         public void DelegateIsNullTest()
         {
-            Assert.Throws<ArgumentNullException>(() => LazyFactory.CreateMultiThreadLazy<object>(null));
+            Assert.Throws<ArgumentNullException>(() => LazyFactory.CreateOneThreadLazy<object>(null));
+            Assert.Throws<ArgumentNullException>(() => LazyFactory.CreateOneThreadLazy<object>(null));
         }
 
-        [Test, TestCaseSource("TestCases")]
-        public void Tests2(Func<int> func)
+        [Test]
+        public void OneThreadLazyGetCalledOnlyOnce()
+        {
+            var counter = 0;
+            Func<int> func = () => counter++;
+            var lazy = LazyFactory.CreateOneThreadLazy(func);
+            for (int i = 0; i < 2; ++i)
+            {
+                lazy.Get();
+            }
+            Assert.AreEqual(counter, 1);
+        }
+
+        private static readonly object[] TestCases =
+        {
+            new Func<int>[] {()=> 32 },
+            new Func<int>[] {()=> 2 },
+            new Func<int>[] {()=> 4 },
+        };
+
+        [Test, TestCaseSource(nameof(TestCases))]
+        public void TestsMultiThread(Func<int> func)
         {
             var lazy = LazyFactory.CreateMultiThreadLazy(func);
+            Assert.AreEqual(lazy.Get(), func());
+        }
+
+        [Test, TestCaseSource(nameof(TestCases))]
+        public void TestsOneThread(Func<int> func)
+        {
+            var lazy = LazyFactory.CreateOneThreadLazy(func);
             Assert.AreEqual(lazy.Get(), func());
         }
 
