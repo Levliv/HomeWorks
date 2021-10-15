@@ -16,17 +16,7 @@ namespace LazyFactoryNamespace
         /// Constructor for MutiThread
         /// </summary>
         /// <param name="supplier"></param>
-        public MultiThreadLazy(Func<T> supplier)
-        {
-            if (supplier != null)
-            {
-                _supplier = supplier;
-            }
-            else
-            {
-                throw new ArgumentNullException("null ptr is not allowed");
-            }
-        }
+        public MultiThreadLazy(Func<T> supplier) => _supplier = supplier ?? throw new ArgumentNullException("null ptr is not allowed");
 
         /// <summary>
         /// Multi thread getter

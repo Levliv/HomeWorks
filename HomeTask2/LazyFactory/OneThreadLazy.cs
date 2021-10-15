@@ -8,23 +8,13 @@ namespace LazyFactoryNamespace
     {
         private Func<T> _supplier;
         public T RecordedResult { get; private set; }
-        private volatile bool _isRecorded = false;
+        private bool _isRecorded = false;
 
         /// <summary>
         /// One Thread LazyFactory
         /// </summary>
         /// <param name="supplier"></param>
-        public OneThreadLazy(Func<T> supplier)
-        {
-            if (supplier != null)
-            {
-                _supplier = supplier;
-            }
-            else
-            {
-                throw new ArgumentNullException("Not ptr is not allowed");
-            }
-        }
+        public OneThreadLazy(Func<T> supplier) => _supplier = supplier ?? throw new ArgumentNullException("Not ptr is not allowed");
 
         /// <summary>
         /// One thread getter

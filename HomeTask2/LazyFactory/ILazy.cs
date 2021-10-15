@@ -1,7 +1,7 @@
 ﻿namespace LazyFactoryNamespace
 {
     /// <summary>
-    /// Interface ILazy
+    /// Interface for Lazy computation
     /// </summary>
     public interface ILazy<T>
     {

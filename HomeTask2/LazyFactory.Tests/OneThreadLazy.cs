@@ -11,13 +11,31 @@ namespace LazyFactoryNamespace.Tests
             Assert.Throws<ArgumentNullException>(() => LazyFactory.CreateOneThreadLazy<object>(null));
         }
 
-        [TestCase(10, ExpectedResult=10)]
-        [TestCase(20, ExpectedResult=20)]
-        public int OneThreadLazyTest(int funcValue)
+        [Test]
+        public void OneThreadLazyGetCalledOnlyOnce()
         {
-            Func<int> func =() => funcValue;
+            var counter = 0;
+            Func<int> func = () => counter++;
             var lazy = LazyFactory.CreateOneThreadLazy(func);
-            return lazy.Get();
+            for (int i = 0; i < 2; ++i)
+            {
+                lazy.Get();
+            }
+            Assert.AreEqual(counter, 1);
+        }
+
+        private static readonly object[] TestCases =
+        {
+            new Func<int>[] {()=> 32 },
+            new Func<int>[] {()=> 2 },
+            new Func<int>[] {()=> 4 },
+        };
+
+        [Test, TestCaseSource(nameof(TestCases))]
+        public void Tests2(Func<int> func)
+        {
+            var lazy = LazyFactory.CreateOneThreadLazy(func);
+            Assert.AreEqual(lazy.Get(), func());
         }
     }
 }
