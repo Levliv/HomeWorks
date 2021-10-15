@@ -35,8 +35,8 @@ jobs:
     #- name: DIR
     #  run: dir
     - name: Restore
-      run: nuget restore HomeTask2/InterTask/InterTask.sln
+      run: nuget restore HomeTask2/LazyFactory/LazyFactory.sln
     - name: building
-      run: dotnet build HomeTask2/InterTask/InterTask.sln
+      run: dotnet build HomeTask2/LazyFactory/LazyFactory.sln
     - name: test
-      run: dotnet test HomeTask2/InterTask/InterTask.sln
+      run: dotnet test HomeTask2/LazyFactory/LazyFactory.sln
