@@ -21,7 +21,7 @@ namespace MyFTP
 
                 Console.WriteLine($"Client Reciving on port: {port}");
                 var streamReader = new StreamReader(stream);
-                var data = streamReader.ReadLine();
+                var data = streamReader.ReadToEnd();
                 Console.WriteLine($"Recived data: {data}");
             }
         }

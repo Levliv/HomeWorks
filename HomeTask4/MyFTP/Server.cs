@@ -77,41 +77,43 @@ namespace MyFTP
             }
         }
 
-        public void ServerMethod()
+        public async Task ServerMethodAsync()
         {
-            Console.WriteLine("Starting");
             const int port = 8888;
             var listener = new TcpListener(IPAddress.Any, port);
             listener.Start();
             Console.WriteLine($"Listening on port: {port}");
             while (true)
             {
-                var socket = listener.AcceptSocket();
-                var stream = new NetworkStream(socket);
-                var streamReader = new StreamReader(stream);
-                var data = streamReader.ReadLine();
-                var strings = data.Split(' ');
-                switch (int.Parse(strings[0]))
+                var socket = await listener.AcceptSocketAsync();
+                Task.Run(async () =>
                 {
-                    case 1:
-                        {
-                            var streamWriter = new StreamWriter(stream);
-                            streamWriter.WriteLine(List(strings[1].Substring(2).Replace('/', '\\')));
-                            streamWriter.Flush();
-                            break;
-                        }
-                    case 2:
-                        {
-                            var streamWriter = new StreamWriter(stream);
-                            streamWriter.WriteLine(Get(strings[1].Substring(2).Replace('/', '\\')));
-                            streamWriter.Flush();
-                            break;
-                        }
-                    default:
-                        throw new ArgumentException("Your key is out of index");
-                }
-                Console.WriteLine($"Server Recived: {data}");
-                socket.Close();
+                    var stream = new NetworkStream(socket);
+                    var streamReader = new StreamReader(stream);
+                    var data = await streamReader.ReadLineAsync();
+                    var strings = data.Split(' ');
+                    var streamWriter = new StreamWriter(stream);
+                    switch (int.Parse(strings[0]))
+                    {
+                        case 1:
+                            {
+                                await streamWriter.WriteLineAsync(List(strings[1].Substring(2).Replace('/', '\\')));
+                                streamWriter.Flush();
+                                socket.Close();
+                                break;
+                            }
+                        case 2:
+                            {
+                                var (size, bytes) = Get(strings[1].Substring(2).Replace('/', '\\'));
+                                await streamWriter.WriteAsync(size.ToString() + Encoding.UTF8.GetString(bytes));
+                                await streamWriter.FlushAsync();
+                                socket.Close();
+                                break;
+                            }
+                        default:
+                            throw new ArgumentException("Your key is out of index");
+                    }
+                });
             }
         }
     }
