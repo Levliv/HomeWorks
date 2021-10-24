@@ -3,10 +3,11 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace MyFTP
 {
-    class Server: IServer
+    class Server
     {
         private (int, string) ProsessFiles(FileInfo[] files)
         {
@@ -28,18 +29,16 @@ namespace MyFTP
             return (directories.Length, ResultString);
         }
 
-        private (int size, string name, bool isDir) ListProsess(string path)
+        private (int size, string name) ListProsess(string path)
         {
-            var stringShorted = path.Substring(2);
-            var pathWithChangedSlashes = stringShorted.Replace('/', '\\');
-            var di = new DirectoryInfo(pathWithChangedSlashes);
+            var di = new DirectoryInfo(path);
             if (di.Exists)
             {
                 var (numberOfFiles, strFiles) = ProsessFiles(di.GetFiles());
                 var (numberOfDirectories, strDirs) = ProsessDirectories(di.GetDirectories());
-                return (numberOfFiles + numberOfDirectories, strFiles + " " + strDirs, di.Exists);
+                return (numberOfFiles + numberOfDirectories, strFiles + " " + strDirs);
             }
-            return (-1, "", di.Exists);
+            return (-1, "");
         }
 
         /// <summary>
@@ -47,12 +46,13 @@ namespace MyFTP
         /// </summary>
         /// <param name="path">path to the directory we need to look at</param>
         /// <returns>srting in format string with server respond</returns>
-        public string List(string path)
+        private string List(string path)
         {
-            var (size, name, isDir) = ListProsess(path);
+            Console.WriteLine($"Hi:{path}");
+            var (size, name) = ListProsess(path);
             if (size != -1)
             {
-                return size.ToString() + " " + name + " " + isDir.ToString();
+                return size.ToString() + " " + name + " ";
             }
             else
             {
@@ -65,13 +65,11 @@ namespace MyFTP
         /// </summary>
         /// <param name="path">File path</param>
         /// <returns>Size of file, massive of bytes(file)</returns>
-        public (long size, byte[] content) Get(string path)
+        private (long size, byte[] content) Get(string path)
         {
-            var stringShorted = path.Substring(2);
-            var pathWithChangedSlashes = stringShorted.Replace('/', '\\');
-            if (File.Exists(pathWithChangedSlashes))
+            if (File.Exists(path))
             {
-                var dataBytes = File.ReadAllBytes(pathWithChangedSlashes);
+                var dataBytes = File.ReadAllBytes(path);
                 return (dataBytes.Length, dataBytes);
             } else
             {
@@ -79,43 +77,41 @@ namespace MyFTP
             }
         }
 
-        public static void ServerMethod()
+        public void ServerMethod()
         {
             Console.WriteLine("Starting");
             const int port = 8888;
             var listener = new TcpListener(IPAddress.Any, port);
             listener.Start();
             Console.WriteLine($"Listening on port: {port}");
-            using (var socket = listener.AcceptSocket())
+            while (true)
             {
+                var socket = listener.AcceptSocket();
                 var stream = new NetworkStream(socket);
                 var streamReader = new StreamReader(stream);
                 var data = streamReader.ReadLine();
-                Console.WriteLine($"Recived: {data}");
-
-                Console.WriteLine($"Sending \"Hi!\"");
-                var streamWriter = new StreamWriter(stream);
-                streamWriter.WriteLine("Hi!");
-                streamWriter.Flush();
-            }
-            listener.Stop();
-            Console.WriteLine("Finishing");
-        }
-        public static void ClientMethod()
-        {
-            const int port = 8888;
-            using (var client = new TcpClient("localhost", port))
-            {
-                Console.WriteLine($"Sending to port: {port}");
-                var stream = client.GetStream();
-                var streamWrirter = new StreamWriter(stream);
-                streamWrirter.WriteLine("Hello World!");
-                streamWrirter.Flush();
-
-                Console.WriteLine($"Reciving on port: {port}");
-                var streamReader = new StreamReader(stream);
-                var data = streamReader.ReadLine();
-                Console.WriteLine($"Recived data: {data}");
+                var strings = data.Split(' ');
+                switch (int.Parse(strings[0]))
+                {
+                    case 1:
+                        {
+                            var streamWriter = new StreamWriter(stream);
+                            streamWriter.WriteLine(List(strings[1].Substring(2).Replace('/', '\\')));
+                            streamWriter.Flush();
+                            break;
+                        }
+                    case 2:
+                        {
+                            var streamWriter = new StreamWriter(stream);
+                            streamWriter.WriteLine(Get(strings[1].Substring(2).Replace('/', '\\')));
+                            streamWriter.Flush();
+                            break;
+                        }
+                    default:
+                        throw new ArgumentException("Your key is out of index");
+                }
+                Console.WriteLine($"Server Recived: {data}");
+                socket.Close();
             }
         }
     }

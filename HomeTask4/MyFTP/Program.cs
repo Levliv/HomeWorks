@@ -10,15 +10,38 @@ namespace MyFTP
         static void Main(string[] args)
         {
 
+            var server = new Server();
+            var client = new Client();
+            var threads = new Thread[2];
+            try
+            {
+                threads[0] = new Thread(
+                    () => server.ServerMethod()
+                    );
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            try
+            {
+                threads[0].Start();
+                threads[1] = new Thread(() => client.ClientMethod());
+                threads[1].Start();
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
+            /*
+            foreach (var thread in threads)
+            {
+                thread.Join();
+            }
+            */
 
-            //var taskA = new Task(() => Server.ServerMethod());
-            //var taskB = new Task(() => Server.ClientMethod());
-            //taskA.Start();
-            //taskB.Start();
             //taskA.Wait();
             //taskB.Wait();
             //string path = "1 ./Tests/Files/testfile.txt";
-            var server = new Server();
             //var str = server.List(path);
             //var (res, bytes) =  server.Get(path);
             //Console.WriteLine(res);
