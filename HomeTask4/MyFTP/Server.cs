@@ -48,7 +48,6 @@ namespace MyFTP
         /// <returns>srting in format string with server respond</returns>
         private string List(string path)
         {
-            Console.WriteLine($"Hi:{path}");
             var (size, name) = ListProsess(path);
             if (size != -1)
             {

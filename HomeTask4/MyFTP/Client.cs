@@ -16,9 +16,8 @@ namespace MyFTP
                 Console.WriteLine($"Client Sending to port: {port}");
                 var stream = client.GetStream();
                 var streamWrirter = new StreamWriter(stream);
-                streamWrirter.WriteLine("2 ./Tests/Files/testfile.txt");
+                streamWrirter.WriteLine("1 ./Tests/Files");
                 streamWrirter.Flush();
-
                 Console.WriteLine($"Client Reciving on port: {port}");
                 var streamReader = new StreamReader(stream);
                 var data = streamReader.ReadToEnd();
