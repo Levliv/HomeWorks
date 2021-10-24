@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MyFTP
 {
@@ -6,7 +8,12 @@ namespace MyFTP
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var taskA = new Task(() => Server.ServerMethod());
+            var taskB = new Task(() => Server.ClientMethod());
+            taskA.Start();
+            taskB.Start();
+            taskA.Wait();
+            taskB.Wait();
         }
     }
 }
