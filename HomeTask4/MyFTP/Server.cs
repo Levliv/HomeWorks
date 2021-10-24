@@ -41,6 +41,7 @@ namespace MyFTP
             }
             return (-1, "", di.Exists);
         }
+
         /// <summary>
         /// Creates server respond
         /// </summary>
@@ -59,9 +60,23 @@ namespace MyFTP
             }
         }
 
-        public (int size, byte[] content) Get(string path)
+        /// <summary>
+        /// Returns datagram in respond of Get request
+        /// </summary>
+        /// <param name="path">File path</param>
+        /// <returns>Size of file, massive of bytes(file)</returns>
+        public (long size, byte[] content) Get(string path)
         {
-            return (4, Encoding.Unicode.GetBytes("sad boy"));
+            var stringShorted = path.Substring(2);
+            var pathWithChangedSlashes = stringShorted.Replace('/', '\\');
+            if (File.Exists(pathWithChangedSlashes))
+            {
+                var dataBytes = File.ReadAllBytes(pathWithChangedSlashes);
+                return (dataBytes.Length, dataBytes);
+            } else
+            {
+                return (-1, new byte[0]);
+            }
         }
 
         public static void ServerMethod()

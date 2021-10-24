@@ -9,6 +9,6 @@ namespace MyFTP
     interface IServer
     {
         public string List(string path);
-        public (int size, byte[] content) Get(string path);
+        public (long size, byte[] content) Get(string path);
     }
 }
