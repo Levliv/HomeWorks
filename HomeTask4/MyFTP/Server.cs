@@ -8,14 +8,62 @@ namespace MyFTP
 {
     class Server: IServer
     {
-        public (int size, string name, bool isDir) List(string path)
+        private (int, string) ProsessFiles(FileInfo[] files)
         {
-            return (3, "sad", false);
+            var stringBuilder = new StringBuilder();
+            int currentDirectoryLenght = Directory.GetCurrentDirectory().Length;
+            foreach (var file in files)
+                stringBuilder.Append("." + file.ToString().Substring(currentDirectoryLenght).Replace('\\', '/') + " false");
+            var ResultString = stringBuilder.ToString();
+            return (files.Length, ResultString);
         }
+
+        private (int, string) ProsessDirectories(DirectoryInfo[] directories)
+        {
+            var stringBuilder = new StringBuilder();
+            int currentDirectoryLenght = Directory.GetCurrentDirectory().Length;
+            foreach (var directory in directories)
+                stringBuilder.Append("." + directory.ToString().Substring(currentDirectoryLenght).Replace('\\', '/') + " true");
+            var ResultString = stringBuilder.ToString();
+            return (directories.Length, ResultString);
+        }
+
+        private (int size, string name, bool isDir) ListProsess(string path)
+        {
+            var stringShorted = path.Substring(2);
+            var pathWithChangedSlashes = stringShorted.Replace('/', '\\');
+            var di = new DirectoryInfo(pathWithChangedSlashes);
+            if (di.Exists)
+            {
+                var (numberOfFiles, strFiles) = ProsessFiles(di.GetFiles());
+                var (numberOfDirectories, strDirs) = ProsessDirectories(di.GetDirectories());
+                return (numberOfFiles + numberOfDirectories, strFiles + " " + strDirs, di.Exists);
+            }
+            return (-1, "", di.Exists);
+        }
+        /// <summary>
+        /// Creates server respond
+        /// </summary>
+        /// <param name="path">path to the directory we need to look at</param>
+        /// <returns>srting in format string with server respond</returns>
+        public string List(string path)
+        {
+            var (size, name, isDir) = ListProsess(path);
+            if (size != -1)
+            {
+                return size.ToString() + " " + name + " " + isDir.ToString();
+            }
+            else
+            {
+                return "-1";
+            }
+        }
+
         public (int size, byte[] content) Get(string path)
         {
             return (4, Encoding.Unicode.GetBytes("sad boy"));
         }
+
         public static void ServerMethod()
         {
             Console.WriteLine("Starting");

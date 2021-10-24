@@ -8,7 +8,7 @@ namespace MyFTP
 {
     interface IServer
     {
-        public (int size, string name, bool isDir) List(string path);
+        public string List(string path);
         public (int size, byte[] content) Get(string path);
     }
 }
