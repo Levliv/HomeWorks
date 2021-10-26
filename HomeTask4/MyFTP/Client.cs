@@ -30,12 +30,10 @@ namespace MyFTP
             const int port = 8888;
             using (var client = new TcpClient("localhost", port))
             {
-                Console.WriteLine($"Client Sending to port: {port}");
                 var stream = client.GetStream();
                 var streamWrirter = new StreamWriter(stream);
                 streamWrirter.WriteLine(path);
                 streamWrirter.Flush();
-                Console.WriteLine($"Client Reciving on port: {port}");
                 var streamReader = new BinaryReader(stream);
                 ReceivedData = streamReader.ReadBytes(65535);
                 Console.WriteLine(System.Text.Encoding.UTF8.GetString(ReceivedData));

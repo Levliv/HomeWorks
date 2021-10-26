@@ -84,7 +84,6 @@ namespace MyFTP
             const int port = 8888;
             var listener = new TcpListener(IPAddress.Any, port);
             listener.Start();
-            Console.WriteLine($"Listening on port: {port}");
             while (true)
             {
                 var socket = await listener.AcceptSocketAsync();
@@ -107,7 +106,8 @@ namespace MyFTP
                         case 2:
                             {
                                 var (size, bytes) = Get(strings[1].Substring(2).Replace('/', '\\'));
-                                var bytes_massive = Encoding.UTF8.GetBytes(size.ToString());
+                                var sizeInBytes = Encoding.UTF8.GetBytes(size.ToString());
+                                streamBinaryWriter.Write(sizeInBytes);
                                 streamBinaryWriter.Write(bytes);
                                 streamBinaryWriter.Flush();
                                 socket.Close();
