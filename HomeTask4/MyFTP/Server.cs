@@ -76,6 +76,9 @@ namespace MyFTP
             }
         }
 
+        /// <summary>
+        /// Sends response for clients reqest and interrupts connection
+        /// </summary>
         public async Task ServerMethodAsync()
         {
             const int port = 8888;
@@ -85,7 +88,7 @@ namespace MyFTP
             while (true)
             {
                 var socket = await listener.AcceptSocketAsync();
-                Task.Run(async () =>
+                await Task.Run(async () =>
                 {
                     var stream = new NetworkStream(socket);
                     var streamReader = new StreamReader(stream);

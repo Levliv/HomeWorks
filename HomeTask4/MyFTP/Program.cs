@@ -12,12 +12,10 @@ namespace MyFTP
             var threads = new Thread[2];
             var server = new Server();
             var client = new Client();
-            threads[0] = new Thread(() => server.ServerMethodAsync());
-            threads[1] = new Thread(() => client.ClientMethod());
-            foreach (var thread in threads)
-                thread.Start();
-            foreach (var thread in threads)
-                thread.Join();
+            var task1 = Task.Run(() => server.ServerMethodAsync());
+            var task2 = Task.Run(() => client.ClientMethod());
+            task1.Wait();
+            task2.Wait();
         }
     }
 }
