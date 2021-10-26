@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MyFTP
 {
-    class Server
+    public class Server
     {
         private (int, string) ProsessFiles(FileInfo[] files)
         {
@@ -94,21 +94,22 @@ namespace MyFTP
                     var streamReader = new StreamReader(stream);
                     var data = await streamReader.ReadLineAsync();
                     var strings = data.Split(' ');
-                    var streamWriter = new StreamWriter(stream);
+                    var streamBinaryWriter = new BinaryWriter(stream);
                     switch (int.Parse(strings[0]))
                     {
                         case 1:
                             {
-                                await streamWriter.WriteLineAsync(List(strings[1].Substring(2).Replace('/', '\\')));
-                                streamWriter.Flush();
+                                streamBinaryWriter.Write(Encoding.UTF8.GetBytes(List(strings[1].Substring(2).Replace('/', '\\'))));
+                                streamBinaryWriter.Flush();
                                 socket.Close();
                                 break;
                             }
                         case 2:
                             {
                                 var (size, bytes) = Get(strings[1].Substring(2).Replace('/', '\\'));
-                                await streamWriter.WriteAsync(size.ToString() + Encoding.UTF8.GetString(bytes));
-                                await streamWriter.FlushAsync();
+                                var bytes_massive = Encoding.UTF8.GetBytes(size.ToString());
+                                streamBinaryWriter.Write(bytes);
+                                streamBinaryWriter.Flush();
                                 socket.Close();
                                 break;
                             }

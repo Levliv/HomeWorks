@@ -1,13 +1,30 @@
 ﻿using System;
 using System.IO;
-using System.Net;
 using System.Net.Sockets;
-using System.Text;
 
 namespace MyFTP
 {
-    class Client
+    public class Client
     {
+        private string path;
+
+        /// <summary>
+        /// Datagram for recived data
+        /// </summary>
+        public byte[] ReceivedData { get; private set; }
+        
+        /// <summary>
+        /// Construxtor for client
+        /// </summary>
+        /// <param name="request">Request for the server</param>
+        public Client(string request)
+        {
+            path = request;
+        }
+
+        /// <summary>
+        /// Method to send requests and get responds as a client
+        /// </summary>
         public void ClientMethod()
         {
             const int port = 8888;
@@ -16,12 +33,12 @@ namespace MyFTP
                 Console.WriteLine($"Client Sending to port: {port}");
                 var stream = client.GetStream();
                 var streamWrirter = new StreamWriter(stream);
-                streamWrirter.WriteLine("1 ./Tests/Files");
+                streamWrirter.WriteLine(path);
                 streamWrirter.Flush();
                 Console.WriteLine($"Client Reciving on port: {port}");
-                var streamReader = new StreamReader(stream);
-                var data = streamReader.ReadToEnd();
-                Console.WriteLine($"Recived data: {data}");
+                var streamReader = new BinaryReader(stream);
+                ReceivedData = streamReader.ReadBytes(65535);
+                Console.WriteLine(System.Text.Encoding.UTF8.GetString(ReceivedData));
             }
         }
     }

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Text;
+﻿using System.Threading.Tasks;
+using System;
 
 namespace MyFTP
 {
@@ -9,13 +7,10 @@ namespace MyFTP
     {
         static void Main(string[] args)
         {
-            var threads = new Thread[2];
             var server = new Server();
-            var client = new Client();
-            var task1 = Task.Run(() => server.ServerMethodAsync());
-            var task2 = Task.Run(() => client.ClientMethod());
-            task1.Wait();
-            task2.Wait();
+            var client = new Client("1 ./Tests/Files");
+            var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
+            client.ClientMethod();
         }
     }
 }
