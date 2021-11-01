@@ -101,13 +101,13 @@ namespace MyFTP
                     {
                         case 1:
                             {
-                                streamBinaryWriter.Write(Encoding.UTF8.GetBytes(List(strings[1].Substring(2).Replace('/', '\\'))));
+                                streamBinaryWriter.Write(Encoding.UTF8.GetBytes(List(strings[1].Substring(2)))); //.Replace('/', '\\')
                                 streamBinaryWriter.Flush();
                                 break;
                             }
                         case 2:
                             {
-                                var (size, bytes) = Get(strings[1].Substring(2).Replace('/', '\\'));
+                                var (size, bytes) = Get(strings[1].Substring(2)); //.Replace('/', '\\')
                                 var sizeInBytes = Encoding.UTF8.GetBytes(size.ToString());
                                 streamBinaryWriter.Write(sizeInBytes);
                                 streamBinaryWriter.Write(Encoding.UTF8.GetBytes("\n"));
