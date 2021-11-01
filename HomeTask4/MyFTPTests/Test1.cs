@@ -18,7 +18,7 @@ namespace MyFTP
             var client = new Client("Tests/TestFile.txt");
             var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
             client.ClientMethod();
-            Assert.AreEqual(System.Text.Encoding.UTF8.GetString(client.ReceivedData), "2 ./Tests/Files/TestFile.txt false ./Tests/Files/Testdir true ");
+            Assert.AreEqual("2 ./Tests/Files/TestFile.txt false ./Tests/Files/Testdir true ", System.Text.Encoding.UTF8.GetString(client.ReceivedData));
         }
 
         [Test]
@@ -28,7 +28,7 @@ namespace MyFTP
             var client = new Client("2 ./Tests/Files/TestFile.txt");
             var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
             client.ClientMethod();
-            Assert.AreEqual(System.Text.Encoding.UTF8.GetString(client.ReceivedData), "21\nabracadabra\r\n2nd line");
+            Assert.AreEqual("21\nabracadabra\r\n2nd line", System.Text.Encoding.UTF8.GetString(client.ReceivedData));
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace MyFTP
             var client = new Client("2 ./Tests/Files/TestBile.txt");
             var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
             client.ClientMethod();
-            Assert.AreEqual(System.Text.Encoding.UTF8.GetString(client.ReceivedData), "-1\n");
+            Assert.AreEqual("-1\n", System.Text.Encoding.UTF8.GetString(client.ReceivedData));
         }
         [Test]
         public void TestForWrongRequest()
@@ -47,7 +47,7 @@ namespace MyFTP
             var client = new Client("3 ./Tests/Files/TestBile.txt");
             var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
             client.ClientMethod();
-            Assert.AreEqual(client.ReceivedData, "");
+            Assert.AreEqual("", client.ReceivedData);
         }
     }
 }
