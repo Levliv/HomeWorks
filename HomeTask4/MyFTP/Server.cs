@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace MyFTP
 {
+    /// <summary>
+    /// Server class to process requests
+    /// </summary>
     public class Server
     {
         private (int, string) ProsessFiles(FileInfo[] files)
@@ -86,7 +89,7 @@ namespace MyFTP
             listener.Start();
             while (true)
             {
-                var socket = await listener.AcceptSocketAsync();
+                using var socket = await listener.AcceptSocketAsync();
                 await Task.Run(async () =>
                 {
                     var stream = new NetworkStream(socket);
@@ -100,7 +103,6 @@ namespace MyFTP
                             {
                                 streamBinaryWriter.Write(Encoding.UTF8.GetBytes(List(strings[1].Substring(2).Replace('/', '\\'))));
                                 streamBinaryWriter.Flush();
-                                socket.Close();
                                 break;
                             }
                         case 2:
@@ -108,13 +110,11 @@ namespace MyFTP
                                 var (size, bytes) = Get(strings[1].Substring(2).Replace('/', '\\'));
                                 var sizeInBytes = Encoding.UTF8.GetBytes(size.ToString());
                                 streamBinaryWriter.Write(sizeInBytes);
+                                streamBinaryWriter.Write(Encoding.UTF8.GetBytes("\n"));
                                 streamBinaryWriter.Write(bytes);
                                 streamBinaryWriter.Flush();
-                                socket.Close();
                                 break;
                             }
-                        default:
-                            throw new ArgumentException("Your key is out of index");
                     }
                 });
             }
