@@ -32,8 +32,8 @@ jobs:
      # check for dotnet
     - name: dotnet check
       run:  dotnet --version
-    #- name: DIR
-    #  run: dir
+    - name: DIR
+      run: dir
     - name: Restore
       run: nuget restore HomeTask4/MyFTP/MyFTP.sln
     - name: building
