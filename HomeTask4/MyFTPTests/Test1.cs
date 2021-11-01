@@ -16,7 +16,7 @@ namespace MyFTP
             Console.WriteLine("Ok-1");
             Console.WriteLine("HERE");
             Console.WriteLine(Directory.Exists("../../../../../Tests"));
-            var client = new Client($"1 .{dataPath}/Tests/Files");
+            var client = new Client($"1 ../../../../../Tests/Files");
 
             Console.WriteLine("Ok-2");
             var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
