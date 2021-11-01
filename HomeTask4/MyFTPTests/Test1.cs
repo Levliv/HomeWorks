@@ -34,7 +34,6 @@ namespace MyFTP
             var client = new Client("2 ./Tests/Files/TestBile.txt");
             var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
             client.ClientMethod();
-            Console.WriteLine(System.Text.Encoding.UTF8.GetString(client.ReceivedData));
             Assert.AreEqual(System.Text.Encoding.UTF8.GetString(client.ReceivedData), "-1\n");
         }
         [Test]

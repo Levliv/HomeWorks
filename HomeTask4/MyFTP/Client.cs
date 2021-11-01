@@ -34,18 +34,8 @@ namespace MyFTP
                 var streamWrirter = new StreamWriter(stream);
                 streamWrirter.WriteLine(path);
                 streamWrirter.Flush();
-                try
-                {
-                    var streamReader = new BinaryReader(stream);
-                    ReceivedData = streamReader.ReadBytes(65535);
-                    Console.WriteLine("Try");
-                }
-                catch (ArgumentException ex)
-                {
-                    Console.WriteLine("Catch client");
-                    throw ex;
-                }
-                //Console.WriteLine(System.Text.Encoding.UTF8.GetString(ReceivedData));
+                var streamReader = new BinaryReader(stream);
+                ReceivedData = streamReader.ReadBytes(65535);
             }
         }
     }
