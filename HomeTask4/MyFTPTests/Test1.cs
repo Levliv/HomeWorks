@@ -14,6 +14,8 @@ namespace MyFTP
         {
             var server = new Server();
             Console.WriteLine("Ok-1");
+            Console.WriteLine("HERE");
+            Console.WriteLine(Directory.Exists("../../../../../Tests"));
             var client = new Client($"1 .{dataPath}/Tests/Files");
 
             Console.WriteLine("Ok-2");
