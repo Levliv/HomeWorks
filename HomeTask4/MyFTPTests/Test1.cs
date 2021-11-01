@@ -18,7 +18,8 @@ namespace MyFTP
             var client = new Client("Tests/TestFile.txt");
             var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
             client.ClientMethod();
-            Assert.AreEqual(System.Text.Encoding.UTF8.GetString(client.ReceivedData), "2 ./Tests/Files/TestFile.txt false ./Tests/Files/Testdir true ");
+            //System.Text.Encoding.UTF8.GetString(client.ReceivedData)
+            Assert.AreEqual(Directory.Exists("Tests"), "2 ./Tests/Files/TestFile.txt false ./Tests/Files/Testdir true ");
         }
 
         [Test]
