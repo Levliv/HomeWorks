@@ -7,11 +7,13 @@ namespace MyFTP
 {
     public class Tests
     {
+        private string dataPath = "../../../Tests";
+
         [Test]
         public void TestServerList()
         {
             var server = new Server();
-            var client = new Client("1 ./Tests/Files");
+            var client = new Client("1 ./../../../Tests/Files");
             var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
             client.ClientMethod();
             Assert.AreEqual(System.Text.Encoding.UTF8.GetString(client.ReceivedData), "2 ./Tests/Files/TestFile.txt false ./Tests/Files/Testdir true ");
