@@ -12,11 +12,8 @@ namespace MyFTP
         public void TestServerList()
         {
             var server = new Server();
-            Directory.CreateDirectory("Tests\\Files\\Testdir");
-            File.Create("Tests\\Files\\TestFile.txt");
-            var streamWriter = new StreamWriter("Tests\\Files\\TestFile.txt");
-            streamWriter.Write("abracadabra\r\n2nd line");
-            streamWriter.Close();
+            //Directory.CreateDirectory("Tests\\Files\\Testdir");
+            //File.Create("Tests\\Files\\TestFile.txt");
             Console.WriteLine("Ok-1");
             var client = new Client("1 ./Tests/Files");
 
@@ -29,6 +26,9 @@ namespace MyFTP
         [Test]
         public void TestServerGet()
         {
+            var streamWriter = new StreamWriter("Tests\\Files\\TestFile.txt");
+            streamWriter.Write("abracadabra\r\n2nd line");
+            streamWriter.Close();
             var server = new Server();
             var client = new Client("2 ./Tests/Files/TestFile.txt");
             var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
