@@ -7,15 +7,14 @@ namespace MyFTP
 {
     public class Tests
     {
+        private string dataPath = "../../../../..";
 
         [Test]
         public void TestServerList()
         {
             var server = new Server();
-            //Directory.CreateDirectory("Tests\\Files\\Testdir");
-            //File.Create("Tests\\Files\\TestFile.txt");
             Console.WriteLine("Ok-1");
-            var client = new Client("1 ./Tests/Files");
+            var client = new Client($"1 .{dataPath}/Tests/Files");
 
             Console.WriteLine("Ok-2");
             var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
