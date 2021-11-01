@@ -13,13 +13,12 @@ namespace MyFTP
         public void TestServerList()
         {
             var server = new Server();
-            Directory.CreateDirectory("Tests");
-            File.Create("Tests/TestFile.txt");
+            Directory.CreateDirectory("Tests/Files/Testdir");
+            File.Create("Tests/Files/TestFile.txt");
             var client = new Client("Tests/TestFile.txt");
             var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
             client.ClientMethod();
-            //System.Text.Encoding.UTF8.GetString(client.ReceivedData)
-            Assert.AreEqual(Directory.Exists("Tests"), "2 ./Tests/Files/TestFile.txt false ./Tests/Files/Testdir true ");
+            Assert.AreEqual(System.Text.Encoding.UTF8.GetString(client.ReceivedData), "2 ./Tests/Files/TestFile.txt false ./Tests/Files/Testdir true ");
         }
 
         [Test]
