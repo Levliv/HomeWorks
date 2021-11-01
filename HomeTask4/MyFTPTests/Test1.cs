@@ -9,13 +9,10 @@ namespace MyFTP
     {
         private string dataPath = "../../../Tests";
 
-        [OneTimeSetUp]
+        [SetUp]
         public void RunBeforeAnyTests()
         {
-            Directory.CreateDirectory("Tests\\Files\\Testdir");
-            File.Create("Tests\\Files\\TestFile.txt");
-            var streamWriter = new StreamWriter("Tests\\Files\\TestFile.txt");
-            streamWriter.Write("abracadabra\r\n2nd line");
+            
 
         }
         [Test]
@@ -31,6 +28,9 @@ namespace MyFTP
         [Test]
         public void TestServerGet()
         {
+            //var streamWriter = new StreamWriter("Tests/Files/TestFile.txt");
+            //streamWriter.Write("abracadabra\r\n2nd line");
+            //streamWriter.Close();
             var server = new Server();
             var client = new Client("2 ./Tests/Files/TestFile.txt");
             var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
