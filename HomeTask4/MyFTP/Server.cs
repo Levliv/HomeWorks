@@ -29,13 +29,10 @@ namespace MyFTP
         private (int, string) ProsessDirectories(DirectoryInfo[] directories)
         {
             var stringBuilder = new StringBuilder();
-            Console.WriteLine("Good boy");
-            Console.WriteLine(Directory.GetCurrentDirectory());
             var dir = Path.GetFullPath("../../../../..");
             foreach (var directory in directories)
             {
                 stringBuilder.Append("." + directory.ToString().Replace(dir, "").Replace('\\', '/') + " true");
-                Console.WriteLine(directory.ToString());
             }
             var ResultString = stringBuilder.ToString();
             return (directories.Length, ResultString);
@@ -43,17 +40,11 @@ namespace MyFTP
 
         private (int size, string name) ListProsess(string path)
         {
-            Console.WriteLine("List Prosess: " + path);
             var di = new DirectoryInfo(path);
-            Console.WriteLine(di.Exists);
             if (di.Exists)
             {
-                Console.WriteLine("Inside");
-                Console.WriteLine(di.GetFiles().Length);
                 var (numberOfFiles, strFiles) = ProsessFiles(di.GetFiles());
-                Console.WriteLine(numberOfFiles);
                 var (numberOfDirectories, strDirs) = ProsessDirectories(di.GetDirectories());
-                Console.WriteLine(numberOfDirectories);
                 return (numberOfFiles + numberOfDirectories, strFiles + " " + strDirs);
             }
             return (-1, "");
@@ -112,23 +103,17 @@ namespace MyFTP
                     var data = await streamReader.ReadLineAsync();
                     var strings = data.Split(' ');
                     var streamBinaryWriter = new BinaryWriter(stream);
-                    Console.WriteLine("Here Server");
-                    Console.WriteLine("Got:" + strings[0]);
                     switch (int.Parse(strings[0]))
                     {
                         case 1:
                             {
-                                Console.WriteLine("Case1");
-                                Console.WriteLine("Got:" + strings[1]);
-                                streamBinaryWriter.Write(Encoding.UTF8.GetBytes(List(strings[1]))); //.Replace('/', '\\')
-                                Console.WriteLine("AfterStreamWriter");
-                                Console.WriteLine("Got:" + strings[1]);
+                                streamBinaryWriter.Write(Encoding.UTF8.GetBytes(List(strings[1])));
                                 streamBinaryWriter.Flush();
                                 break;
                             }
                         case 2:
                             {
-                                var (size, bytes) = Get(strings[1].Substring(2)); //.Replace('/', '\\')
+                                var (size, bytes) = Get(strings[1]);
                                 
                                 var sizeInBytes = Encoding.UTF8.GetBytes(size.ToString());
                                 streamBinaryWriter.Write(sizeInBytes);
