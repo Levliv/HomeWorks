@@ -12,10 +12,11 @@ namespace MyFTP
     /// </summary>
     public class Server
     {
+        private string dataPath = "../../../.";
         private (int, string) ProsessFiles(FileInfo[] files)
         {
             var stringBuilder = new StringBuilder();
-            var dir = Path.GetFullPath("../../../../..");
+            var dir = Path.GetFullPath(dataPath + ".");
             Console.WriteLine("Dir");
             Console.WriteLine(dir);
             foreach (var file in files)
@@ -29,7 +30,7 @@ namespace MyFTP
         private (int, string) ProsessDirectories(DirectoryInfo[] directories)
         {
             var stringBuilder = new StringBuilder();
-            var dir = Path.GetFullPath("../../../../..");
+            var dir = Path.GetFullPath(dataPath + ".");
             foreach (var directory in directories)
             {
                 stringBuilder.Append("." + directory.ToString().Replace(dir, "").Replace('\\', '/') + " true");
@@ -79,7 +80,8 @@ namespace MyFTP
             {
                 var dataBytes = File.ReadAllBytes(path);
                 return (dataBytes.Length, dataBytes);
-            } else
+            }
+            else
             {
                 return (-1, new byte[0]);
             }
@@ -107,14 +109,14 @@ namespace MyFTP
                     {
                         case 1:
                             {
-                                streamBinaryWriter.Write(Encoding.UTF8.GetBytes(List(strings[1])));
+                                streamBinaryWriter.Write(Encoding.UTF8.GetBytes(List(dataPath + strings[1])));
                                 streamBinaryWriter.Flush();
                                 break;
                             }
                         case 2:
                             {
-                                var (size, bytes) = Get(strings[1]);
-                                
+                                var (size, bytes) = Get(dataPath + strings[1]);
+
                                 var sizeInBytes = Encoding.UTF8.GetBytes(size.ToString());
                                 streamBinaryWriter.Write(sizeInBytes);
                                 streamBinaryWriter.Write(Encoding.UTF8.GetBytes("\n"));
