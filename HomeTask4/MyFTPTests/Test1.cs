@@ -13,12 +13,7 @@ namespace MyFTP
         public void TestServerList()
         {
             var server = new Server();
-            Console.WriteLine("Ok-1");
-            Console.WriteLine("HERE");
-            Console.WriteLine(Directory.Exists("../../../../../Tests"));
             var client = new Client($"1 ../../../../../Tests/Files");
-
-            Console.WriteLine("Ok-2");
             var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
             client.ClientMethod();
             Assert.AreEqual("2 ./Tests/Files/TestFile.txt false ./Tests/Files/Testdir true ", System.Text.Encoding.UTF8.GetString(client.ReceivedData));
@@ -27,9 +22,6 @@ namespace MyFTP
         [Test]
         public void TestServerGet()
         {
-            var streamWriter = new StreamWriter("Tests\\Files\\TestFile.txt");
-            streamWriter.Write("abracadabra\r\n2nd line");
-            streamWriter.Close();
             var server = new Server();
             var client = new Client("2 ./Tests/Files/TestFile.txt");
             var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
