@@ -7,43 +7,17 @@ namespace MyFTP
 {
     public class Tests
     {
-        [Test]
-        public void TestServerList()
+        [TestCase("1 ./Tests/Files", TestName = "TestServerList", ExpectedResult = "2 ./Tests/Files/TestFile.txt false ./Tests/Files/Testdir true ")]
+        [TestCase("2 ./Tests/Files/TestFile.txt", TestName = "TestServerGet", ExpectedResult = "23\nAbracadabra\r\n2nd line\r\n")]
+        [TestCase("2 ./Tests/Files/TestBile.txt", TestName = "TestServerForEmptyGet", ExpectedResult = "-1\n")]
+        [TestCase("3 ./Tests/Files/TestBile.txt", TestName = "TestForWrongRequest", ExpectedResult = "")]
+        public string TestServer(string request)
         {
             var server = new Server();
-            var client = new Client($"1 ./Tests/Files");
+            var client = new Client(request);
             var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
             client.ClientMethod();
-            Assert.AreEqual("2 ./Tests/Files/TestFile.txt false ./Tests/Files/Testdir true ", System.Text.Encoding.UTF8.GetString(client.ReceivedData));
-        }
-
-        [Test]
-        public void TestServerGet()
-        {
-            var server = new Server();
-            var client = new Client("2 ./Tests/Files/TestFile.txt");
-            var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
-            client.ClientMethod();
-            Assert.AreEqual("23\nAbracadabra\r\n2nd line\r\n", System.Text.Encoding.UTF8.GetString(client.ReceivedData));
-        }
-
-        [Test]
-        public void TestServerForEmptyGet()
-        {
-            var server = new Server();
-            var client = new Client("2 ./Tests/Files/TestBile.txt");
-            var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
-            client.ClientMethod();
-            Assert.AreEqual("-1\n", System.Text.Encoding.UTF8.GetString(client.ReceivedData));
-        }
-        [Test]
-        public void TestForWrongRequest()
-        {
-            var server = new Server();
-            var client = new Client("3 ./Tests/Files/TestBile.txt");
-            var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
-            client.ClientMethod();
-            Assert.AreEqual("", client.ReceivedData);
+            return System.Text.Encoding.UTF8.GetString(client.ReceivedData);
         }
     }
 }
