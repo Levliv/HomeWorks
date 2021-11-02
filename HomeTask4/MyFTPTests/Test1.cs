@@ -23,7 +23,7 @@ namespace MyFTP
         public void TestServerGet()
         {
             var server = new Server();
-            var client = new Client("2 ./Tests/Files/TestFile.txt");
+            var client = new Client("2 ../../../../../Tests/Files/TestFile.txt");
             var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
             client.ClientMethod();
             Assert.AreEqual("21\nabracadabra\r\n2nd line", System.Text.Encoding.UTF8.GetString(client.ReceivedData));
