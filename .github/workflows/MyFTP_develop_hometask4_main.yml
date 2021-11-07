@@ -1,0 +1,27 @@
+name: github_actions_basics_for_.NET
+
+on:
+  push:
+    branches: [ master, develop_hometask4 ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      
+    - name: set up
+      uses: actions/setup-dotnet@v1
+      with:
+          dotnet-version: '5.0'
+    - name: dotnet check
+      run:  dotnet --version
+    - name: Restore
+      run: nuget restore HomeTask4/MyFTPServer/MyFTP.sln
+    - name: building
+      run: dotnet build HomeTask4/MyFTPServer/MyFTP.sln
+    - name: test
+      run: dotnet test HomeTask4/MyFTPServer/MyFTP.sln
