@@ -12,7 +12,16 @@ namespace MyFTP
     /// </summary>
     public class Server
     {
-        private string dataPath = "../../../.";
+        private string dataPath;
+        private int port;
+        private IPAddress ip;
+
+        public Server(IPAddress ip, int port, string param = "../../../.")
+        {
+            dataPath = param;
+            this.port = port;
+            this.ip = ip;
+        }
         private (int, string) ProsessFiles(FileInfo[] files)
         {
             var stringBuilder = new StringBuilder();
@@ -23,8 +32,8 @@ namespace MyFTP
             {
                 stringBuilder.Append("." + file.ToString().Replace(dir, "").Replace('\\', '/') + " false");
             }
-            var ResultString = stringBuilder.ToString();
-            return (files.Length, ResultString);
+            var resultString = stringBuilder.ToString();
+            return (files.Length, resultString);
         }
 
         private (int, string) ProsessDirectories(DirectoryInfo[] directories)
@@ -59,14 +68,8 @@ namespace MyFTP
         private string List(string path)
         {
             var (size, name) = ListProsess(path);
-            if (size != -1)
-            {
-                return size.ToString() + " " + name + " ";
-            }
-            else
-            {
-                return "-1";
-            }
+
+            return size != -1 ? $"{size} {name}" : "-1";
         }
 
         /// <summary>
@@ -92,19 +95,18 @@ namespace MyFTP
         /// </summary>
         public async Task ServerMethodAsync()
         {
-            const int port = 8888;
-            var listener = new TcpListener(IPAddress.Any, port);
+            var listener = new TcpListener(ip, port);
             listener.Start();
             while (true)
             {
                 using var socket = await listener.AcceptSocketAsync();
                 await Task.Run(async () =>
                 {
-                    var stream = new NetworkStream(socket);
-                    var streamReader = new StreamReader(stream);
+                    using var stream = new NetworkStream(socket);
+                    using var streamReader = new StreamReader(stream);
                     var data = await streamReader.ReadLineAsync();
                     var strings = data.Split(' ');
-                    var streamBinaryWriter = new BinaryWriter(stream);
+                    using var streamBinaryWriter = new BinaryWriter(stream);
                     switch (int.Parse(strings[0]))
                     {
                         case 1:
