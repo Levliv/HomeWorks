@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFTPServer", "MyFTPServer.csproj", "{6FD5B0E5-05FE-4734-BC89-0619714B2A7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFTPClient", "..\MyFTPClient\MyFTPClient.csproj", "{BC919C42-3FEE-4BFB-A944-D263657EF44C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFTPTests", "..\MyFTPTests\MyFTPTests.csproj", "{876CCCD4-7B33-41D6-A62A-E0479638AA32}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6FD5B0E5-05FE-4734-BC89-0619714B2A7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FD5B0E5-05FE-4734-BC89-0619714B2A7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FD5B0E5-05FE-4734-BC89-0619714B2A7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FD5B0E5-05FE-4734-BC89-0619714B2A7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC919C42-3FEE-4BFB-A944-D263657EF44C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC919C42-3FEE-4BFB-A944-D263657EF44C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC919C42-3FEE-4BFB-A944-D263657EF44C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC919C42-3FEE-4BFB-A944-D263657EF44C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{876CCCD4-7B33-41D6-A62A-E0479638AA32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{876CCCD4-7B33-41D6-A62A-E0479638AA32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{876CCCD4-7B33-41D6-A62A-E0479638AA32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{876CCCD4-7B33-41D6-A62A-E0479638AA32}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {08B2E352-CF18-4899-BA90-94D0F8808AE8}
+	EndGlobalSection
+EndGlobal
