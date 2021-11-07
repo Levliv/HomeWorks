@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Sockets;
 using System.Net;
+using System.Collections.Generic;
 
 namespace MyFTP
 {
@@ -31,10 +32,10 @@ namespace MyFTP
             this.port = port;
         }
 
-        public void List(string path)
+        public List<RespondFileStuct> List(string path)
         {
-            var obj = new RespondFileStuct.RespondFileStuct();
-            return;
+            
+            return new List<RespondFileStuct> { };
         }
 
         /// <summary>
