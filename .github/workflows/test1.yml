@@ -35,7 +35,7 @@ jobs:
     #- name: DIR
     #  run: dir
     - name: Restore
-      run: nuget restore first_test/first_test/first_test.sln
+      run: nuget restore first_test/MyNetChat/MyNetChat.sln
     - name: building
       run: dotnet build first_test/MyNetChat/MyNetChat.sln
     - name: test
