@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyNetChat", "MyNetChat.csproj", "{9215B7FD-685B-4C7F-A0C4-B5D319E54A47}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyNetChatTests", "..\MyNetChatTests\MyNetChatTests.csproj", "{D3EE6361-8281-468F-99EF-6DA3A7F04EBB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{9215B7FD-685B-4C7F-A0C4-B5D319E54A47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9215B7FD-685B-4C7F-A0C4-B5D319E54A47}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9215B7FD-685B-4C7F-A0C4-B5D319E54A47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3EE6361-8281-468F-99EF-6DA3A7F04EBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3EE6361-8281-468F-99EF-6DA3A7F04EBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3EE6361-8281-468F-99EF-6DA3A7F04EBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3EE6361-8281-468F-99EF-6DA3A7F04EBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
