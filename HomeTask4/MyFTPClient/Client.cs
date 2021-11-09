@@ -19,7 +19,8 @@ namespace MyFTP
         /// <summary>
         /// Datagram for recieved data
         /// </summary>
-        public byte[] ReceivedData { get; private set; }
+        public string ReceivedData { get; private set; }
+        public byte[] FileData { get; private set; }
 
         /// <summary>
         /// Constructor for client
@@ -32,10 +33,12 @@ namespace MyFTP
             this.port = port;
         }
 
-        public List<RespondFileStuct> List(string path)
+        public List<RespondFileStuct> List(string path, NetworkStream networkStream)
         {
-            
-            return new List<RespondFileStuct> { };
+            using var streamWrirter = new StreamWriter(networkStream);
+            streamWrirter.WriteLine(path);
+            streamWrirter.Flush();
+            return new List<RespondFileStuct>() { };
         }
 
         /// <summary>
@@ -48,8 +51,15 @@ namespace MyFTP
             using var streamWrirter = new StreamWriter(networkStream);
             streamWrirter.WriteLine(path);
             streamWrirter.Flush();
-            using var streamReader = new BinaryReader(networkStream);
-            ReceivedData = streamReader.ReadBytes(65535);
+            //if (path[0] == 1)
+            //{
+            //    List("", networkStream);
+            //}
+            //else
+            //{
+                using var streamReader = new BinaryReader(networkStream);
+                FileData = streamReader.ReadBytes(65535);
+            //}
         }
     }
 }

@@ -20,7 +20,7 @@ namespace MyFTP
             var client = new Client(request, ip, 8888);
             var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
             client.ClientMethod();
-            return System.Text.Encoding.UTF8.GetString(client.ReceivedData);
+            return System.Text.Encoding.UTF8.GetString(client.FileData);
         }
     }
 }

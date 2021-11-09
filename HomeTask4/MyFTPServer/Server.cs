@@ -26,8 +26,6 @@ namespace MyFTP
         {
             var stringBuilder = new StringBuilder();
             var dir = Path.GetFullPath(dataPath + ".");
-            Console.WriteLine("Dir");
-            Console.WriteLine(dir);
             foreach (var file in files)
             {
                 stringBuilder.Append("." + file.ToString().Replace(dir, "").Replace('\\', '/') + " false");
@@ -111,8 +109,10 @@ namespace MyFTP
                     {
                         case 1:
                             {
-                                streamBinaryWriter.Write(Encoding.UTF8.GetBytes(List(dataPath + strings[1])));
+                                streamBinaryWriter.Write(List(dataPath + strings[1]));
                                 streamBinaryWriter.Flush();
+                                Console.WriteLine("Testing");
+                                Console.WriteLine(List(dataPath + strings[1]));
                                 break;
                             }
                         case 2:
