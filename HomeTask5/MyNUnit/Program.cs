@@ -40,8 +40,25 @@ namespace MyNUnit
 
     class Program
     {
+        /// <summary>
+        /// Number of passed tests
+        /// </summary>
+        static public int Passed { get; private set; }
+
+        /// <summary>
+        /// Number of skiped tests
+        /// </summary>
+        static public int Skiped { get; private set; }
+
+        /// <summary>
+        /// Number of not passed tests
+        /// </summary>
+        static public int Failed { get; private set; }
+
         static void Main(string[] args)
         {
+            TestRunner.Start(Console.ReadLine());
+            /*
             Type type = Type.GetType("MyNUnit.Student", true, true);
             Student student = new Student();
             var methods = type.GetMethods();
@@ -56,50 +73,20 @@ namespace MyNUnit
                     Console.WriteLine($"{methodInfo} Attributes:");
                     foreach (MyTestAttribute attribute in attributesMyTest)
                     {
-                        if (attribute.Ignore != null)
+                        switch (MethodInvoked(attribute, methodInfo, type, student))
                         {
-                            Console.WriteLine($"Test with {attribute} for method {methodInfo.Name} wasn't called. Description: {attribute.Ignore}");
+                            case 1:
+                                Skiped++;
+                                break;
+                            case 2:
+                                Passed++;
+                                break;
+                            case -1:
+                                Failed++;
+                                break;
                         }
-                        else
-                        {
-                            if (attribute.Expected == null)
-                            {
-                                Console.WriteLine("Ok");
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    object result = type.InvokeMember(methodInfo.Name, BindingFlags.InvokeMethod, null, student, new object[] { });
-                                    if (attribute.Expected.Equals(result))
-                                    {
-                                        Console.WriteLine("Ok");
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("Error");
-                                        Console.WriteLine($"Expected: {attribute.Expected}, but got {result}");
-                                    }
-                                }
-                                catch (Exception exception)
-                                {
-                                    if (attribute.Expected.Equals(exception.InnerException.GetType()))
-                                    {
-                                        Console.WriteLine("Ok");
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("Not Ok");
-                                        Console.WriteLine($"Expected: {attribute.Expected}, but got {exception}");
-                                    }
-                                }
-                            }
-                        }
-                    Console.WriteLine("Check 2");
-                    Console.WriteLine(methodInfo.Name);
                     }
                 }
-
                 if (attributesMyTest.Length > 0)
                 {
                     MethodsWithMyTestList.Add(methodInfo);
@@ -112,6 +99,63 @@ namespace MyNUnit
 
             foreach (var methodInfo in MethodsWithMyTestList)
             {
+            }
+            */
+        }
+        /// <summary>
+        /// TestMethod Invoked. Returns:
+        /// 1 - for Skipped
+        /// 2 - for Passed
+        /// -1 - for Failed
+        /// </summary>
+        /// <param name="attribute"></param>
+        /// <param name="methodInfo"></param>
+        /// <param name="type"></param>
+        /// <param name="student"></param>
+        /// <returns></returns>
+        static int MethodInvoked(MyTestAttribute attribute, MethodInfo methodInfo, Type type, Student student)
+        {
+            if (attribute.Ignore != null)
+            {
+                Console.WriteLine($"Test with {attribute} for method {methodInfo.Name} wasn't called. Description: {attribute.Ignore}");
+                return 1;
+            }
+            else
+            {
+                if (attribute.Expected == null)
+                {
+                    return 2;
+                }
+                else
+                {
+                    try
+                    {
+                        object result = type.InvokeMember(methodInfo.Name, BindingFlags.InvokeMethod, null, student, new object[] { });
+                        if (attribute.Expected.Equals(result))
+                        {
+                            return 2;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Error");
+                            Console.WriteLine($"Expected: {attribute.Expected}, but got {result}");
+                            return -1;
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        if (attribute.Expected.Equals(exception.InnerException.GetType()))
+                        {
+                            return 2;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Not Ok");
+                            Console.WriteLine($"Expected: {attribute.Expected}, but got {exception}");
+                            return -1;
+                        }
+                    }
+                }
             }
         }
     }
