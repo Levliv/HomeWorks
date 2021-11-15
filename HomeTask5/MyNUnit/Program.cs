@@ -13,21 +13,22 @@ namespace MyNUnit
         [MyTest]
         public bool Expel()
         {
-            Console.WriteLine("Expelled successfully");
+            //Console.WriteLine("Expelled successfully");
             Name = null;
             SurName = null;
             Age = 0;
             return true;
         }
 
-        [MyTest(Expected = 12, Ignore = "WTF")]
-        public bool Expel2()
+        [MyTest(Expected = typeof(ArgumentException), Ignore = "WTF")]
+        public int Expel2()
         {
-            Console.WriteLine("Expelled successfully 2");
+            //Console.WriteLine("Expelled successfully 2");
             Name = null;
             SurName = null;
             Age = 0;
-            return true;
+            //throw new ArgumentException();
+            return 13;
         }
         private void ChangeStudent(string NewStudentName, string NewStudentSurname, int NewStudentAge)
         {
@@ -37,21 +38,11 @@ namespace MyNUnit
         }
     }
 
-    public class MyBeforeTestAttribute : Attribute
-    {
-
-    }
-    public class MyTestAttribute: Attribute
-    {
-        public int Expected { get; set; }
-        public string Ignore { get; set; }
-        public MyTestAttribute() { }
-    }
     class Program
     {
         static void Main(string[] args)
         {
-            Type type = Type.GetType("MyNUnit.Student", false, true);
+            Type type = Type.GetType("MyNUnit.Student", true, true);
             Student student = new Student();
             var methods = type.GetMethods();
             var MethodsWithMyTestList = new List<MethodInfo> { };
@@ -59,12 +50,53 @@ namespace MyNUnit
             foreach (MethodInfo methodInfo in methods)
             {
                 object[] attributesMyTest = methodInfo.GetCustomAttributes(typeof(MyTestAttribute), true);
-                var attributesMyBeforeTest = methodInfo.GetCustomAttributes(typeof(MyBeforeTestAttribute), false);
+                var attributesMyBeforeTest = methodInfo.GetCustomAttributes(typeof(BeforeAttribute), false);
                 if (attributesMyTest.Length > 0)
                 {
-                    foreach (object attribute in attributesMyTest)
+                    Console.WriteLine($"{methodInfo} Attributes:");
+                    foreach (MyTestAttribute attribute in attributesMyTest)
                     {
-                        Console.WriteLine(attribute.ToString());
+                        if (attribute.Ignore != null)
+                        {
+                            Console.WriteLine($"Test with {attribute} for method {methodInfo.Name} wasn't called. Description: {attribute.Ignore}");
+                        }
+                        else
+                        {
+                            if (attribute.Expected == null)
+                            {
+                                Console.WriteLine("Ok");
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    object result = type.InvokeMember(methodInfo.Name, BindingFlags.InvokeMethod, null, student, new object[] { });
+                                    if (attribute.Expected.Equals(result))
+                                    {
+                                        Console.WriteLine("Ok");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Error");
+                                        Console.WriteLine($"Expected: {attribute.Expected}, but got {result}");
+                                    }
+                                }
+                                catch (Exception exception)
+                                {
+                                    if (attribute.Expected.Equals(exception.InnerException.GetType()))
+                                    {
+                                        Console.WriteLine("Ok");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Not Ok");
+                                        Console.WriteLine($"Expected: {attribute.Expected}, but got {exception}");
+                                    }
+                                }
+                            }
+                        }
+                    Console.WriteLine("Check 2");
+                    Console.WriteLine(methodInfo.Name);
                     }
                 }
 
@@ -77,10 +109,9 @@ namespace MyNUnit
                     MethodsWithMyBeforeTestList.Add(methodInfo);
                 }
             }
+
             foreach (var methodInfo in MethodsWithMyTestList)
             {
-                type.InvokeMember(methodInfo.Name, BindingFlags.InvokeMethod, null, student, new object[] { });
-                Console.WriteLine(methodInfo.Name);
             }
         }
     }
