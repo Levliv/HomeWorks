@@ -28,7 +28,18 @@ namespace MyNUnit
         {
             MyTests = new BlockingCollection<TestStrcuct>();
             var dllFiles = Directory.GetFiles(path,"*.dll", SearchOption.AllDirectories);
-            foreach(var dll in dllFiles)
+            var dllFilesNotRepeated = new HashSet<string>();
+            var downloadeddlls = new HashSet<string>();
+            foreach (var dll in dllFiles)
+            {
+                if (!downloadeddlls.Contains(dll.Split("\\")[^1]))
+                {
+                    downloadeddlls.Add(dll.Split("\\")[^1]);
+                    dllFilesNotRepeated.Add(dll);
+                }
+
+            }
+            foreach(var dll in dllFilesNotRepeated)
             {
                 Console.WriteLine(dll);
                 var assembly = Assembly.LoadFrom(dll);

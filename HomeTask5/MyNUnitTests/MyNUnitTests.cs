@@ -13,8 +13,8 @@ namespace MyNUnitTests
         [Test]
         public void MethodsAttributes()
         {
-            var baseLoopBack = "../../../../Testdata/";
-            TestRunner.Start(baseLoopBack + "Test1/");
+            var baseLoopBack = "..\\..\\..\\..\\Testdata\\";
+            TestRunner.Start(baseLoopBack + "Test1\\");
 
             Assert.Pass();
         }
