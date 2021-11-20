@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="MyNUnit">
+      <HintPath>..\..\Test2\Test2\bin\Debug\net5.0\MyNUnit.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

@@ -23,6 +23,7 @@ namespace MyNUnit
                     $"{((testResult.IsIgnored)? "Ignored, message = " + testResult.Ignore_message:"")}");
             }
         }
+
         public static void Start(string path)
         {
             MyTests = new BlockingCollection<TestStrcuct>();
@@ -45,25 +46,32 @@ namespace MyNUnit
                 Parallel.ForEach(types, TestStarter);
             }
         }
+
         public static void TestStarter(Type type)
         {
+            var obj = ConstuctorFinder(type);
             MethodsInvoker<BeforeClassAttribute>(type);
-            MethodsInvoker<MyTestAttribute>(type);
+            MethodsInvoker<MyTestAttribute>(type, obj);
             MethodsInvoker<AfterClassAttribute>(type);
         }
+
         public static void MethodsInvoker<AttributeType>(Type type, object obj = null)
         {
             Action<MethodInfo> test;
             var methodsWithAttribute = type.GetMethods().Where(x => Attribute.IsDefined(x, typeof(AttributeType)));
             if (typeof(AttributeType) == typeof(MyTestAttribute))
             {
-                test = MethodsWithMyTestInvoker;
+                test = x => MethodsWithMyTestInvoker(x, obj);
             }
             else
-            if (typeof(AttributeType) == typeof(BeforeAttribute) || typeof(AttributeType) == typeof(AfterAttribute) ||
-                typeof(AttributeType) == typeof(BeforeClassAttribute) || typeof(AttributeType) == typeof(AfterClassAttribute))
+            if (typeof(AttributeType) == typeof(BeforeClassAttribute) || typeof(AttributeType) == typeof(AfterClassAttribute))
             {
-                test = MethodsWithBeforeAndAfterClassAttribute;
+
+                test = x => MethodsWithBeforeAndAfterClassAttribute(x, obj);
+            }
+            else
+            if (typeof(AttributeType) == typeof(BeforeAttribute) || typeof(AttributeType) == typeof(AfterAttribute)){
+                test = x => MethodsWithAfterAndBeforeAttribute(x, obj);
             }
             else
             {
@@ -71,7 +79,15 @@ namespace MyNUnit
             }
             Parallel.ForEach(methodsWithAttribute, test);
         }
-        static void MethodsWithMyTestInvoker(MethodInfo methodInfo)
+
+        public static object ConstuctorFinder(Type type)
+        {
+            var ctor = type.GetConstructor(Type.EmptyTypes);
+            var obj = ctor.Invoke(null);
+            return obj;
+        }
+
+        public static void MethodsWithMyTestInvoker(MethodInfo methodInfo, object obj)
         {
             MyTestAttribute attribute = (MyTestAttribute)methodInfo.GetCustomAttribute(typeof(MyTestAttribute), true);
             if (attribute.Ignore != null)
@@ -82,25 +98,9 @@ namespace MyNUnit
             {
                 if (attribute.Expected == null)
                 {
-                    object t = null;
-                    bool found = false;
-                    foreach (ConstructorInfo ctor in methodInfo.DeclaringType.GetConstructors())
-                    {
-                        ParameterInfo[] parameters = ctor.GetParameters();
-                        if (parameters.Length == 0)
-                        {
-                            t = ctor.Invoke(null);
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found)
-                    {
-                        throw new ArgumentException("Constructor with no paramets was not found");
-                    }
                     MethodsInvoker<BeforeAttribute>(methodInfo.DeclaringType);
                     var watch = Stopwatch.StartNew();
-                    object result = methodInfo.Invoke(t, null);
+                    object result = methodInfo.Invoke(obj, null);
                     watch.Stop();
                     MyTests.Add(new TestStrcuct(methodInfo, isPassed: true, timeConsumed: watch.ElapsedMilliseconds));
                     MethodsInvoker<AfterAttribute>(methodInfo.DeclaringType);
@@ -109,25 +109,9 @@ namespace MyNUnit
                 {
                     try
                     {
-                        object t = null;
-                        bool found = false;
-                        foreach (ConstructorInfo ctor in methodInfo.DeclaringType.GetConstructors())
-                        {
-                            ParameterInfo[] parameters = ctor.GetParameters();
-                            if (parameters.Length == 0)
-                            {
-                                t = ctor.Invoke(null);
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found)
-                        {
-                            throw new ArgumentException("Constructor with no paramets was not found");
-                        }
                         MethodsInvoker<BeforeAttribute>(methodInfo.DeclaringType);
                         var watch = Stopwatch.StartNew();
-                        object result = methodInfo.Invoke(t, null);
+                        object result = methodInfo.Invoke(obj, null);
                         watch.Stop();
                         MethodsInvoker<AfterAttribute>(methodInfo.DeclaringType);
                         if (attribute.Expected.Equals(result))
@@ -153,16 +137,23 @@ namespace MyNUnit
                 }
             }
         }
-
-        static void MethodsWithBeforeAndAfterClassAttribute(MethodInfo methodInfo)
+        public static void MethodsWithAfterAndBeforeAttribute(MethodInfo methodInfo, object obj)
         {
-            if (methodInfo.IsStatic && ((methodInfo.GetCustomAttribute(typeof(BeforeClassAttribute)) != null) || (methodInfo.GetCustomAttribute(typeof(AfterClassAttribute)) != null)))
+            object result = methodInfo.Invoke(obj, null);
+
+        }
+
+        public static void MethodsWithBeforeAndAfterClassAttribute(MethodInfo methodInfo, object obj)
+        {
+            if (!methodInfo.IsStatic && ((methodInfo.GetCustomAttribute(typeof(BeforeClassAttribute)) != null) || (methodInfo.GetCustomAttribute(typeof(AfterClassAttribute)) != null)))
             {
-                methodInfo.Invoke(null, null);
+                Console.WriteLine("Wrong ch");
+                throw new InvalidOperationException("Method to call must me static");
             }
             else
             {
-                throw new InvalidOperationException("Method to call must me static");
+                Console.WriteLine("Theare");
+                methodInfo.Invoke(obj, null);
             }
         }
     }
