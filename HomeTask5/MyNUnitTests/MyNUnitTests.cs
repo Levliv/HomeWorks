@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using MyNUnit;
-using System.Collections.Concurrent;
 
 namespace MyNUnitTests
 {
