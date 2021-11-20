@@ -20,31 +20,82 @@ namespace MyNUnit
             {
                 var assembly = Assembly.LoadFrom(dll);
                 var types = assembly.GetTypes();
-                foreach (var type in types)
+                Parallel.ForEach(types, TestStarter);
+            }
+        }
+        public static void TestStarter(Type type)
+        {
+            Console.WriteLine($"======{type.Name}==========");
+
+            MethodsInvoker<BeforeClassAttribute>(type);
+            MethodsInvoker<MyTestAttribute>(type);
+            MethodsInvoker<AfterClassAttribute>(type);
+        }
+        public static void MethodsInvoker<AttributeType>(Type type) // where selector Надо убедитья, что AttributeType наследник Attribute
+        {
+            var methodsinfo = type.GetTypeInfo().DeclaredMethods;
+            foreach (var methodInfo in methodsinfo)
+            {
+                var methodsWithAttribute = methodInfo.GetCustomAttributes(typeof(AttributeType), true);
+            }
+        }
+        static void MethodsWithMyTestInvoker(MethodInfo methodInfo, Student student)
+        {
+            MyTestAttribute attribute = (MyTestAttribute)methodInfo.GetCustomAttribute(typeof(MyTestAttribute), true);
+            if (attribute.Ignore != null)
+            {
+                Console.WriteLine($"Test with {typeof(MyTestAttribute).Name} for method {methodInfo.Name} wasn't called. Description: {attribute.Ignore}");
+                MyTests.Add(new TestStrcuct(methodInfo, isIgnored: true, ignore_message: attribute.Ignore));
+            }
+            else
+            {
+                if (attribute.Expected == null)
                 {
-                    Console.WriteLine($"======{type.Name}==========");
-                    var methods = type.GetMethods();
-                    foreach (var methodInfo in methods)
+                    MyTests.Add(new TestStrcuct(methodInfo, isPassed: true));
+                }
+                else
+                {
+                    try
                     {
-                        var attributesMyTest = methodInfo.GetCustomAttributes(typeof(MyTestAttribute), true);
-                        var attributesBeforeTest = methodInfo.GetCustomAttributes(typeof(BeforeAttribute), true);
-                        var attributesAfterTest = methodInfo.GetCustomAttributes(typeof(AfterAttribute), true);
-                        if (attributesMyTest.Length > 0)
+                        object result = methodInfo.Invoke(student, null);
+                        if (attribute.Expected.Equals(result))
                         {
-                            foreach (MyTestAttribute attribute in attributesMyTest) 
-                            {
-                                MyTests.Add(new TestStrcuct(methodInfo, assembly, type));
-                            }
-                            Action<MethodInfo> MethodInvoker = ;
-                            Parallel.ForEach(MyTests, MethodInvoker);
+                            MyTests.Add(new TestStrcuct(methodInfo, isPassed: true)); ;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Error");
+                            Console.WriteLine($"Expected: {attribute.Expected}, but got {result}");
+                            MyTests.Add(new TestStrcuct(methodInfo, isFailed: true));
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        if (attribute.Expected.Equals(exception.InnerException.GetType()))
+                        {
+                            MyTests.Add(new TestStrcuct(methodInfo, isPassed: true));
+                        }
+                        else
+                        {
+                            Console.WriteLine("Not Ok");
+                            Console.WriteLine($"Expected: {attribute.Expected}, but got {exception}");
+                            MyTests.Add(new TestStrcuct(methodInfo, isFailed: true));
                         }
                     }
                 }
             }
         }
-        public static void TestInvoker<AttributeType>(Type type)
-        {
 
+        static void MethodsWithBeforeAndAfterAttribute(MethodInfo methodInfo, object obj)
+        {
+            if (methodInfo.IsStatic && ((methodInfo.GetCustomAttribute(typeof(BeforeClassAttribute)) != null) || (methodInfo.GetCustomAttribute(typeof(AfterClassAttribute)) != null)))
+            {
+                methodInfo.Invoke(obj, null);
+            }
+            else
+            {
+                throw new InvalidOperationException("Method to call must me static");
+            }
         }
     }
 }
