@@ -34,7 +34,6 @@ namespace MyNUnit
                 var assembly = Assembly.LoadFrom(dll);
                 var types = assembly.GetTypes();
                 Parallel.ForEach(types, TestStarter);
-                break;
             }
         }
         public static void TestStarter(Type type)
