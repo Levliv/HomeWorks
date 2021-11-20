@@ -5,4 +5,10 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="Test1">
+      <HintPath>..\Testdata\Test1\Test1\obj\Debug\net5.0\Test1.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

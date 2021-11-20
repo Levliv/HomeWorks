@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using MyNUnit;
+using Test1;
 
 namespace MyNUnitTests
 {
@@ -14,9 +15,9 @@ namespace MyNUnitTests
         public void MethodsAttributes()
         {
             var baseLoopBack = "..\\..\\..\\..\\Testdata\\";
+            Test1.Test1.WasInvoked = false;
             TestRunner.Start(baseLoopBack + "Test1\\");
-
-            Assert.Pass();
+            Assert.AreEqual(true, Test1.Test1.WasInvoked);
         }
     }
 }

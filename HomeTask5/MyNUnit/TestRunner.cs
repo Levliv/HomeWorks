@@ -5,7 +5,6 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Reflection;
 using System.Diagnostics;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace MyNUnit
@@ -41,7 +40,6 @@ namespace MyNUnit
             }
             foreach(var dll in dllFilesNotRepeated)
             {
-                Console.WriteLine(dll);
                 var assembly = Assembly.LoadFrom(dll);
                 var types = assembly.GetTypes();
                 Parallel.ForEach(types, TestStarter);
@@ -84,8 +82,27 @@ namespace MyNUnit
             {
                 if (attribute.Expected == null)
                 {
+                    object t = null;
+                    bool found = false;
+                    foreach (ConstructorInfo ctor in methodInfo.DeclaringType.GetConstructors())
+                    {
+                        ParameterInfo[] parameters = ctor.GetParameters();
+                        if (parameters.Length == 0)
+                        {
+                            t = ctor.Invoke(null);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                    {
+                        throw new ArgumentException("Constructor with no paramets was not found");
+                    }
                     MethodsInvoker<BeforeAttribute>(methodInfo.DeclaringType);
-                    MyTests.Add(new TestStrcuct(methodInfo, isPassed: true, timeConsumed: 0));
+                    var watch = Stopwatch.StartNew();
+                    object result = methodInfo.Invoke(t, null);
+                    watch.Stop();
+                    MyTests.Add(new TestStrcuct(methodInfo, isPassed: true, timeConsumed: watch.ElapsedMilliseconds));
                     MethodsInvoker<AfterAttribute>(methodInfo.DeclaringType);
                 }
                 else
