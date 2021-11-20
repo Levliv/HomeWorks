@@ -49,9 +49,8 @@ namespace MyNUnit
 
         public static void TestStarter(Type type)
         {
-            var obj = ConstuctorFinder(type);
             MethodsInvoker<BeforeClassAttribute>(type);
-            MethodsInvoker<MyTestAttribute>(type, obj);
+            MethodsInvoker<MyTestAttribute>(type);
             MethodsInvoker<AfterClassAttribute>(type);
         }
 
@@ -80,15 +79,16 @@ namespace MyNUnit
             Parallel.ForEach(methodsWithAttribute, test);
         }
 
-        public static object ConstuctorFinder(Type type)
+        public static object ConstuctorFinder(MethodInfo methodInfo)
         {
-            var ctor = type.GetConstructor(Type.EmptyTypes);
+            var ctor = methodInfo.DeclaringType.GetConstructor(Type.EmptyTypes);
             var obj = ctor.Invoke(null);
             return obj;
         }
 
         public static void MethodsWithMyTestInvoker(MethodInfo methodInfo, object obj)
         {
+            obj = ConstuctorFinder(methodInfo);
             MyTestAttribute attribute = (MyTestAttribute)methodInfo.GetCustomAttribute(typeof(MyTestAttribute), true);
             if (attribute.Ignore != null)
             {
@@ -139,6 +139,7 @@ namespace MyNUnit
         }
         public static void MethodsWithAfterAndBeforeAttribute(MethodInfo methodInfo, object obj)
         {
+            obj = ConstuctorFinder(methodInfo);
             object result = methodInfo.Invoke(obj, null);
 
         }

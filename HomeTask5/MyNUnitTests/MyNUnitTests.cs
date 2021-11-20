@@ -35,10 +35,10 @@ namespace MyNUnitTests
         [Test]
         public void MultiBeforeAndAfterAndMyTestAttribute()
         {
-            var resultBlock = new BlockingCollection<int> { 1, 1, 2, 3, 4 };
+            var resultBlock = new bool[]{ true, true, true, true, true};
             var baseLoopBack = "..\\..\\..\\..\\Testdata\\";
-            TestRunner.Start(baseLoopBack + "Test2\\");
-            Assert.AreEqual(resultBlock, Test3.Test3.block);
+            TestRunner.Start(baseLoopBack + "Test3\\");
+            Assert.AreEqual(resultBlock, Test3.Test3.array);
         }
     }
 }

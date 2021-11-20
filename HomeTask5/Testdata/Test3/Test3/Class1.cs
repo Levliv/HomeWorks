@@ -8,7 +8,7 @@ namespace Test3
         /// <summary>
         /// String to be sure in order of invokation
         /// </summary>
-        public static BlockingCollection<int> block = new ();
+        public static bool[] array = new bool[5];
 
         /// <summary>
         /// Adds one symbol to the test string
@@ -16,7 +16,7 @@ namespace Test3
         [MyTest]
         public void MainMethod()
         {
-            block.Add(2);
+            array[0] = true;
         }
 
         /// <summary>
@@ -25,16 +25,17 @@ namespace Test3
         [Before]
         public void BeforeMethod()
         {
-            block.Add(1);
+            array[1] = true;
         }
 
+        
         /// <summary>
         /// Second Before Method to chack that we run all of them if there are some
         /// </summary>
         [Before]
         public void BeforeMethod2()
         {
-            block.Add(1);
+            array[2] = true;
         }
 
         /// <summary>
@@ -43,15 +44,16 @@ namespace Test3
         [After]
         public void AfterMethod()
         {
-            block.Add(3);
+            array[3] = true;
         }
+        
         /// <summary>
         /// Second After Method to chack that we run all of them if there are some
         /// </summary>
         [After]
         public void AfterMethod2()
         {
-            block.Add(3);
+            array[4] = true;
         }
     }
 }
