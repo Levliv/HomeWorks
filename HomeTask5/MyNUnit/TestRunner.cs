@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Reflection;
+using System.Diagnostics;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace MyNUnit
 {
@@ -13,59 +14,101 @@ namespace MyNUnit
     {
         public static BlockingCollection<TestStrcuct> MyTests { get; private set; }
 
+        public static void PrintTestResults()
+        {
+            Console.WriteLine("Results");
+            foreach (var testResult in MyTests)
+            {
+                Console.WriteLine($"Method : {testResult.MethodInformation}; {(testResult.IsPassed ? "Passed in " + testResult.TimeConsumed:"")}" +
+                    $"{(testResult.IsFailed ? $"Failed + Expected: {testResult.Expected}, Got: {testResult.Got}":"")}" +
+                    $"{((testResult.IsIgnored)? "Ignored, message = " + testResult.Ignore_message:"")}");
+            }
+        }
         public static void Start(string path)
         {
-            var dllfiles = Directory.GetFiles(path,"*.dll", SearchOption.AllDirectories);
-            foreach(var dll in dllfiles)
+            MyTests = new BlockingCollection<TestStrcuct>();
+            var dllFiles = Directory.GetFiles(path,"*.dll", SearchOption.AllDirectories);
+            foreach(var dll in dllFiles)
             {
+                Console.WriteLine(dll);
                 var assembly = Assembly.LoadFrom(dll);
                 var types = assembly.GetTypes();
                 Parallel.ForEach(types, TestStarter);
+                break;
             }
         }
         public static void TestStarter(Type type)
         {
-            Console.WriteLine($"======{type.Name}==========");
-
             MethodsInvoker<BeforeClassAttribute>(type);
             MethodsInvoker<MyTestAttribute>(type);
             MethodsInvoker<AfterClassAttribute>(type);
         }
-        public static void MethodsInvoker<AttributeType>(Type type) // where selector Надо убедитья, что AttributeType наследник Attribute
+        public static void MethodsInvoker<AttributeType>(Type type, object obj = null)
         {
-            var methodsinfo = type.GetTypeInfo().DeclaredMethods;
-            foreach (var methodInfo in methodsinfo)
+            Action<MethodInfo> test;
+            var methodsWithAttribute = type.GetMethods().Where(x => Attribute.IsDefined(x, typeof(AttributeType)));
+            if (typeof(AttributeType) == typeof(MyTestAttribute))
             {
-                var methodsWithAttribute = methodInfo.GetCustomAttributes(typeof(AttributeType), true);
+                test = MethodsWithMyTestInvoker;
             }
+            else
+            if (typeof(AttributeType) == typeof(BeforeAttribute) || typeof(AttributeType) == typeof(AfterAttribute) ||
+                typeof(AttributeType) == typeof(BeforeClassAttribute) || typeof(AttributeType) == typeof(AfterClassAttribute))
+            {
+                test = MethodsWithBeforeAndAfterClassAttribute;
+            }
+            else
+            {
+                throw new Exception("Wrong attribute type");
+            }
+            Parallel.ForEach(methodsWithAttribute, test);
         }
-        static void MethodsWithMyTestInvoker(MethodInfo methodInfo, Student student)
+        static void MethodsWithMyTestInvoker(MethodInfo methodInfo)
         {
             MyTestAttribute attribute = (MyTestAttribute)methodInfo.GetCustomAttribute(typeof(MyTestAttribute), true);
             if (attribute.Ignore != null)
             {
-                Console.WriteLine($"Test with {typeof(MyTestAttribute).Name} for method {methodInfo.Name} wasn't called. Description: {attribute.Ignore}");
                 MyTests.Add(new TestStrcuct(methodInfo, isIgnored: true, ignore_message: attribute.Ignore));
             }
             else
             {
                 if (attribute.Expected == null)
                 {
-                    MyTests.Add(new TestStrcuct(methodInfo, isPassed: true));
+                    MethodsInvoker<BeforeAttribute>(methodInfo.DeclaringType);
+                    MyTests.Add(new TestStrcuct(methodInfo, isPassed: true, timeConsumed: 0));
+                    MethodsInvoker<AfterAttribute>(methodInfo.DeclaringType);
                 }
                 else
                 {
                     try
                     {
-                        object result = methodInfo.Invoke(student, null);
+                        object t = null;
+                        bool found = false;
+                        foreach (ConstructorInfo ctor in methodInfo.DeclaringType.GetConstructors())
+                        {
+                            ParameterInfo[] parameters = ctor.GetParameters();
+                            if (parameters.Length == 0)
+                            {
+                                t = ctor.Invoke(null);
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found)
+                        {
+                            throw new ArgumentException("Constructor with no paramets was not found");
+                        }
+                        MethodsInvoker<BeforeAttribute>(methodInfo.DeclaringType);
+                        var watch = Stopwatch.StartNew();
+                        object result = methodInfo.Invoke(t, null);
+                        watch.Stop();
+                        MethodsInvoker<AfterAttribute>(methodInfo.DeclaringType);
                         if (attribute.Expected.Equals(result))
                         {
-                            MyTests.Add(new TestStrcuct(methodInfo, isPassed: true)); ;
+                            MyTests.Add(new TestStrcuct(methodInfo, isPassed: true, timeConsumed: watch.ElapsedMilliseconds)); ;
                         }
                         else
                         {
-                            Console.WriteLine("Error");
-                            Console.WriteLine($"Expected: {attribute.Expected}, but got {result}");
                             MyTests.Add(new TestStrcuct(methodInfo, isFailed: true));
                         }
                     }
@@ -77,8 +120,6 @@ namespace MyNUnit
                         }
                         else
                         {
-                            Console.WriteLine("Not Ok");
-                            Console.WriteLine($"Expected: {attribute.Expected}, but got {exception}");
                             MyTests.Add(new TestStrcuct(methodInfo, isFailed: true));
                         }
                     }
@@ -86,11 +127,11 @@ namespace MyNUnit
             }
         }
 
-        static void MethodsWithBeforeAndAfterAttribute(MethodInfo methodInfo, object obj)
+        static void MethodsWithBeforeAndAfterClassAttribute(MethodInfo methodInfo)
         {
             if (methodInfo.IsStatic && ((methodInfo.GetCustomAttribute(typeof(BeforeClassAttribute)) != null) || (methodInfo.GetCustomAttribute(typeof(AfterClassAttribute)) != null)))
             {
-                methodInfo.Invoke(obj, null);
+                methodInfo.Invoke(null, null);
             }
             else
             {

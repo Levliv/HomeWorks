@@ -58,6 +58,7 @@ namespace MyNUnit
         static void Main(string[] args)
         {
             TestRunner.Start(Console.ReadLine());
+            TestRunner.PrintTestResults();
             /*
             Type type = Type.GetType("MyNUnit.Student", true, true);
             Student student = new Student();
