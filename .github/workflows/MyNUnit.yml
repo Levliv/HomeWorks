@@ -39,8 +39,8 @@ jobs:
     - name: building
       run: dotnet build HomeTask5/MyNunit/MyNUnit.sln
     - name: Restore TestClass1
-      run: nuget restore HomeTask5/Testdata/Test1/Test1.sln
+      run: nuget restore HomeTask5/Testdata/Test1/Test1/Test1.sln
     - name: building TestClass1
-      run: dotnet build HomeTask5/Testdata/Test1/Test1.sln
+      run: dotnet build HomeTask5/Testdata/Test1/Test1/Test1.sln
     - name: test
       run: dotnet test HomeTask5/MyNunit/MyNUnit.sln
