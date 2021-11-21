@@ -9,10 +9,19 @@ using System.Collections.Generic;
 
 namespace MyNUnit
 {
+    /// <summary>
+    /// Class for MyNUnit Framework 
+    /// </summary>
     public static class TestRunner
     {
+        /// <summary>
+        /// Concurent collection to strore data about the tests
+        /// </summary>
         public static BlockingCollection<TestStrcuct> MyTests { get; private set; }
 
+        /// <summary>
+        /// Printing the results of testing
+        /// </summary>
         public static void PrintTestResults()
         {
             Console.WriteLine("Results");
@@ -24,6 +33,10 @@ namespace MyNUnit
             }
         }
 
+        /// <summary>
+        /// Loadign the dll and starting the tests, Cheks for not repeated dlls
+        /// </summary>
+        /// <param name="path">Path to folder, loading all the dlls in all the directorieds beneath it as well</param>
         public static void Start(string path)
         {
             MyTests = new BlockingCollection<TestStrcuct>();
@@ -47,6 +60,10 @@ namespace MyNUnit
             }
         }
 
+        /// <summary>
+        /// Starting the all the tests with BeforeClass - Before - MyTest - After - AfterClass atrributes
+        /// </summary>
+        /// <param name="type">loaded assembly</param>
         public static void TestStarter(Type type)
         {
             MethodsInvoker<BeforeClassAttribute>(type);
@@ -54,6 +71,10 @@ namespace MyNUnit
             MethodsInvoker<AfterClassAttribute>(type);
         }
 
+        /// <summary>
+        /// Invokes the methods with attribues, calling methods corresponding to the attribute type
+        /// </summary>
+        /// <typeparam name="AttributeType">BeforeClass - Before - MyTest - After - AfterClass atrributes</typeparam>
         public static void MethodsInvoker<AttributeType>(Type type, object obj = null)
         {
             Action<MethodInfo> test;
@@ -79,6 +100,9 @@ namespace MyNUnit
             Parallel.ForEach(methodsWithAttribute, test);
         }
 
+        /// <summary>
+        /// Constructing the object as an instance of this type by methodInfo information
+        /// </summary>
         public static object ConstuctorFinder(MethodInfo methodInfo)
         {
             var ctor = methodInfo.DeclaringType.GetConstructor(Type.EmptyTypes);
@@ -86,6 +110,9 @@ namespace MyNUnit
             return obj;
         }
 
+        /// <summary>
+        /// Invoking Methods with MyTestAttribute
+        /// </summary>
         public static void MethodsWithMyTestInvoker(MethodInfo methodInfo, object obj)
         {
             obj = ConstuctorFinder(methodInfo);
@@ -137,6 +164,10 @@ namespace MyNUnit
                 }
             }
         }
+
+        /// <summary>
+        /// Invoking methods with Before and After Attribute
+        /// </summary>
         public static void MethodsWithAfterAndBeforeAttribute(MethodInfo methodInfo, object obj)
         {
             obj = ConstuctorFinder(methodInfo);
@@ -144,6 +175,9 @@ namespace MyNUnit
 
         }
 
+        /// <summary>
+        /// Invoking methods with BeforeClass and AfterClass Attributes, without creating an instance, requires methods to be static 
+        /// </summary>
         public static void MethodsWithBeforeAndAfterClassAttribute(MethodInfo methodInfo, object obj)
         {
             if (!methodInfo.IsStatic && ((methodInfo.GetCustomAttribute(typeof(BeforeClassAttribute)) != null) || (methodInfo.GetCustomAttribute(typeof(AfterClassAttribute)) != null)))
