@@ -143,22 +143,22 @@ namespace MyNUnit
                         MethodsInvoker<AfterAttribute>(methodInfo.DeclaringType);
                         if (attribute.Expected.Equals(result))
                         {
-                            MyTests.Add(new TestStrcuct(methodInfo, isPassed: true, timeConsumed: watch.ElapsedMilliseconds)); ;
+                            MyTests.Add(new TestStrcuct(methodInfo, isPassed: true, expected: attribute.Expected, timeConsumed: watch.ElapsedMilliseconds)); ;
                         }
                         else
                         {
-                            MyTests.Add(new TestStrcuct(methodInfo, isFailed: true));
+                            MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isFailed: true));
                         }
                     }
                     catch (Exception exception)
                     {
                         if (attribute.Expected.Equals(exception.InnerException.GetType()))
                         {
-                            MyTests.Add(new TestStrcuct(methodInfo, isPassed: true));
+                            MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isPassed: true));
                         }
                         else
                         {
-                            MyTests.Add(new TestStrcuct(methodInfo, isFailed: true));
+                            MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isFailed: true));
                         }
                     }
                 }

@@ -19,7 +19,7 @@ namespace MyNUnitTests
             var baseLoopBack = "..\\..\\..\\..\\Testdata\\";
             Test1.Test1.WasInvoked = false;
             TestRunner.Start(baseLoopBack + "Test1\\");
-            Assert.AreEqual(true, Test1.Test1.WasInvoked);
+            Assert.IsTrue(Test1.Test1.WasInvoked);
         }
 
         /// <summary>
@@ -51,14 +51,11 @@ namespace MyNUnitTests
         [Test]
         public void TestingExpectedInMyTest()
         {
-            var resultBlock = new bool[] { true, true, true, true, true };
             var baseLoopBack = "..\\..\\..\\..\\Testdata\\";
             TestRunner.Start(baseLoopBack + "Test4\\");
-            var MethodsWithExpected = from i in TestRunner.MyTests where i.MethodInformation.Name == "MyTest4" select i;
-            foreach(var methodWithExpected in MethodsWithExpected)
-            {
-                Assert.AreEqual(10, methodWithExpected.Expected);
-            }
+            var methodsWithExpected = from i in TestRunner.MyTests where i.MethodInformation.Name == "Test4Method" select i;
+            var methodWithExpected = methodsWithExpected.Last();
+            Assert.AreEqual(10, methodWithExpected.Expected);
         }
 
         /// <summary>
@@ -67,15 +64,12 @@ namespace MyNUnitTests
         [Test]
         public void TestingIgnoreInMyTest()
         {
-            var resultBlock = new bool[] { true, true, true, true, true };
             var baseLoopBack = "..\\..\\..\\..\\Testdata\\";
             TestRunner.Start(baseLoopBack + "Test5\\");
             var MethodsWithExpected = from i in TestRunner.MyTests where i.MethodInformation.Name == "Test5Method" select i;
-            foreach (var methodWithExpected in MethodsWithExpected)
-            {
-                Assert.True(methodWithExpected.IsIgnored);
-                Assert.AreEqual("TestIgnoreMessage", methodWithExpected.Ignore_message);
-            }
+            var methodWithExpected = MethodsWithExpected.Last();
+            Assert.True(methodWithExpected.IsIgnored);
+            Assert.AreEqual("TestIgnoreMessage", methodWithExpected.Ignore_message);
         }
 
         /// <summary>
@@ -84,14 +78,11 @@ namespace MyNUnitTests
         [Test]
         public void TestingExpectedErrorInMyTest()
         {
-            var resultBlock = new bool[] { true, true, true, true, true };
             var baseLoopBack = "..\\..\\..\\..\\Testdata\\";
             TestRunner.Start(baseLoopBack + "Test6\\");
             var MethodsWithExpected = from i in TestRunner.MyTests where i.MethodInformation.Name == "Test6Method" select i;
-            foreach (var methodWithExpected in MethodsWithExpected)
-            {
-                Assert.AreEqual(new ArgumentException(), methodWithExpected.Expected);         
-            }
+            var MethodWithExpected = MethodsWithExpected.Last();
+            Assert.AreEqual(typeof(ArgumentException), MethodWithExpected.Expected);
         }
     }
 }
