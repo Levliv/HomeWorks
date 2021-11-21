@@ -27,6 +27,9 @@
     <Reference Include="Test3">
       <HintPath>..\Testdata\Test3\Test3\bin\Debug\net5.0\Test3.dll</HintPath>
     </Reference>
+    <Reference Include="Test4">
+      <HintPath>..\Testdata\Test4\Test4\bin\Debug\net5.0\Test4.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
