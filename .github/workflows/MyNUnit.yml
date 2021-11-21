@@ -46,7 +46,9 @@ jobs:
       run: nuget restore HomeTask5/Testdata/Test4/Test4/Test4.sln
     - name: Restore TestClass5
       run: nuget restore HomeTask5/Testdata/Test5/Test5/Test5.sln
-    
+    - name: Restore TestClass6
+      run: nuget restore HomeTask5/Testdata/Test6/Test6/Test6.sln
+      
     - name: building
       run: dotnet build HomeTask5/MyNunit/MyNUnit.csproj
     - name: building TestClass1
@@ -59,6 +61,8 @@ jobs:
       run: dotnet build HomeTask5/Testdata/Test4/Test4/Test4.sln
     - name: building TestClass5
       run: dotnet build HomeTask5/Testdata/Test5/Test5/Test5.sln
+    - name: building TestClass6
+      run: dotnet build HomeTask5/Testdata/Test6/Test6/Test6.sln
     - name: building
       run: dotnet build HomeTask5/MyNunitTests/MyNUnitTests.csproj
     - name: test
