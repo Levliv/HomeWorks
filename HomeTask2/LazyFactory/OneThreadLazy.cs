@@ -7,8 +7,12 @@ namespace LazyFactoryNamespace
     public class OneThreadLazy<T> : ILazy<T>
     {
         private Func<T> _supplier;
-        public T RecordedResult { get; private set; }
         private bool _isRecorded = false;
+
+        /// <summary>
+        /// Storing a Recocdet afer Lazy init result
+        /// </summary>
+        public T RecordedResult { get; private set; }
 
         /// <summary>
         /// One Thread LazyFactory

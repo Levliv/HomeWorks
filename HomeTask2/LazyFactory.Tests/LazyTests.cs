@@ -4,9 +4,15 @@ using System.Threading;
 
 namespace LazyFactoryNamespace.Tests
 {
+    /// <summary>
+    /// Tests for Lazy class
+    /// </summary>
     [TestFixture]
     public class Tests
     {
+        /// <summary>
+        /// Test for null supplier
+        /// </summary>
         [Test]
         public void DelegateIsNullTest()
         {
@@ -21,6 +27,9 @@ namespace LazyFactoryNamespace.Tests
             new Func<object>[] { ()=> 'c'},
         };
 
+        /// <summary>
+        /// Testing that Lazy One and Multi thread return right answers
+        /// </summary>
         [Test, TestCaseSource(nameof(TestCases))]
         public void TestsOneAndMultiThread(Func<object> func)
         {
@@ -28,6 +37,9 @@ namespace LazyFactoryNamespace.Tests
             Assert.AreEqual(LazyFactory.CreateOneThreadLazy(func).Get(), func());
         }
 
+        /// <summary>
+        /// Testing that One thread Lazy called only once(an init as well), and never called again
+        /// </summary>
         [Test]
         public void OneThreadLazyGetCalledOnlyOnceTest()
         {
@@ -41,6 +53,9 @@ namespace LazyFactoryNamespace.Tests
             Assert.AreEqual(counter, 1);
         }
 
+        /// <summary>
+        /// Testing Race condition for Multi thread Lazy version
+        /// </summary>
         [Test]
         public void RaceMultiThreadLazyTest()
         {

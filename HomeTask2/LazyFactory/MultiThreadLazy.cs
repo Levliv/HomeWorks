@@ -8,9 +8,13 @@ namespace LazyFactoryNamespace
     public class MultiThreadLazy<T> : ILazy<T>
     {
         private Func<T> _supplier;
-        public T RecordedResult { get; private set; }
         private volatile bool _isRecorded = false;
         private readonly object balanceLock = new object();
+        
+        /// <summary>
+        /// Storing a Recocdet afer Lazy init result
+        /// </summary>
+        public T RecordedResult { get; private set; }
 
         /// <summary>
         /// Constructor for MutiThread
