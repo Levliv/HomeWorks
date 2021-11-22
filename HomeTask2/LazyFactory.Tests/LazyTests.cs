@@ -4,34 +4,28 @@ using System.Threading;
 
 namespace LazyFactoryNamespace.Tests
 {
+    [TestFixture]
     public class Tests
     {
         [Test]
         public void DelegateIsNullTest()
         {
             Assert.Throws<ArgumentNullException>(() => LazyFactory.CreateOneThreadLazy<object>(null));
-            Assert.Throws<ArgumentNullException>(() => LazyFactory.CreateOneThreadLazy<object>(null));
+            Assert.Throws<ArgumentNullException>(() => LazyFactory.CreateMultiThreadLazy<object>(null));
         }
 
         private static readonly object[] TestCases =
         {
-            new Func<int>[] {()=> 32 },
-            new Func<int>[] {()=> 2 },
-            new Func<int>[] {()=> 4 },
+            new Func<object>[] { ()=> 32},
+            new Func<object>[] { ()=> "abc"},
+            new Func<object>[] { ()=> 'c'},
         };
 
         [Test, TestCaseSource(nameof(TestCases))]
-        public void TestsMultiThread(Func<int> func)
+        public void TestsOneAndMultiThread(Func<object> func)
         {
-            var lazy = LazyFactory.CreateMultiThreadLazy(func);
-            Assert.AreEqual(lazy.Get(), func());
-        }
-
-        [Test, TestCaseSource(nameof(TestCases))]
-        public void TestsOneThread(Func<int> func)
-        {
-            var lazy = LazyFactory.CreateOneThreadLazy(func);
-            Assert.AreEqual(lazy.Get(), func());
+            Assert.AreEqual(LazyFactory.CreateMultiThreadLazy(func).Get(), func());
+            Assert.AreEqual(LazyFactory.CreateOneThreadLazy(func).Get(), func());
         }
 
         [Test]
