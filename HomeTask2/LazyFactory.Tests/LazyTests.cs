@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System;
 using System.Threading;
+using System.Collections;
 
 namespace LazyFactoryNamespace.Tests
 {
@@ -10,6 +11,38 @@ namespace LazyFactoryNamespace.Tests
     [TestFixture]
     public class Tests
     {
+
+
+        public static IEnumerable Lazies
+        {
+            get
+            {
+                Func<object> t = () => 12;
+                Func<object> se;
+                se = () => LazyFactory.CreateOneThreadLazy(t);
+                yield return new TestCaseData(se).Returns(t);
+            }
+        }
+
+        [TestCaseSource(nameof(Lazies))]
+        public object DivideTest<T>(ILazy<T> lazy)
+        {
+            return lazy.Get();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         /// <summary>
         /// Test for null supplier
         /// </summary>
