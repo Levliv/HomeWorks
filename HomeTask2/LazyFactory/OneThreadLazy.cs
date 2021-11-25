@@ -1,5 +1,5 @@
 ﻿using System;
-namespace LazyFactoryNamespace
+namespace LazyFactory
 {
     /// <summary>
     /// One thread LazyFactory
@@ -7,7 +7,10 @@ namespace LazyFactoryNamespace
     public class OneThreadLazy<T> : ILazy<T>
     {
         private Func<T> _supplier;
-        private bool _isRecorded = false;
+        /// <summary>
+        /// Contains infomation about whether it has been counted 
+        /// </summary>
+        public bool IsRecorded = false;
 
         /// <summary>
         /// Storing a Recocdet afer Lazy init result
@@ -25,11 +28,11 @@ namespace LazyFactoryNamespace
         /// </summary>
         public T Get()
         {
-            if (!_isRecorded)
+            if (!IsRecorded)
             {
                 RecordedResult = _supplier();
                 _supplier = null;
-                _isRecorded = true;
+                IsRecorded = true;
             }
             return RecordedResult;
         }

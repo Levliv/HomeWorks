@@ -8,9 +8,13 @@ namespace LazyFactoryNamespace
     public class MultiThreadLazy<T> : ILazy<T>
     {
         private Func<T> _supplier;
-        private volatile bool _isRecorded = false;
         private readonly object balanceLock = new object();
-        
+
+        /// <summary>
+        /// Contains infomation about whether it has been counted
+        /// </summary>
+        public volatile bool IsRecorded = false;
+
         /// <summary>
         /// Storing a Recocdet afer Lazy init result
         /// </summary>
@@ -27,14 +31,14 @@ namespace LazyFactoryNamespace
         /// </summary>
         public T Get()
         {
-            if (!_isRecorded)
+            if (!IsRecorded)
             {
                 lock (balanceLock)
                 {
-                    if (!_isRecorded)
+                    if (!IsRecorded)
                     {
                         RecordedResult = _supplier();
-                        _isRecorded = true;
+                        IsRecorded = true;
                         _supplier = null;
                     }
                 }

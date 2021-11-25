@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LazyFactoryNamespace
+namespace LazyFactory
 {
     /// <summary>
     /// Lazy factory

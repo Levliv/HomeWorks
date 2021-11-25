@@ -1,4 +1,4 @@
-﻿namespace LazyFactoryNamespace
+﻿namespace LazyFactory
 {
     /// <summary>
     /// Interface for Lazy computation
@@ -8,6 +8,6 @@
         /// <summary>
         /// Getting the resuts of Func<typeparamref name="T"/>
         /// </summary>
-        T Get();
+        public T Get();
     }
 }

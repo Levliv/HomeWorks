@@ -1,9 +1,9 @@
 using NUnit.Framework;
 using System;
 using System.Threading;
-using System.Collections;
 
-namespace LazyFactoryNamespace.Tests
+
+namespace LazyFactory
 {
     /// <summary>
     /// Tests for Lazy class
@@ -11,37 +11,13 @@ namespace LazyFactoryNamespace.Tests
     [TestFixture]
     public class Tests
     {
-
-
-        public static IEnumerable Lazies
+        [Test]
+        public void LazyHasADelayedInit()
         {
-            get
-            {
-                Func<object> t = () => 12;
-                Func<object> se;
-                se = () => LazyFactory.CreateOneThreadLazy(t);
-                yield return new TestCaseData(se).Returns(t);
-            }
+            Func<int> func = () => 1;
+            var lazy = LazyFactory.CreateOneThreadLazy(func);
+            Assert.IsFalse(lazy.Is_Recorded);
         }
-
-        [TestCaseSource(nameof(Lazies))]
-        public object DivideTest<T>(ILazy<T> lazy)
-        {
-            return lazy.Get();
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         /// <summary>
         /// Test for null supplier
@@ -53,23 +29,6 @@ namespace LazyFactoryNamespace.Tests
             Assert.Throws<ArgumentNullException>(() => LazyFactory.CreateMultiThreadLazy<object>(null));
         }
 
-        private static readonly object[] TestCases =
-        {
-            new Func<object>[] { ()=> 32},
-            new Func<object>[] { ()=> "abc"},
-            new Func<object>[] { ()=> 'c'},
-        };
-
-        /// <summary>
-        /// Testing that Lazy One and Multi thread return right answers
-        /// </summary>
-        [Test, TestCaseSource(nameof(TestCases))]
-        public void TestsOneAndMultiThread(Func<object> func)
-        {
-            Assert.AreEqual(LazyFactory.CreateMultiThreadLazy(func).Get(), func());
-            Assert.AreEqual(LazyFactory.CreateOneThreadLazy(func).Get(), func());
-        }
-
         /// <summary>
         /// Testing that One thread Lazy called only once(an init as well), and never called again
         /// </summary>
@@ -79,7 +38,7 @@ namespace LazyFactoryNamespace.Tests
             var counter = 0;
             Func<int> func = () => counter++;
             var lazy = LazyFactory.CreateOneThreadLazy(func);
-            for (int i = 0; i < 2; ++i)
+            for (int i = 0; i < 10; ++i)
             {
                 lazy.Get();
             }
@@ -111,7 +70,7 @@ namespace LazyFactoryNamespace.Tests
             {
                 threads[i].Join();
             }
-            Assert.AreEqual(counter, 1);
+            Assert.AreEqual(1, counter);
         }
     }
 }
