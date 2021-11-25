@@ -1,4 +1,4 @@
-name: Action.NET
+name: Action.NET for MyLazy
 on:
   push:
     branches: [ master, MyLazy ]
