@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFTPServer", "MyFTP\MyFTPServer.csproj", "{196FD7EB-1EE6-4E11-A25E-CBB8165CD311}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFTPClient", "..\MyFTPClient\MyFTPClient.csproj", "{F8DE13E3-9334-4077-A514-66BAD1C3F12C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFTPTests", "..\MyFTPTests\MyFTPTests.csproj", "{D499C1AF-140C-4DF0-845A-D6D9643F8CB5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{196FD7EB-1EE6-4E11-A25E-CBB8165CD311}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{196FD7EB-1EE6-4E11-A25E-CBB8165CD311}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{196FD7EB-1EE6-4E11-A25E-CBB8165CD311}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{196FD7EB-1EE6-4E11-A25E-CBB8165CD311}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8DE13E3-9334-4077-A514-66BAD1C3F12C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8DE13E3-9334-4077-A514-66BAD1C3F12C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8DE13E3-9334-4077-A514-66BAD1C3F12C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8DE13E3-9334-4077-A514-66BAD1C3F12C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D499C1AF-140C-4DF0-845A-D6D9643F8CB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D499C1AF-140C-4DF0-845A-D6D9643F8CB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D499C1AF-140C-4DF0-845A-D6D9643F8CB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D499C1AF-140C-4DF0-845A-D6D9643F8CB5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4B8E44DD-B239-41A5-AC6B-E7EB36621EC2}
+	EndGlobalSection
+EndGlobal
