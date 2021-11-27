@@ -22,13 +22,12 @@ static class Program
                     Console.WriteLine("The rewuest should include symbols");
                     request = Console.ReadLine();
                 }
-                var requestedstrings = request.Split(" ");
                 if(request == null || ip == null)
                 {
                     throw new ArgumentNullException("Request and ip should not be NULL");
                 }
                 var client = new Client(ipString, port);
-                client.ClientRequest(requestedstrings[0], requestedstrings[1]);
+                client.ClientRequest(request);
                 client.PrintResults();
             }
         }

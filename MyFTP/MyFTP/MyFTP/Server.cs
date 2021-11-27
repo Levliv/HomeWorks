@@ -8,17 +8,31 @@ using System.Threading.Tasks;
 namespace MyFTP;
 public class Server
 {
+    /// <summary>
+    /// Path to the base directory where the search is supposed to begin
+    /// </summary>
     public string DataPath { get; private set; }
+    
+    /// <summary>
+    /// Port for the server
+    /// </summary>
     public int Port { get; private set; }
+
+    /// <summary>
+    /// Ip of the server
+    /// </summary>
     public IPAddress Ip { get; private set; }
 
+    /// <summary>
+    /// Constructor for Server
+    /// </summary>
+    /// <param name="param">Path to the base directory where the search is supposed to begin</param>
     public Server(IPAddress ip, int port, string param = "../../../.")
     {
         DataPath = param;
         Port = port;
         Ip = ip;
     }
-
 
     private (int, string) ProsessFiles(FileInfo[] files)
     {
@@ -103,24 +117,24 @@ public class Server
                 using var streamReader = new StreamReader(networkStream);
                 var data = await streamReader.ReadLineAsync();
                 var strings = data.Split(' ');
+                var requestPath = strings[1];
                 switch (int.Parse(strings[0]))
                 {
                     case 1: // List request Case
                         {
                             using var streamWriter = new StreamWriter(networkStream);
-                            streamWriter.WriteLine(List(DataPath));
+                            streamWriter.WriteLine(List(DataPath + requestPath));
                             streamWriter.Flush();
-                            Console.WriteLine("Testing");
-                            Console.WriteLine(List(DataPath + strings[1]));
                             break;
                         }
                     case 2: // Get request Case
                         {
-                            var (size, bytes) = Get(DataPath + strings[1]);
+                            var (size, bytes) = Get(DataPath + requestPath);
+                            using var streamWriter = new StreamWriter(networkStream);
+                            var sizeOfMessage = bytes.Length;
+                            streamWriter.WriteLine(sizeOfMessage);
+                            streamWriter.Flush();
                             using var streamBinaryWriter = new BinaryWriter(networkStream);
-                            var sizeInBytes = Encoding.UTF8.GetBytes(size.ToString());
-                            streamBinaryWriter.Write(sizeInBytes);
-                            streamBinaryWriter.Write(Encoding.UTF8.GetBytes("\n"));
                             streamBinaryWriter.Write(bytes);
                             streamBinaryWriter.Flush();
                             break;

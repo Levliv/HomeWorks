@@ -14,4 +14,9 @@
     <PackageReference Include="coverlet.collector" Version="3.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MyFTPClient\MyFTPClient.csproj" />
+    <ProjectReference Include="..\MyFTP\MyFTP\MyFTPServer.csproj" />
+  </ItemGroup>
+
 </Project>
