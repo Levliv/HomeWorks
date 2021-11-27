@@ -58,7 +58,10 @@ public class Server
         return (directories.Length, ResultString);
     }
 
-    private (int size, string name) ListProsess(string path)
+    /// <summary>
+    /// Server's method for seraching in order to create list of files and dirs in the directory
+    /// </summary>
+    public (int size, string name) ListProsess(string path)
     {
         var di = new DirectoryInfo(path);
         if (di.Exists)
@@ -75,7 +78,7 @@ public class Server
     /// </summary>
     /// <param name="path">path to the directory we need to look at</param>
     /// <returns>srting in format string with server respond</returns>
-    private string List(string path)
+    public string List(string path)
     {
         var (size, name) = ListProsess(path);
 
@@ -87,7 +90,7 @@ public class Server
     /// </summary>
     /// <param name="path">File path</param>
     /// <returns>Size of file, massive of bytes(file)</returns>
-    private (long size, byte[] content) Get(string path)
+    public (long size, byte[] content) Get(string path)
     {
         if (File.Exists(path))
         {
