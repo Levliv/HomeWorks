@@ -29,6 +29,7 @@ static class Program
                 }
                 var client = new Client(ipString, port);
                 client.ClientRequest(requestedstrings[0], requestedstrings[1]);
+                client.PrintResults();
             }
         }
         else

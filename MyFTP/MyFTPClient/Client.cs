@@ -39,7 +39,7 @@ public class Client
         switch (RequestType)
         {
             case RequestType.Get:
-                MyStreamReader = Get();
+                MyStreamReader = Get(path);
                 break;
             case RequestType.List:
                 ResultsOfListResponse = List(path);
@@ -68,7 +68,7 @@ public class Client
     {
         using var networkStream = TcpClient.GetStream();
         using var streamWriter = new StreamWriter(networkStream);
-        streamWriter.WriteLine(RequestType + path);
+        streamWriter.WriteLine(1 + " " + path);
         streamWriter.Flush();
         using var streamReader = new StreamReader(networkStream);
         var strings = streamReader.ReadToEnd().Split(" ");
@@ -80,8 +80,12 @@ public class Client
         return files;
     }
 
-    public NetworkStream Get()
+    public NetworkStream Get(string path)
     {
+        using var networkStream = TcpClient.GetStream();
+        using var streamWriter = new StreamWriter(networkStream);
+        streamWriter.WriteLine(2 + " " + path);
+        streamWriter.Flush();
         return TcpClient.GetStream();
     }
 }
