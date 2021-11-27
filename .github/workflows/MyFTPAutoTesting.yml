@@ -1,4 +1,4 @@
-name: Action.NET for MyLazy
+name: Action.NET for MyFTP
 on:
   push:
     branches: [ master, MyFTP ]
