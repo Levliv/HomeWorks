@@ -50,14 +50,15 @@ public class Client
     /// <summary>
     /// Structs to preserve information about file got from Server by Get Request
     /// </summary>
-    public GetResponseStruct GetResponse { get; private set; }
+    private GetResponseStruct GetResponse;
 
     /// <summary>
     /// Constructor for the Client, creating new TCP client and connecting to the server
     /// </summary>
     public Client(string ipString, int port)
     {
-        TcpClient = new TcpClient(ipString, port);
+        TcpClient = new TcpClient();
+        //TcpClient = new TcpClient(ipString, port);
         IpString = ipString;
         Port = port;
     }
@@ -118,12 +119,13 @@ public class Client
     /// <returns>Sequence of data in base ResponseFormat</returns>
     public IEnumerable<ResponseFormat> List(string path)
     {
+        TcpClient.ConnectAsync(IpString, Port);
         using var networkStream = TcpClient.GetStream();
         using var streamWriter = new StreamWriter(networkStream);
         streamWriter.WriteLine(1 + " " + path);
         streamWriter.Flush();
         using var streamReader = new StreamReader(networkStream);
-        var strings = streamReader.ReadLine().Split(" ");
+        var strings = (streamReader.ReadLine() ?? "").Split(" ");
         var files = new List<ResponseFormat>();
         for (var i = 1; i < int.Parse(strings[0]) * 2; i += 2)
         {
@@ -139,6 +141,7 @@ public class Client
     /// <returns> Base struct GetResponseStruct</returns>
     public GetResponseStruct Get(string path)
     {
+        TcpClient.ConnectAsync(IpString, Port);
         using var networkStream = TcpClient.GetStream();
         using var streamWriter = new StreamWriter(networkStream);
         streamWriter.WriteLine(2 + " " + path);
