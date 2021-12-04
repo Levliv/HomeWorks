@@ -4,15 +4,20 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace MyFTP;
+
+/// <summary>
+/// Server class to process client's requests
+/// </summary>
 public class Server
 {
     /// <summary>
     /// Path to the base directory where the search is supposed to begin
     /// </summary>
     public string DataPath { get; private set; }
-    
+
     /// <summary>
     /// Port for the server
     /// </summary>
@@ -26,10 +31,10 @@ public class Server
     /// <summary>
     /// Constructor for Server
     /// </summary>
-    /// <param name="param">Path to the base directory where the search is supposed to begin</param>
-    public Server(IPAddress ip, int port, string param = "../../../.")
+    /// <param name="dirBackPath">Path to the base directory where the search is supposed to begin</param>
+    public Server(IPAddress ip, int port, string dirBackPath = "../../../.")
     {
-        DataPath = param;
+        DataPath = dirBackPath;
         Port = port;
         Ip = ip;
     }
@@ -111,11 +116,12 @@ public class Server
     {
         var listener = new TcpListener(Ip, Port);
         listener.Start();
+        List<Task> list = new List<Task>();
         while (true)
         {
-            using var socket = await listener.AcceptSocketAsync();
-            await Task.Run(async () =>
+            list.Add(Task.Run(async () =>
             {
+                using var socket = await listener.AcceptSocketAsync();
                 using var networkStream = new NetworkStream(socket);
                 using var streamReader = new StreamReader(networkStream);
                 var data = await streamReader.ReadLineAsync();
@@ -143,7 +149,10 @@ public class Server
                             break;
                         }
                 }
-            });
+            }));
+            foreach (var task in list) {
+                await task;
+            }
         }
     }
 }

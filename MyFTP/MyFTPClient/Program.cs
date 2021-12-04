@@ -5,24 +5,14 @@ static class Program
 {
     static void Main(string[] args)
     {
-        int port;
-        string ipString;
-        IPAddress? ip;
-        string? request;
-        if (int.TryParse(args[1], out port) && IPAddress.TryParse(args[0], out ip))
+        if (int.TryParse(args[1], out int port) && IPAddress.TryParse(args[0], out IPAddress? ip))
         {
-            ipString = args[0];
+            string ipString = args[0];
             Console.WriteLine($"port {port} and ip {ip} recognised successfully");
             while (true)
             {
-                Console.WriteLine("Enter your requset, master");
-                request = Console.ReadLine();
-                while (request == null)
-                {
-                    Console.WriteLine("The rewuest should include symbols");
-                    request = Console.ReadLine();
-                }
-                if(request == null || ip == null)
+                string? request = args[2];
+                if (request == null || ip == null)
                 {
                     throw new ArgumentNullException("Request and ip should not be NULL");
                 }

@@ -2,3 +2,7 @@
 
 # CS8604: Возможно, аргумент-ссылка, допускающий значение NULL.
 dotnet_diagnostic.CS8604.severity = none
+csharp_prefer_simple_using_statement=true:warning
+
+[*.{cs,vb}]
+dotnet_style_prefer_auto_properties=true:suggestion

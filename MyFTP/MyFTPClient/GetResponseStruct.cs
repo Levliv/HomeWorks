@@ -17,7 +17,7 @@ namespace MyFTPClient
         public long Size { get; set; }
 
         /// <summary>
-        /// Data in bytes recived got by tcp
+        /// Data in bytes received by tcp
         /// </summary>
         public byte[] Data { get; set; }
 

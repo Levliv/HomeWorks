@@ -13,7 +13,7 @@ public enum RequestType
 }
 
 /// <summary>
-/// Class for Client of tcp protocol
+/// Class for Client of TCP protocol
 /// </summary>
 public class Client
 {
@@ -36,29 +36,25 @@ public class Client
     /// Tcp Client string inforation about current connection
     /// </summary>
     public TcpClient TcpClient { get; private set; }
-    
+
     /// <summary>
     /// Structs to preserve information about files in directories got from Server by List Request
     /// </summary>
-
     public IEnumerable<ResponseFormat>? ResultsOfListResponse { get; private set; }
 
     /// <summary>
     /// Containing the information about the stream of the current connection
     /// </summary>
-
     public NetworkStream? MyStreamReader { get; private set; }
 
     /// <summary>
     /// Structs to preserve information about file got from Server by Get Request
     /// </summary>
-
     public GetResponseStruct GetResponse { get; private set; }
 
     /// <summary>
-    /// Constructor for the Client, creating new tcp client and connecting to the server
+    /// Constructor for the Client, creating new TCP client and connecting to the server
     /// </summary>
-
     public Client(string ipString, int port)
     {
         TcpClient = new TcpClient(ipString, port);
@@ -71,15 +67,14 @@ public class Client
     /// </summary>
     public void ClientRequest(string requestString)
     {
-        var splitedRequestString = requestString.Split(" ");
-        var request = splitedRequestString[0];
-        var path = splitedRequestString[1];
+        var splitеedRequestString = requestString.Split(" ");
+        var request = splitеedRequestString[0];
+        var path = splitеedRequestString[1];
         if (request == "2")
         {
             FtpRequestType = RequestType.Get;
         }
-        else
-        if (request == "1")
+        else if (request == "1")
         {
             FtpRequestType = RequestType.List;
         }
@@ -95,7 +90,7 @@ public class Client
     }
 
     /// <summary>
-    /// Printing the results got by tcp
+    /// Printing the results got by TCP
     /// </summary>
     public void PrintResults()
     {
@@ -130,9 +125,9 @@ public class Client
         using var streamReader = new StreamReader(networkStream);
         var strings = streamReader.ReadLine().Split(" ");
         var files = new List<ResponseFormat>();
-        for (var i = 1; i < int.Parse(strings[0]) * 2; i+=2)
+        for (var i = 1; i < int.Parse(strings[0]) * 2; i += 2)
         {
-            files.Add(new ResponseFormat(strings[i], strings[i+1]));
+            files.Add(new ResponseFormat(strings[i], strings[i + 1]));
         }
         return files;
     }
@@ -150,10 +145,10 @@ public class Client
         streamWriter.Flush();
         MyStreamReader = TcpClient.GetStream();
         using var streamReader = new StreamReader(MyStreamReader);
-        var messageLenght = int.Parse(streamReader.ReadLine());
+        var messageLength = int.Parse(streamReader.ReadLine() ?? "0");
         using var streamBinaryReader = new BinaryReader(MyStreamReader);
-        var bytes = streamBinaryReader.ReadBytes(messageLenght);
-        var result = new GetResponseStruct(messageLenght, bytes);
+        var bytes = streamBinaryReader.ReadBytes(messageLength);
+        var result = new GetResponseStruct(messageLength, bytes);
         return result;
     }
 }

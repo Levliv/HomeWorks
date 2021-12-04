@@ -19,7 +19,7 @@ public class MyFTPTests
         IPAddress ip;
         IPAddress.TryParse("127.0.0.1", out ip);
         var server = new Server(ip, 8000);
-        var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
+        var task1 = Task.Run(() => server.ServerMethodAsync());
     }
 
     /// <summary>

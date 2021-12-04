@@ -7,12 +7,14 @@ static class Program
 {
     static void Main(string[] args)
     {
-        IPAddress ip;
-        int port;
-        if (IPAddress.TryParse(args[0], out ip) && int.TryParse(args[1], out port))
+        if (IPAddress.TryParse(args[0], out IPAddress? ip) && int.TryParse(args[1], out int port))
         {
             var server = new Server(ip, port);
-            var task1 = Task.Run(() => server.ServerMethodAsync().Wait());
+            var task1 = Task.Run(() => server.ServerMethodAsync());
+        }
+        else
+        {
+            Console.WriteLine("Program requires two command line options");
         }
     }
 }
