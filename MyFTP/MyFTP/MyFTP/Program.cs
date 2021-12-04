@@ -11,6 +11,7 @@ static class Program
         {
             var server = new Server(ip, port);
             var task1 = Task.Run(() => server.ServerMethodAsync());
+            task1.Wait();
         }
         else
         {

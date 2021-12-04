@@ -125,7 +125,7 @@ public class Server
                 using var networkStream = new NetworkStream(socket);
                 using var streamReader = new StreamReader(networkStream);
                 var data = await streamReader.ReadLineAsync();
-                var strings = (data ?? "").Split(' ');
+                var strings = data.Split(' ');
                 var requestPath = strings[1];
                 switch (int.Parse(strings[0]))
                 {

@@ -5,6 +5,7 @@ using MyFTPClient;
 using System.Collections;
 using System.Linq;
 using System.Text;
+using System;
 
 namespace MyFTP;
 
@@ -40,14 +41,23 @@ public class MyFTPTests
     public void TestClientRequestList()
     {
         var client = new Client("127.0.0.1", 8000);
-        client.ClientRequest("1 ./Tests/Files");
-        Assert.AreEqual(client.FtpRequestType, RequestType.List);
-        var fileNames = from item in client.ResultsOfListResponse select item.Name;
-        var ifFilesDirs = from item in client.ResultsOfListResponse select item.IsDir;
-        IEnumerable expectedFileNames = new[] { "./Tests/Files/TestFile.txt", "./Tests/Files/TestDir" };
-        IEnumerable expectedIsFilesdirs = new[] {false, true };
-        Assert.AreEqual(expectedFileNames, fileNames);
-        Assert.AreEqual(expectedIsFilesdirs, ifFilesDirs);
+        IEnumerable expectedFileNames = new[] { "./Tests/Files/TestFile.txt False", "./Tests/Files/TestDir True" };
+        var expectedString = new StringBuilder();
+        foreach (var fileName in expectedFileNames)
+        {
+            expectedString.Append(fileName);
+            expectedString.Append(' ');
+        }
+        var result = client.List("./Tests/Files");
+        var resultString = new StringBuilder();
+        foreach (var file in result)
+        {
+            resultString.Append(file.Name);
+            resultString.Append(' ');
+            resultString.Append(file.IsDir);
+            resultString.Append(' ');
+        }
+        Assert.IsTrue(expectedString.Equals(resultString));
     }
 
     /// <summary>
@@ -56,8 +66,9 @@ public class MyFTPTests
     [Test]
     public void TestClientRequestGet()
     {
+        
         var client = new Client("127.0.0.1", 8000);
-        client.ClientRequest("2 ./Tests/Files/TestFile.txt");
-        //Assert.AreEqual("Abracanabra\r\n2nd line", (Encoding.UTF8.GetString(client.GetResponse.Data)));
+        var result = client.Get("./Tests/Files/TestFile.txt");
+        Assert.AreEqual("Abracanabra\r\n2nd line", (Encoding.UTF8.GetString(result.Data)));
     }
 }
