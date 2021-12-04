@@ -10,12 +10,12 @@ namespace MyLazy
         /// <summary>
         /// Contains infomation about whether it has been counted 
         /// </summary>
-        public bool IsRecorded = false;
+        private bool IsRecorded = false;
 
         /// <summary>
         /// Storing a Recocdet afer Lazy init result
         /// </summary>
-        public T RecordedResult { get; private set; }
+        private T RecordedResult;
 
         /// <summary>
         /// One Thread LazyFactory

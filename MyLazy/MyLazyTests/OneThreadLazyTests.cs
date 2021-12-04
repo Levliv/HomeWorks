@@ -14,10 +14,10 @@ namespace MyLazy
         public static IEnumerable TestData = new object[] { 12, "abc", 'c' };
 
         /// <summary>
-        /// Tesing The correctness on Lazy Computatio
+        /// Tesing The correctness on Lazy Computation
         /// </summary>
         [TestCaseSource(nameof(TestData))]
-        public void TestForCorrectenss(object d)
+        public void TestForCorrectness(object d)
         {
             var lazy = LazyFactory.CreateOneThreadLazy(() => d);
             Assert.AreEqual(d, lazy.Get());

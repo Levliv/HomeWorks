@@ -13,12 +13,12 @@ namespace MyLazy
         /// <summary>
         /// Contains infomation about whether it has been counted
         /// </summary>
-        public volatile bool IsRecorded = false;
+        private volatile bool IsRecorded = false;
 
         /// <summary>
-        /// Storing a Recocdet afer Lazy init result
+        /// Storing recorded result
         /// </summary>
-        public T RecordedResult { get; private set; }
+        private T RecordedResult;
 
         /// <summary>
         /// Constructor for MutiThread

@@ -3,7 +3,7 @@
     /// <summary>
     /// Interface for Lazy computation
     /// </summary>
-    public interface ILazy<T>
+    public interface ILazy<out T>
     {
         /// <summary>
         /// Getting the resuts of Func<typeparamref name="T"/>
