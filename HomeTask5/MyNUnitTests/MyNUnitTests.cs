@@ -11,7 +11,7 @@ namespace MyNUnitTests
     public class Tests
     {
         /// <summary>
-        /// Chechking that when only method have attributes everything works fine
+        /// Checking that when only method have attributes everything works fine
         /// </summary>
         [Test]
         public void OneMethoWithMyTestAttribute()
@@ -69,7 +69,7 @@ namespace MyNUnitTests
             var MethodsWithExpected = from i in TestRunner.MyTests where i.MethodInformation.Name == "Test5Method" select i;
             var methodWithExpected = MethodsWithExpected.Last();
             Assert.True(methodWithExpected.IsIgnored);
-            Assert.AreEqual("TestIgnoreMessage", methodWithExpected.Ignore_message);
+            Assert.AreEqual("TestIgnoreMessage", methodWithExpected.IgnoreMessage);
         }
 
         /// <summary>

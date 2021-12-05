@@ -4,7 +4,7 @@ using System.Reflection;
 namespace MyNUnit
 {
     /// <summary>
-    /// Template for data restored after test invokation
+    /// Template for data restored after test invocation
     /// </summary>
     public class TestStrcuct
     {
@@ -44,20 +44,20 @@ namespace MyNUnit
         public object Expected { get; }
 
         /// <summary>
-        /// Containg the actual(returned from the method) value got by test invocation 
+        /// Containing the actual(returned from the method) value got by test invocation  
         /// </summary>
         public object Got { get; }
 
         /// <summary>
-        /// Containig message is case test in suppposed to be ignored
+        /// Containing message in case test is suppposed to be ignored
         /// </summary>
-        public string Ignore_message { get; }
+        public string IgnoreMessage { get; }
 
         /// <summary>
-        /// Constructor to restore the information about tests
+        /// Constructor to store the information about tests
         /// </summary>
         public TestStrcuct(MethodInfo methodInfo, bool isPassed = false, bool isFailed = false,
-            bool isIgnored = false, long timeConsumed = 0, string errorMessage = null, object expected = null, object got = null,  string ignore_message = null)
+            bool isIgnored = false, long timeConsumed = 0, string errorMessage = null, object expected = null, object got = null,  string ignoreMessage = null)
         {
             MethodInformation = methodInfo;
             IsPassed = isPassed;
@@ -66,7 +66,7 @@ namespace MyNUnit
             ErrorMessage = errorMessage;
             Expected = expected;
             Got = got;
-            Ignore_message = ignore_message;
+            IgnoreMessage = ignoreMessage;
             TimeConsumed = timeConsumed;
         }
     }

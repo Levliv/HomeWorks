@@ -15,7 +15,7 @@ namespace MyNUnit
     public static class TestRunner
     {
         /// <summary>
-        /// Concurent collection to strore data about the tests
+        /// Concurent collection to store data about the tests
         /// </summary>
         public static BlockingCollection<TestStrcuct> MyTests { get; private set; }
 
@@ -27,32 +27,32 @@ namespace MyNUnit
             Console.WriteLine("Results");
             foreach (var testResult in MyTests)
             {
-                Console.WriteLine($"Method : {testResult.MethodInformation}; {(testResult.IsPassed ? "Passed in " + testResult.TimeConsumed:"")}" +
-                    $"{(testResult.IsFailed ? $"Failed + Expected: {testResult.Expected}, Got: {testResult.Got}":"")}" +
-                    $"{((testResult.IsIgnored)? "Ignored, message = " + testResult.Ignore_message:"")}");
+                Console.WriteLine($"Method : {testResult.MethodInformation}; {(testResult.IsPassed ? "Passed in " + testResult.TimeConsumed : "")}" +
+                    $"{(testResult.IsFailed ? $"Failed + Expected: {testResult.Expected}, Got: {testResult.Got}" : "")}" +
+                    $"{((testResult.IsIgnored) ? "Ignored, message = " + testResult.IgnoreMessage : "")}");
             }
         }
 
         /// <summary>
-        /// Loadign the dll and starting the tests, Cheks for not repeated dlls
+        /// Loading the dll and starting the tests, Cheks for not repeated dlls
         /// </summary>
-        /// <param name="path">Path to folder, loading all the dlls in all the directorieds beneath it as well</param>
+        /// <param name="path">Path to folder, loading all the dlls in all the directories beneath it as well</param>
         public static void Start(string path)
         {
             MyTests = new BlockingCollection<TestStrcuct>();
-            var dllFiles = Directory.GetFiles(path,"*.dll", SearchOption.AllDirectories);
+            var dllFiles = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories);
             var dllFilesNotRepeated = new HashSet<string>();
-            var downloadeddlls = new HashSet<string>();
+            var downloadedDlls = new HashSet<string>();
             foreach (var dll in dllFiles)
             {
-                if (!downloadeddlls.Contains(dll.Split("\\")[^1]))
+                if (!downloadedDlls.Contains(dll.Split("\\")[^1]))
                 {
-                    downloadeddlls.Add(dll.Split("\\")[^1]);
+                    downloadedDlls.Add(dll.Split("\\")[^1]);
                     dllFilesNotRepeated.Add(dll);
                 }
 
             }
-            foreach(var dll in dllFilesNotRepeated)
+            foreach (var dll in dllFilesNotRepeated)
             {
                 var assembly = Assembly.LoadFrom(dll);
                 var types = assembly.GetTypes();
@@ -72,7 +72,7 @@ namespace MyNUnit
         }
 
         /// <summary>
-        /// Invokes the methods with attribues, calling methods corresponding to the attribute type
+        /// Invokes the methods with attributes, calling methods corresponding to the attribute type
         /// </summary>
         /// <typeparam name="AttributeType">BeforeClass - Before - MyTest - After - AfterClass atrributes</typeparam>
         public static void MethodsInvoker<AttributeType>(Type type, object obj = null)
@@ -86,16 +86,16 @@ namespace MyNUnit
             else
             if (typeof(AttributeType) == typeof(BeforeClassAttribute) || typeof(AttributeType) == typeof(AfterClassAttribute))
             {
-
                 test = x => MethodsWithBeforeAndAfterClassAttribute(x, obj);
             }
             else
-            if (typeof(AttributeType) == typeof(BeforeAttribute) || typeof(AttributeType) == typeof(AfterAttribute)){
+            if (typeof(AttributeType) == typeof(BeforeAttribute) || typeof(AttributeType) == typeof(AfterAttribute))
+            {
                 test = x => MethodsWithAfterAndBeforeAttribute(x, obj);
             }
             else
             {
-                throw new Exception("Wrong attribute type");
+                throw new ArgumentException("Wrong attribute type");
             }
             Parallel.ForEach(methodsWithAttribute, test);
         }
@@ -116,10 +116,10 @@ namespace MyNUnit
         public static void MethodsWithMyTestInvoker(MethodInfo methodInfo, object obj)
         {
             obj = ConstuctorFinder(methodInfo);
-            MyTestAttribute attribute = (MyTestAttribute)methodInfo.GetCustomAttribute(typeof(MyTestAttribute), true);
+            var attribute = (MyTestAttribute)methodInfo.GetCustomAttribute(typeof(MyTestAttribute), true);
             if (attribute.Ignore != null)
             {
-                MyTests.Add(new TestStrcuct(methodInfo, isIgnored: true, ignore_message: attribute.Ignore));
+                MyTests.Add(new TestStrcuct(methodInfo, isIgnored: true, ignoreMessage: attribute.Ignore));
             }
             else
             {
@@ -143,7 +143,7 @@ namespace MyNUnit
                         MethodsInvoker<AfterAttribute>(methodInfo.DeclaringType);
                         if (attribute.Expected.Equals(result))
                         {
-                            MyTests.Add(new TestStrcuct(methodInfo, isPassed: true, expected: attribute.Expected, timeConsumed: watch.ElapsedMilliseconds)); ;
+                            MyTests.Add(new TestStrcuct(methodInfo, isPassed: true, expected: attribute.Expected, timeConsumed: watch.ElapsedMilliseconds));
                         }
                         else
                         {
@@ -172,7 +172,6 @@ namespace MyNUnit
         {
             obj = ConstuctorFinder(methodInfo);
             object result = methodInfo.Invoke(obj, null);
-
         }
 
         /// <summary>
@@ -180,14 +179,13 @@ namespace MyNUnit
         /// </summary>
         public static void MethodsWithBeforeAndAfterClassAttribute(MethodInfo methodInfo, object obj)
         {
-            if (!methodInfo.IsStatic && ((methodInfo.GetCustomAttribute(typeof(BeforeClassAttribute)) != null) || (methodInfo.GetCustomAttribute(typeof(AfterClassAttribute)) != null)))
+            if (!methodInfo.IsStatic && ((methodInfo.GetCustomAttribute(typeof(BeforeClassAttribute)) != null) 
+                || (methodInfo.GetCustomAttribute(typeof(AfterClassAttribute)) != null)))
             {
-                Console.WriteLine("Wrong ch");
                 throw new InvalidOperationException("Method to call must me static");
             }
             else
             {
-                Console.WriteLine("Theare");
                 methodInfo.Invoke(obj, null);
             }
         }

@@ -8,7 +8,14 @@ namespace MyNUnit
     [AttributeUsage(AttributeTargets.Method)]
     public class MyTestAttribute : Attribute
     {
-        public object Expected = null;
-        public string Ignore = null;
+        /// <summary>
+        /// Expected value
+        /// </summary>
+        public Type Expected { get; set; } = null;
+
+        /// <summary>
+        /// Message in case test supposed to be ignored
+        /// </summary>
+        public string Ignore { get; set; } = null;
     }
 }
