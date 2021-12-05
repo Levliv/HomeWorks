@@ -21,17 +21,17 @@ public class Client
     /// <summary>
     /// Tcp Client string inforation about current connection
     /// </summary>
-    public TcpClient TcpClient { get; private set; }
+    private TcpClient TcpClient;
 
     /// <summary>
     /// Structs to preserve information about files in directories got from Server by List Request
     /// </summary>
-    public IEnumerable<ResponseFormat>? ResultsOfListResponse { get; private set; }
+    private IEnumerable<ResponseFormat>? ResultsOfListResponse;
 
     /// <summary>
     /// Containing the information about the stream of the current connection
     /// </summary>
-    public NetworkStream? MyStreamReader { get; private set; }
+    private NetworkStream? MyStreamReader;
 
     /// <summary>
     /// Constructor for the Client, creating new TCP client and connecting to the server

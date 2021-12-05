@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MyFTPClient
+﻿namespace MyFTPClient
 {
     /// <summary>
     /// Contating the information about the information got from the server
@@ -14,12 +8,12 @@ namespace MyFTPClient
         /// <summary>
         /// Message size
         /// </summary>
-        public long Size { get; set; }
+        public long Size { get; }
 
         /// <summary>
         /// Data in bytes received by tcp
         /// </summary>
-        public byte[] Data { get; set; }
+        public byte[] Data { get; }
 
         /// <summary>
         /// Constructor for GetResponse, conains data about the lenght and the content of the message

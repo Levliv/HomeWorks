@@ -17,10 +17,10 @@ public class ResponseFormat
     /// <summary>
     /// Contains the imformation about the name of the file/dir
     /// </summary>
-    public string? Name { get; set; }
+    public string? Name { get; }
 
     /// <summary>
     /// Contains the imformation about whether this file is Directory
     /// </summary>
-    public bool IsDir { get; set; }
+    public bool IsDir { get; }
 }
