@@ -1,0 +1,24 @@
+name: Action.NET for MD5
+on:
+  push:
+    branches: [ master, MD5 ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: set up
+      uses: actions/setup-dotnet@v1
+      with:
+          dotnet-version: '5.0'
+          
+    - name: dotnet check
+      run:  dotnet --version
+    - name: Restore
+      run: nuget restore MDA5/MDA5/MDA5.sln
+    - name: building
+      run: dotnet build MDA5/MDA5/MDA5.sln
+    - name: test
+      run: dotnet test MDA5/MDA5/MDA5.sln
