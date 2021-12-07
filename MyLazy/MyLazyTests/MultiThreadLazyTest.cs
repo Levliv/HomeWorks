@@ -17,22 +17,6 @@ namespace MyLazy
         }
 
         /// <summary>
-        /// Testing that One thread Lazy called only once(an init as well), and never called again
-        /// </summary>
-        [Test]
-        public void MultiThreadLazyGetCalledOnlyOnceTest()
-        {
-            var counter = 0;
-            Func<int> func = () => counter++;
-            var lazy = LazyFactory.CreateMultiThreadLazy(func);
-            for (int i = 0; i < 10; ++i)
-            {
-                lazy.Get();
-            }
-            Assert.AreEqual(counter, 1);
-        }
-
-        /// <summary>
         /// Testing Race condition for Multi thread Lazy version
         /// </summary>
         [Test]

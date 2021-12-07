@@ -6,35 +6,36 @@ namespace MyLazy
     /// </summary>
     public class OneThreadLazy<T> : ILazy<T>
     {
-        private Func<T> _supplier;
+        private Func<T> supplier;
+
         /// <summary>
         /// Contains infomation about whether it has been counted 
         /// </summary>
-        private bool IsRecorded = false;
+        private bool isRecorded = false;
 
         /// <summary>
         /// Storing a Recocdet afer Lazy init result
         /// </summary>
-        private T RecordedResult;
+        private T recordedResult;
 
         /// <summary>
         /// One Thread LazyFactory
         /// </summary>
         /// <param name="supplier"></param>
-        public OneThreadLazy(Func<T> supplier) => _supplier = supplier ?? throw new ArgumentNullException("Not ptr is not allowed");
+        public OneThreadLazy(Func<T> supplier) => this.supplier = supplier ?? throw new ArgumentNullException("Not ptr is not allowed");
 
         /// <summary>
         /// One thread getter
         /// </summary>
         public T Get()
         {
-            if (!IsRecorded)
+            if (!isRecorded)
             {
-                RecordedResult = _supplier();
-                _supplier = null;
-                IsRecorded = true;
+                recordedResult = supplier();
+                supplier = null;
+                isRecorded = true;
             }
-            return RecordedResult;
+            return recordedResult;
         }
     }
 }

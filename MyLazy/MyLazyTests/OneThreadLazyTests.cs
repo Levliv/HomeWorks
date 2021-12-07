@@ -1,18 +1,26 @@
 using NUnit.Framework;
 using System;
 using System.Collections;
-
+using System.Threading;
 
 namespace MyLazy
 {
     [TestFixture]
     public class OneThreadLazyTests
     {
+        private static int counter = 0;
+        private static int multiCounter = 0;
+
         /// <summary>
         /// Test data
         /// </summary>
         public static IEnumerable TestData = new object[] { 12, "abc", 'c' };
 
+        public static IEnumerable TestLazy()
+        {
+            yield return LazyFactory.CreateOneThreadLazy(() => counter++);
+            yield return LazyFactory.CreateMultiThreadLazy(() => Interlocked.Increment(ref multiCounter));
+        }
         /// <summary>
         /// Tesing The correctness on Lazy Computation
         /// </summary>
@@ -36,17 +44,15 @@ namespace MyLazy
         /// <summary>
         /// Testing that One thread Lazy called only once(an init as well), and never called again
         /// </summary>
-        [Test]
-        public void OneThreadLazyGetCalledOnlyOnceTest()
+        [TestCaseSource(nameof(TestLazy))]
+        public void LazyGetCalledOnlyOnceTest<T>(ILazy<T> lazy)
         {
-            var counter = 0;
-            Func<int> func = () => counter++;
-            var lazy = LazyFactory.CreateOneThreadLazy(func);
             for (int i = 0; i < 10; ++i)
             {
                 lazy.Get();
             }
-            Assert.AreEqual(counter, 1);
+            Assert.AreEqual(1, counter);
+            Assert.AreEqual(1, multiCounter);
         }
     }
 }

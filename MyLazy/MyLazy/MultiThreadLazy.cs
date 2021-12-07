@@ -7,7 +7,7 @@ namespace MyLazy
     /// </summary>
     public class MultiThreadLazy<T> : ILazy<T>
     {
-        private Func<T> _supplier;
+        private Func<T> supplier;
         private readonly object balanceLock = new object();
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace MyLazy
         /// Constructor for MutiThread
         /// </summary>
         /// <param name="supplier"></param>
-        public MultiThreadLazy(Func<T> supplier) => _supplier = supplier ?? throw new ArgumentNullException("null ptr is not allowed");
+        public MultiThreadLazy(Func<T> supplier) => this.supplier = supplier ?? throw new ArgumentNullException("null ptr is not allowed");
 
         /// <summary>
         /// Multi thread getter
@@ -37,9 +37,9 @@ namespace MyLazy
                 {
                     if (!IsRecorded)
                     {
-                        RecordedResult = _supplier();
+                        RecordedResult = supplier();
                         IsRecorded = true;
-                        _supplier = null;
+                        supplier = null;
                     }
                 }
             }
