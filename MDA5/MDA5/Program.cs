@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace MyMD5;
+namespace MDA5;
 
 class Programm
 {
@@ -39,8 +39,14 @@ class Programm
         }
 
     }
-    public static void Main()
+    public static void Main(string[] args)
     {
+        var path = args[0];
+        if (!Directory.Exists(path))
+        {
+            throw new ArgumentException("Directory does not exists");
+        }
         Timer();
+        Console.WriteLine(BitConverter.ToString(HashCounter.ComputeHashSingleThread(path)));
     }
 }

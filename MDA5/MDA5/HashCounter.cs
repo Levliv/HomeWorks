@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Collections.Concurrent;
 
-namespace MyMD5
+namespace MDA5
 {
-    internal static class HashCounter
+    public static class HashCounter
     {
         public static byte[] ComputeHashSingleThread(string path)
         {
