@@ -3,9 +3,9 @@ using System.Text;
 
 namespace MyFTPClient;
 
-static class Program
+internal static class Program
 {
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
         if (int.TryParse(args[1], out int port) && IPAddress.TryParse(args[0], out IPAddress? ip) && int.TryParse(args[2], out int requestCode))
         {
@@ -38,6 +38,7 @@ static class Program
         else
         {
             Console.WriteLine($"port or ip is not recognised");
+            Console.WriteLine($"CLI expects 3 arguments in the following order: ip, port, request ");
         }
     }
 }

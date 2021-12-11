@@ -24,11 +24,6 @@ public class Client
     private TcpClient TcpClient;
 
     /// <summary>
-    /// Structs to preserve information about files in directories got from Server by List Request
-    /// </summary>
-    private IEnumerable<ResponseFormat>? ResultsOfListResponse;
-
-    /// <summary>
     /// Containing the information about the stream of the current connection
     /// </summary>
     private NetworkStream? MyStreamReader;

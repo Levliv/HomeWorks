@@ -15,7 +15,7 @@ static class Program
         }
         else
         {
-            Console.WriteLine("Program requires two command line options");
+            Console.WriteLine("Program requires two command line options, use them in the following order: ip, port");
         }
     }
 }
