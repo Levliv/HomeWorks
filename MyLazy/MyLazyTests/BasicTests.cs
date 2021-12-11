@@ -9,7 +9,15 @@ namespace MyLazy
     public class OneThreadLazyTests
     {
         private static int counter = 0;
-        private static int multiCounter = 0;
+
+        /// <summary>
+        /// Resetting the counter
+        /// </summary>
+        [SetUp]
+        public void BeforeTest()
+        {
+            counter = 0;
+        }
 
         /// <summary>
         /// Test data
@@ -18,8 +26,8 @@ namespace MyLazy
 
         public static IEnumerable TestLazy()
         {
+            yield return LazyFactory.CreateMultiThreadLazy(() => Interlocked.Increment(ref counter));
             yield return LazyFactory.CreateOneThreadLazy(() => counter++);
-            yield return LazyFactory.CreateMultiThreadLazy(() => Interlocked.Increment(ref multiCounter));
         }
         /// <summary>
         /// Tesing The correctness on Lazy Computation
@@ -51,8 +59,8 @@ namespace MyLazy
             {
                 lazy.Get();
             }
+            //Assert.AreEqual(1, counter);
             Assert.AreEqual(1, counter);
-            Assert.AreEqual(1, multiCounter);
         }
     }
 }

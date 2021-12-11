@@ -13,12 +13,12 @@ namespace MyLazy
         /// <summary>
         /// Contains infomation about whether it has been counted
         /// </summary>
-        private volatile bool IsRecorded = false;
+        private volatile bool isRecorded = false;
 
         /// <summary>
         /// Storing recorded result
         /// </summary>
-        private T RecordedResult;
+        private T recordedResult;
 
         /// <summary>
         /// Constructor for MutiThread
@@ -31,19 +31,19 @@ namespace MyLazy
         /// </summary>
         public T Get()
         {
-            if (!IsRecorded)
+            if (!isRecorded)
             {
                 lock (balanceLock)
                 {
-                    if (!IsRecorded)
+                    if (!isRecorded)
                     {
-                        RecordedResult = supplier();
-                        IsRecorded = true;
+                        recordedResult = supplier();
+                        isRecorded = true;
                         supplier = null;
                     }
                 }
             }
-            return RecordedResult;
+            return recordedResult;
         }
     }
 }
