@@ -24,11 +24,15 @@ namespace MyLazy
         /// </summary>
         public static IEnumerable TestData = new object[] { 12, "abc", 'c' };
 
+        /// <summary>
+        /// Testing Lazies
+        /// </summary>
         public static IEnumerable TestLazy()
         {
             yield return LazyFactory.CreateMultiThreadLazy(() => Interlocked.Increment(ref counter));
             yield return LazyFactory.CreateOneThreadLazy(() => counter++);
         }
+
         /// <summary>
         /// Tesing The correctness on Lazy Computation
         /// </summary>
@@ -38,7 +42,6 @@ namespace MyLazy
             var lazy = LazyFactory.CreateOneThreadLazy(() => d);
             Assert.AreEqual(d, lazy.Get());
         }
-
 
         /// <summary>
         /// Test for null supplier
@@ -59,7 +62,6 @@ namespace MyLazy
             {
                 lazy.Get();
             }
-            //Assert.AreEqual(1, counter);
             Assert.AreEqual(1, counter);
         }
     }
