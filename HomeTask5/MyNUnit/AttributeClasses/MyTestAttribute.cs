@@ -11,7 +11,7 @@ namespace MyNUnit
         /// <summary>
         /// Expected value
         /// </summary>
-        public Type Expected { get; set; } = null;
+        public object Expected { get; set; } = null;
 
         /// <summary>
         /// Message in case test supposed to be ignored

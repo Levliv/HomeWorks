@@ -1,5 +1,4 @@
-﻿using System;
-using MyNUnit;
+﻿using MyNUnit;
 
 namespace Test2
 {
@@ -8,7 +7,7 @@ namespace Test2
         /// <summary>
         /// String to be sure in order of invokation
         /// </summary>
-        public static string Checker = "";
+        public static string Checker { get; set; } = "";
 
         /// <summary>
         /// Adds one symbol to the test string
