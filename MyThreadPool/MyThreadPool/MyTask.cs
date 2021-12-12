@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MyThreadPool
+﻿namespace MyThreadPool
 {
     public class MyTask<TResult> : IMyTask<TResult>
     {
@@ -12,13 +6,13 @@ namespace MyThreadPool
         public AggregateException? AggregateException { get; set; } = null;
         private TResult result;
         private Func<TResult> func;
-        private readonly ManualResetEvent manualResetEvent = new (false);
-        private readonly Queue<Action> continueWithTasks = new ();
+        private readonly ManualResetEvent manualResetEvent = new(false);
+        private readonly Queue<Action> continueWithTasks = new();
         private MyThreadPool myThreadPool;
         private object locker = new();
-        public TResult Result 
+        public TResult Result
         {
-            get 
+            get
             {
                 manualResetEvent.WaitOne();
                 if (AggregateException == null)
@@ -26,9 +20,9 @@ namespace MyThreadPool
                     return result;
                 }
                 throw AggregateException;
-            } 
+            }
         }
-        public MyTask(Func<TResult> func, MyThreadPool myThreadPool) 
+        public MyTask(Func<TResult> func, MyThreadPool myThreadPool)
         {
             this.myThreadPool = myThreadPool;
             this.func = func;
