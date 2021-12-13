@@ -22,7 +22,7 @@ namespace MyThreadPoolTests
             var task1 = threadPool.Add(() => 1);
             var task2 = threadPool.Add(() => 2);
             var task3 = threadPool.Add(() => 3);
-            threadPool.ShotDown();
+            threadPool.ShutDown();
             Assert.AreEqual(1, task1);
             Assert.AreEqual(2, task2);
             Assert.AreEqual(3, task3);
@@ -31,7 +31,7 @@ namespace MyThreadPoolTests
         [Test]
         public void TaskAfterShutDownTest() 
         {
-            threadPool.ShotDown();
+            threadPool.ShutDown();
             var task = threadPool.Add(() => 12);
             Assert.Throws<InvalidOperationException>(delegate { threadPool.Add(() => 12); });
         }
