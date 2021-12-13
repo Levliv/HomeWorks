@@ -10,8 +10,12 @@ namespace MDA5Tests
         [Test]
         public void HashDoesNotChangeTest()
         {
-            Console.WriteLine(HashCounter.ComputeHashSingleThread("..\\..\\..\\..\\Tests"));
-            Assert.Pass();
+            Assert.AreEqual("88-CB-42-90-00-50-CA-9D-45-39-2B-46-F8-DF-26-40", BitConverter.ToString(HashCounter.ComputeHashSingleThread("..\\..\\..\\..\\Tests")));
+        }
+        [Test]
+        public void HashMultiThreadTest()
+        {
+            Assert.AreEqual("88-CB-42-90-00-50-CA-9D-45-39-2B-46-F8-DF-26-40", BitConverter.ToString(HashCounter.ComputeHashMultiThread("..\\..\\..\\..\\Tests")));
         }
     }
 }

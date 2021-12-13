@@ -2,7 +2,7 @@
 
 namespace MDA5;
 
-class Programm
+internal class Programm
 {
     private static (long, double) MethodRunner(Func<byte[]> myMethod)
     {
@@ -27,6 +27,7 @@ class Programm
         var standardDeviationQuadratic = Math.Sqrt(deviation);
         return (avg, standardDeviationQuadratic);
     }
+
     private static void Timer()
     {
         var path = "..\\..\\..\\..\\Tests";
@@ -37,16 +38,22 @@ class Programm
             Console.WriteLine("Single Thread: {0}ms +- {1}ms", singleThreadTime, singleThreadSQD);
             Console.WriteLine("Multi Thread: {0}ms +- {1}ms", MultiThreadTime, MultiThreadSQD);
         }
-
     }
     public static void Main(string[] args)
     {
-        var path = args[0];
-        if (!Directory.Exists(path))
+        try
         {
-            throw new ArgumentException("Directory does not exists");
+            var path = args[0];
+            if (!Directory.Exists(path))
+            {
+                throw new ArgumentException("Directory does not exists");
+            }
+            Timer();
+            Console.WriteLine(BitConverter.ToString(HashCounter.ComputeHashSingleThread(path)));
         }
-        Timer();
-        Console.WriteLine(BitConverter.ToString(HashCounter.ComputeHashSingleThread(path)));
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Argument must be provided: {ex.Message}");
+        }
     }
 }

@@ -1,24 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Concurrent;
 using System.Security.Cryptography;
-using System.Collections.Concurrent;
+using System.Text;
 
 namespace MDA5
 {
+    /// <summary>
+    /// Directory MD5 hash counter
+    /// </summary>
     public static class HashCounter
     {
-        public static byte[] ComputeHashSingleThread(string path)
-        {
-            return ComputeDirectoryHash(path);
-        }
-        public static byte[] ComputeHashMultiThread(string path)
-        {
-            return ComputeDirectoryHash(path);
+        /// <summary>
+        /// Computation Single Thread Directory Hash
+        /// </summary>
+        public static byte[] ComputeHashSingleThread(string path) => ComputeDirectoryHash(path);
 
-        }
+        /// <summary>
+        /// Computation Multi Thread Directory Hash
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static byte[] ComputeHashMultiThread(string path) => ComputeDirectoryHashParallel(path);
+
         private static byte[] ComputeDirectoryHashParallel(string path)
         {
             var dataDir = new BlockingCollection<byte[]>();
