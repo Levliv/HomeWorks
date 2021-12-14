@@ -5,10 +5,6 @@ using System;
 namespace PriorityQueueTests;
 public class Tests
 {
-    [SetUp]
-    public void Setup()
-    {
-    }
 
     [Test]
     public void SingleThreadCorrectness()
@@ -25,25 +21,32 @@ public class Tests
     }
 
     [Test]
-    public void SizeTest()
+    public void MultiThreadTest()
     {
         var priorityQueue = new PriorityQueue.PriorityQueue();
-        var threads = new Thread[4];
-        for (int i = 0; i < threads.Length; ++i)
+        var thread1 = new Thread(() =>
         {
-            threads[i] = new Thread(() =>
-            {
-                priorityQueue.Enqueue(i, i);
-            });
-            threads[i].Start();
-        }
-        for (int i = 0; i < threads.Length; ++i)
+            priorityQueue.Enqueue(12, 1);
+        });
+        var thread2 = new Thread(() =>
         {
-            threads[i].Join();
-        }
-        for (int i = threads.Length; i > 0; --i)
+            priorityQueue.Enqueue(22, 5);
+        });
+        thread1.Start();
+        thread2.Start();
+        thread1.Join();
+        thread2.Join();
+        Assert.AreEqual(22, priorityQueue.Dequeue());
+        Assert.AreEqual(12, priorityQueue.Dequeue());
+    }
+    [Test]
+    public void TestSize()
+    {
+        var priorityQueue = new PriorityQueue.PriorityQueue();
+        for (int i = 0; i < 200; ++i)
         {
-            Assert.AreEqual(i, priorityQueue.Dequeue());
+            priorityQueue.Enqueue(i, i);
         }
+        Assert.AreEqual(200, priorityQueue.Size());
     }
 }
