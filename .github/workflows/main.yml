@@ -17,8 +17,8 @@ jobs:
     - name: dotnet check
       run:  dotnet --version
     - name: Restore
-      run: nuget restore PriorityQueue/PriopityQueue/PriopityQueue.sln
+      run: nuget restore PriorityQueue/PriorotyQueue/PriorotyQueue.sln
     - name: building
-      run: dotnet build PriorityQueue/PriopityQueue/PriopityQueue.sln
+      run: dotnet build PriorityQueue/PriorotyQueue/PriorotyQueue.sln
     - name: test
-      run: dotnet test PriorityQueue/PriopityQueue/PriopityQueue.sln
+      run: dotnet test PriorityQueue/PriorotyQueue/PriorotyQueue.sln
