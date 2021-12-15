@@ -2,17 +2,17 @@
 namespace MyThreadPool;
 public class MyThreadPool
 {
-    public int NumberOfThreads { get; set; }
-    private BlockingCollection<Action>? actions = new();
+    private int NumberOfThreads;
+    private ConcurrentQueue<Action>? actions = new();
     private readonly CancellationTokenSource cancellationTokenSource = new();
-    private object locker = new object();
-    private int ShutedDwonThreads = 0;
+    private object lockerQueue = new object();
     private AutoResetEvent taskAutoResetEvent = new(false);
     private AutoResetEvent shutDownResetEvent = new(false); 
     private int threadCounter;
-
+    private CancellationToken token;
     public MyThreadPool(int numberOfThreads)
     {
+        var token = cancellationTokenSource.Token;
         if (numberOfThreads <= 0)
         {
             throw new ArgumentOutOfRangeException("Number of threads must be positive");
@@ -21,31 +21,50 @@ public class MyThreadPool
         var threads = new Thread[numberOfThreads];
         for (var i = 0; i < threads.Length; i++)
         { 
-            threads[i] = new Thread(() => ExecuteTasks(cancellationTokenSource.Token));
+            threads[i] = new Thread(() => 
+            {
+                while (true)
+                {
+                    if (token.IsCancellationRequested)
+                    {
+                        shutDownResetEvent.Set();
+                        Interlocked.Decrement(ref NumberOfThreads);
+                        break;
+                    }
+                    if (actions.TryDequeue(out Action action))
+                    {
+                        action();
+                    }
+                }
+            });
             threads[i].Start();
-            Interlocked.Increment(ref threadCounter);
         }
 
     }
+
     public void ShutDown()
     {
         cancellationTokenSource.Cancel();
-        lock (locker)
+        Console.WriteLine("Shut 1");
+        lock (lockerQueue)
         {
+            Console.WriteLine("Shut 2");
             while (threadCounter > 0)
             {
+                Console.WriteLine($"Shut thread {threadCounter}");
                 shutDownResetEvent.WaitOne();
-                Interlocked.Decrement(ref threadCounter);
             }
+            Interlocked.Decrement(ref threadCounter);
         }
     }
+
     public IMyTask<T> Add<T>(Func<T> func)
     {
         if (func == null)
         {
             throw new ArgumentNullException(nameof(func));
         }
-        lock (locker) 
+        lock (lockerQueue) 
         {
             if (cancellationTokenSource.IsCancellationRequested)
             { 
@@ -54,27 +73,14 @@ public class MyThreadPool
             var task = new MyTask<T>(func, this);
             try
             {
-                actions.Enqueue(task.Run, cancellationTokenSource.Token);
-                taskAutoResetEvent.Set();
+                actions.Enqueue(task.RunTask);
+                //taskAutoResetEvent.Set();
             }
             catch (Exception ex)
             {
                 throw new InvalidOperationException(ex.Message);
             }
             return task;
-        }
-    }
-    private void ExecuteTasks(CancellationToken cancellationToken)
-    {
-        while (!(cancellationToken.IsCancellationRequested || actions.IsEmpty)) {
-            if (actions.TryDequeue(out Action action))
-            {
-                action();
-            }
-            else
-            {
-                taskAutoResetEvent.WaitOne();
-            }
         }
     }
 
@@ -88,8 +94,11 @@ public class MyThreadPool
         private MyThreadPool myThreadPool;
         private object locker = new();
         private ManualResetEvent manualReset = new(false);
+
         public bool IsCompleted { get; set; } = false;
+
         public AggregateException? AggregateException { get; set; } = null;
+
         public TResult Result
         {
             get
@@ -102,22 +111,20 @@ public class MyThreadPool
                 throw AggregateException;
             }
         }
-        public MyTask(Func<TResult> func, MyThreadPool myThreadPool)
+
+        public MyTask(Func<TResult> func, MyThreadPool threadPool)
         {
             if (func == null)
             {
                 throw new ArgumentNullException(nameof(func));
             }
-            this.myThreadPool = myThreadPool;
+            myThreadPool = threadPool;
             this.func = func;
 
         }
+
         public IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> func)
         {
-            if (func == null)
-            {
-                throw new ArgumentNullException(nameof(func));
-            }
             TNewResult Func() => func(Result);
             var task = new MyTask<TNewResult>(Func, myThreadPool);
             lock (locker)
@@ -126,10 +133,11 @@ public class MyThreadPool
                 {
                     return myThreadPool.Add(Func);
                 }
-                continueWithTasks.Enqueue(task.Run);
+                continueWithTasks.Enqueue(task.RunTask);
                 return task;
             }
         }
+
         public void RunTask()
         {
             try
@@ -147,11 +155,18 @@ public class MyThreadPool
                 {
                     while (continueWithTasks.Count > 0)
                     {
-                        myThreadPool.Add(() => continueWithTasks.TryDequeue());
+                        if (continueWithTasks.TryDequeue(out Action instance))
+                        {
+                            myThreadPool.Add(() => instance);
+                        } 
+                        else
+                        {
+                            throw new ArgumentOutOfRangeException(nameof(continueWithTasks));
+                        }
                     }
                     IsCompleted = true;
                     func = null;
-                    //manualReset.Set();
+                    manualReset.Set();
                 }
             }
         }
