@@ -1,5 +1,8 @@
 ﻿namespace MyThreadPool
 {
+    /// <summary>
+    /// Task representation
+    /// </summary>
     public interface IMyTask<out TResult>
     {
         /// <summary>
@@ -15,9 +18,9 @@
         /// <summary>
         /// Continues computation with TResult
         /// </summary>
-        /// <typeparam name="TNewResult"> Result after computation</typeparam>
-        /// <param name="func">Applies to TResult to get TNewResult</param>
-        /// <returns>Result of applying func</returns>
+        /// <typeparam name="TNewResult"> Result after computation </typeparam>
+        /// <param name="func"> Applies to TResult to get TNewResult </param>
+        /// <returns> Result of applying func </returns>
         IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> func);
     }
 }
