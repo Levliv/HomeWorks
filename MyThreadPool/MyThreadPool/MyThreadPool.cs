@@ -1,5 +1,10 @@
 ﻿using System.Collections.Concurrent;
+
 namespace MyThreadPool;
+
+/// <summary>
+/// MyTPL
+/// </summary>
 public class MyThreadPool
 {
     private int NumberOfThreads;
