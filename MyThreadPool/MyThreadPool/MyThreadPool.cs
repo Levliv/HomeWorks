@@ -8,9 +8,9 @@ namespace MyThreadPool;
 public class MyThreadPool
 {
     private int NumberOfThreads;
-    private ConcurrentQueue<Action>? actions = new();
+    private Queue<Action>? actions = new();
     private readonly CancellationTokenSource cancellationTokenSource = new();
-    private object lockerQueue = new object();
+    private object locker = new object();
     private AutoResetEvent shutDownResetEvent = new(false);
     private CancellationToken token;
 
@@ -53,7 +53,6 @@ public class MyThreadPool
             });
             threads[i].Start();
         }
-
     }
 
     /// <summary>
@@ -63,7 +62,7 @@ public class MyThreadPool
     {
         cancellationTokenSource.Cancel();
         Console.WriteLine("Shut 1");
-        lock (lockerQueue)
+        lock (locker)
         {
             Console.WriteLine("Shut 2");
             while (NumberOfThreads > 0)
@@ -86,7 +85,7 @@ public class MyThreadPool
         {
             throw new ArgumentNullException(nameof(func));
         }
-        lock (lockerQueue)
+        lock (locker)
         {
             if (cancellationTokenSource.IsCancellationRequested)
             {
@@ -109,7 +108,7 @@ public class MyThreadPool
     {
         private TResult result;
         private Func<TResult> func;
-        private readonly ConcurrentQueue<Action> continueWithTasks = new();
+        private readonly Queue<Action> continueWithTasks = new();
         private MyThreadPool myThreadPool;
         private object locker = new();
         private ManualResetEvent manualReset = new(false);
@@ -160,14 +159,15 @@ public class MyThreadPool
         /// </summary>
         public IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> func)
         {
-            TNewResult Func() => func(Result);
-            var task = new MyTask<TNewResult>(Func, myThreadPool);
+            var task = new MyTask<TNewResult>(() => func(Result), myThreadPool);
             lock (locker)
             {
                 if (IsCompleted)
                 {
-                    return myThreadPool.Add(Func);
+                    Console.WriteLine("Completed");
+                    return myThreadPool.Add(() => func(Result));
                 }
+                Console.WriteLine("There");
                 continueWithTasks.Enqueue(task.RunTask);
                 return task;
             }
@@ -185,8 +185,8 @@ public class MyThreadPool
             }
             try
             {
+                Console.WriteLine("try");
                 result = func();
-                func = null;
             }
             catch (Exception ex)
             {
@@ -198,14 +198,8 @@ public class MyThreadPool
                 {
                     while (continueWithTasks.Count > 0)
                     {
-                        if (continueWithTasks.TryDequeue(out Action instance))
-                        {
-                            myThreadPool.Add(() => instance);
-                        }
-                        else
-                        {
-                            throw new ArgumentOutOfRangeException(nameof(continueWithTasks));
-                        }
+                        Console.WriteLine($"Counter : {continueWithTasks.Count}");
+                        myThreadPool.actions.Enqueue(continueWithTasks.Dequeue());
                     }
                     IsCompleted = true;
                     func = null;

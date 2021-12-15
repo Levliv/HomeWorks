@@ -3,6 +3,9 @@ using System;
 
 namespace MyThreadPoolTests
 {
+    /// <summary>
+    /// Testing TPL with some one thread scenario to catch some mistakes
+    /// </summary>
     public class BasicTests
     {
         private MyThreadPool.MyThreadPool threadPool;
@@ -25,8 +28,8 @@ namespace MyThreadPoolTests
             Console.WriteLine("Finish");
             Console.WriteLine("ShutDown OK");
             Assert.AreEqual(1, task1.Result);
-            Assert.AreEqual(2, task2.Result);
             Assert.AreEqual(3, task3.Result);
+            Assert.AreEqual(2, task2.Result);
         }
 
         /// <summary>
@@ -43,6 +46,14 @@ namespace MyThreadPoolTests
         public void NumberOfThreadsTest()
         {
             Assert.AreEqual(1, threadPool.ActiveThreads);
+        }
+
+        [Test]
+        public void ContinueWithTest()
+        {
+            var task = threadPool.Add(() => 111);
+            task = task.ContinueWith((x) => 222);
+            Assert.AreEqual(222, task.Result);
         }
     }
 }
