@@ -19,14 +19,9 @@ namespace MyThreadPoolTests
         [Test]
         public void MultipleTasksComputationTests()
         {
-            Console.WriteLine("First");
             var task1 = threadPool.Add(() => 1);
-            Console.WriteLine("Second");
             var task2 = threadPool.Add(() => 2);
-            Console.WriteLine("Third");
             var task3 = threadPool.Add(() => 3);
-            Console.WriteLine("Finish");
-            Console.WriteLine("ShutDown OK");
             Assert.AreEqual(1, task1.Result);
             Assert.AreEqual(3, task3.Result);
             Assert.AreEqual(2, task2.Result);

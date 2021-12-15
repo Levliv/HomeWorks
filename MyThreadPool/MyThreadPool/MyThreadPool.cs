@@ -1,6 +1,4 @@
-﻿using System.Collections.Concurrent;
-
-namespace MyThreadPool;
+﻿namespace MyThreadPool;
 
 /// <summary>
 /// MyTPL
@@ -61,13 +59,10 @@ public class MyThreadPool
     public void ShutDown()
     {
         cancellationTokenSource.Cancel();
-        Console.WriteLine("Shut 1");
         lock (locker)
         {
-            Console.WriteLine("Shut 2");
             while (NumberOfThreads > 0)
             {
-                Console.WriteLine($"Shut thread {NumberOfThreads}");
                 shutDownResetEvent.WaitOne();
             }
             Interlocked.Decrement(ref NumberOfThreads);
@@ -164,10 +159,8 @@ public class MyThreadPool
             {
                 if (IsCompleted)
                 {
-                    Console.WriteLine("Completed");
                     return myThreadPool.Add(() => func(Result));
                 }
-                Console.WriteLine("There");
                 continueWithTasks.Enqueue(task.RunTask);
                 return task;
             }
@@ -185,7 +178,6 @@ public class MyThreadPool
             }
             try
             {
-                Console.WriteLine("try");
                 result = func();
             }
             catch (Exception ex)
@@ -198,7 +190,6 @@ public class MyThreadPool
                 {
                     while (continueWithTasks.Count > 0)
                     {
-                        Console.WriteLine($"Counter : {continueWithTasks.Count}");
                         myThreadPool.actions.Enqueue(continueWithTasks.Dequeue());
                     }
                     IsCompleted = true;
