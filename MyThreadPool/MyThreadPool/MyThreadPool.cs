@@ -6,10 +6,19 @@ public class MyThreadPool
     private ConcurrentQueue<Action>? actions = new();
     private readonly CancellationTokenSource cancellationTokenSource = new();
     private object lockerQueue = new object();
-    private AutoResetEvent taskAutoResetEvent = new(false);
-    private AutoResetEvent shutDownResetEvent = new(false); 
-    private int threadCounter;
+    private AutoResetEvent shutDownResetEvent = new(false);
     private CancellationToken token;
+
+    /// <summary>
+    /// Returns number of active threads
+    /// </summary>
+    public int ActiveThreads => NumberOfThreads;
+
+    /// <summary>
+    /// Constructor for thread pool
+    /// </summary>
+    /// <param name="numberOfThreads">Number of threads to start</param>
+    /// <exception cref="ArgumentOutOfRangeException"> Exception throws if the number of threads is negative</exception>
     public MyThreadPool(int numberOfThreads)
     {
         var token = cancellationTokenSource.Token;
@@ -20,8 +29,8 @@ public class MyThreadPool
         NumberOfThreads = numberOfThreads;
         var threads = new Thread[numberOfThreads];
         for (var i = 0; i < threads.Length; i++)
-        { 
-            threads[i] = new Thread(() => 
+        {
+            threads[i] = new Thread(() =>
             {
                 while (true)
                 {
@@ -42,6 +51,9 @@ public class MyThreadPool
 
     }
 
+    /// <summary>
+    /// Shuts threads pool down after finishing counting the processed tasks
+    /// </summary>
     public void ShutDown()
     {
         cancellationTokenSource.Cancel();
@@ -49,32 +61,36 @@ public class MyThreadPool
         lock (lockerQueue)
         {
             Console.WriteLine("Shut 2");
-            while (threadCounter > 0)
+            while (NumberOfThreads > 0)
             {
-                Console.WriteLine($"Shut thread {threadCounter}");
+                Console.WriteLine($"Shut thread {NumberOfThreads}");
                 shutDownResetEvent.WaitOne();
             }
-            Interlocked.Decrement(ref threadCounter);
+            Interlocked.Decrement(ref NumberOfThreads);
         }
     }
 
+    /// <summary>
+    /// Adding tasks in TaskQueue
+    /// </summary>
+    /// <exception cref="ArgumentNullException"> Throws if the function is null </exception>
+    /// <exception cref="InvalidOperationException"> Throws if cancellation was requested before adding a task </exception>
     public IMyTask<T> Add<T>(Func<T> func)
     {
         if (func == null)
         {
             throw new ArgumentNullException(nameof(func));
         }
-        lock (lockerQueue) 
+        lock (lockerQueue)
         {
             if (cancellationTokenSource.IsCancellationRequested)
-            { 
+            {
                 throw new InvalidOperationException("Cancellation was requested before you added this task");
             }
             var task = new MyTask<T>(func, this);
             try
             {
                 actions.Enqueue(task.RunTask);
-                //taskAutoResetEvent.Set();
             }
             catch (Exception ex)
             {
@@ -83,8 +99,6 @@ public class MyThreadPool
             return task;
         }
     }
-
-
 
     internal class MyTask<TResult> : IMyTask<TResult>
     {
@@ -95,10 +109,19 @@ public class MyThreadPool
         private object locker = new();
         private ManualResetEvent manualReset = new(false);
 
+        /// <summary>
+        /// Contains the information whether the task is completed
+        /// </summary>
         public bool IsCompleted { get; set; } = false;
 
+        /// <summary>
+        /// Contains an exception in case it has occured while Running the task
+        /// </summary>
         public AggregateException? AggregateException { get; set; } = null;
 
+        /// <summary>
+        /// Contains the result of the task Excecution or throws AggregateException if case it has occured
+        /// </summary>
         public TResult Result
         {
             get
@@ -112,6 +135,10 @@ public class MyThreadPool
             }
         }
 
+        /// <summary>
+        /// Constructor for a MyTask instance
+        /// </summary>
+        /// <exception cref="ArgumentNullException">throws in case func is null </exception>
         public MyTask(Func<TResult> func, MyThreadPool threadPool)
         {
             if (func == null)
@@ -123,6 +150,9 @@ public class MyThreadPool
 
         }
 
+        /// <summary>
+        /// Adding ContinueWith tasks in threadPool
+        /// </summary>
         public IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> func)
         {
             TNewResult Func() => func(Result);
@@ -138,8 +168,16 @@ public class MyThreadPool
             }
         }
 
+        /// <summary>
+        /// Runs a task from the taskQueue
+        /// </summary>
+        /// <exception cref="ArgumentException"> Throws in case shut down was requested before task was run </exception>
         public void RunTask()
         {
+            if (myThreadPool.token.IsCancellationRequested)
+            {
+                throw new ArgumentException("TreadPool was shuted down before you added this task");
+            }
             try
             {
                 result = func();
@@ -158,7 +196,7 @@ public class MyThreadPool
                         if (continueWithTasks.TryDequeue(out Action instance))
                         {
                             myThreadPool.Add(() => instance);
-                        } 
+                        }
                         else
                         {
                             throw new ArgumentOutOfRangeException(nameof(continueWithTasks));

@@ -26,26 +26,29 @@ namespace MyThreadPoolTests
             Console.WriteLine("Third");
             var task3 = threadPool.Add(() => 3);
             Console.WriteLine("Finish");
-            //threadPool.ShutDown();
             Console.WriteLine("ShutDown OK");
             Assert.AreEqual(1, task1.Result);
             Assert.AreEqual(2, task2.Result);
             Assert.AreEqual(3, task3.Result);
+            threadPool.ShutDown();
+
         }
 
-        /*
+        /// <summary>
+        /// Testing that if we try to add task after shut down ThreadPool won't accept it
+        /// </summary>
         [Test]
         public void TaskAfterShutDownTest() 
         {
             threadPool.ShutDown();
-            var task = threadPool.Add(() => 12);
             Assert.Throws<InvalidOperationException>(delegate { threadPool.Add(() => 12); });
         }
-        */
+        
+        
         [Test]
         public void NumberOfThreadsTest()
         {
-            Assert.Pass();
+            Assert.AreEqual(1, threadPool.ActiveThreads);
         }
     }
 }
