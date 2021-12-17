@@ -14,11 +14,5 @@ namespace MyThreadPoolTests
         {
             Assert.Throws<ArgumentOutOfRangeException> (() => new MyThreadPool.MyThreadPool(-3));
         }
-
-        [Test]
-        public void MultiThreadComutation()
-        {
-
-        }
     }
 }

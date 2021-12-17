@@ -8,7 +8,7 @@ public class MyThreadPool
     private int NumberOfThreads;
     private Queue<Action>? actions = new();
     private readonly CancellationTokenSource cancellationTokenSource = new();
-    private object locker = new object();
+    private object lockerQueue = new object();
     private AutoResetEvent shutDownResetEvent = new(false);
     private CancellationToken token;
 
@@ -59,7 +59,7 @@ public class MyThreadPool
     public void ShutDown()
     {
         cancellationTokenSource.Cancel();
-        lock (locker)
+        lock (lockerQueue)
         {
             while (NumberOfThreads > 0)
             {
@@ -80,7 +80,7 @@ public class MyThreadPool
         {
             throw new ArgumentNullException(nameof(func));
         }
-        lock (locker)
+        lock (lockerQueue)
         {
             if (cancellationTokenSource.IsCancellationRequested)
             {
@@ -99,7 +99,7 @@ public class MyThreadPool
         }
     }
 
-    internal class MyTask<TResult> : IMyTask<TResult>
+    public class MyTask<TResult> : IMyTask<TResult>
     {
         private TResult result;
         private Func<TResult> func;
@@ -157,12 +157,14 @@ public class MyThreadPool
             var task = new MyTask<TNewResult>(() => func(Result), myThreadPool);
             lock (locker)
             {
-                if (IsCompleted)
-                {
-                    return myThreadPool.Add(() => func(Result));
+                lock (myThreadPool.lockerQueue) {
+                    if (IsCompleted)
+                    {
+                        return myThreadPool.Add(() => func(Result));
+                    }
+                    continueWithTasks.Enqueue(task.RunTask);
+                    return task;
                 }
-                continueWithTasks.Enqueue(task.RunTask);
-                return task;
             }
         }
 
