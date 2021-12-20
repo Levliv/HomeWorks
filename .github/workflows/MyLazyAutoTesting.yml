@@ -1,0 +1,24 @@
+name: Action.NET for MyLazy
+on:
+  push:
+    branches: [ master, MyLazy ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: set up
+      uses: actions/setup-dotnet@v1
+      with:
+          dotnet-version: '5.0'
+          
+    - name: dotnet check
+      run:  dotnet --version
+    - name: Restore
+      run: nuget restore MyLazy/MyLazy/MyLazy.sln
+    - name: building
+      run: dotnet build MyLazy/MyLazy/MyLazy.sln
+    - name: test
+      run: dotnet test MyLazy/MyLazy/MyLazy.sln
