@@ -21,10 +21,10 @@ public class Client
     /// <summary>
     /// Tcp Client string inforation about current connection
     /// </summary>
-    private TcpClient TcpClient;
+    private TcpClient tcpClient;
 
     /// <summary>
-    /// Containing the information about the stream of the current connection
+    /// Containing the stream of the current connection
     /// </summary>
     private NetworkStream? MyStreamReader;
 
@@ -33,7 +33,7 @@ public class Client
     /// </summary>
     public Client(string ipString, int port)
     {
-        TcpClient = new TcpClient();
+        tcpClient = new TcpClient();
         IpString = ipString;
         Port = port;
     }
@@ -45,11 +45,11 @@ public class Client
     /// <returns>Sequence of data in base ResponseFormat</returns>
     public IEnumerable<ResponseFormat> List(string path)
     {
-        if (!TcpClient.Connected)
+        if (!tcpClient.Connected)
         {
-            TcpClient.Connect(IpString, Port);
+            tcpClient.Connect(IpString, Port);
         }
-        var networkStream = TcpClient.GetStream();
+        var networkStream = tcpClient.GetStream();
         var streamWriter = new StreamWriter(networkStream);
         streamWriter.WriteLine(1 + " " + path);
         streamWriter.Flush();
@@ -70,17 +70,17 @@ public class Client
     /// <returns> Base struct GetResponseStruct</returns>
     public GetResponseStruct Get(string path)
     {
-        TcpClient.Connect(IpString, Port);
-        using var networkStream = TcpClient.GetStream();
+        tcpClient.Connect(IpString, Port);
+        using var networkStream = tcpClient.GetStream();
         using var streamWriter = new StreamWriter(networkStream);
         streamWriter.WriteLine(2 + " " + path);
         streamWriter.Flush();
-        MyStreamReader = TcpClient.GetStream();
+        MyStreamReader = tcpClient.GetStream();
         var streamReader = new StreamReader(MyStreamReader);
         var messageLength = int.Parse(streamReader.ReadLine());
         using var streamBinaryReader = new BinaryReader(MyStreamReader);
         var bytes = streamBinaryReader.ReadBytes(messageLength);
-        var result = new GetResponseStruct(messageLength, bytes);
+        var result = new GetResponseStruct(bytes);
         return result;
     }
 }

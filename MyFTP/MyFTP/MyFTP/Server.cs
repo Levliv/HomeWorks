@@ -102,10 +102,7 @@ public class Server
             var dataBytes = File.ReadAllBytes(path);
             return (dataBytes.Length, dataBytes);
         }
-        else
-        {
-            return (-1, new byte[0]);
-        }
+        return (-1, new byte[0]);
     }
 
 
@@ -116,7 +113,7 @@ public class Server
     {
         var listener = new TcpListener(Ip, Port);
         listener.Start();
-        List<Task> list = new List<Task>();
+        var list = new List<Task>();
         while (true)
         {
             list.Add(Task.Run(async () =>
@@ -150,7 +147,7 @@ public class Server
                         }
                 }
             }));
-            await Task.WhenAll(list);
         }
+        Task.WhenAll(list);
     }
 }

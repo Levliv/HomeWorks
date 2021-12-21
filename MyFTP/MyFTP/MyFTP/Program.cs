@@ -7,7 +7,7 @@ static class Program
 {
     static void Main(string[] args)
     {
-        if (IPAddress.TryParse(args[0], out IPAddress? ip) && int.TryParse(args[1], out int port))
+        if (args.Length == 2 && IPAddress.TryParse(args[0], out IPAddress? ip) && int.TryParse(args[1], out int port))
         {
             var server = new Server(ip, port);
             var task1 = Task.Run(() => server.ServerMethodAsync());

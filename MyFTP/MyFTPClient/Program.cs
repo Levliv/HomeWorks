@@ -7,6 +7,11 @@ internal static class Program
 {
     private static void Main(string[] args)
     {
+        if (args.Length != 3)
+        {
+            Console.WriteLine($"CLI expects 3 arguments in the following order: ip, port, request ");
+            return;
+        }
         if (int.TryParse(args[1], out int port) && IPAddress.TryParse(args[0], out IPAddress? ip) && int.TryParse(args[2], out int requestCode))
         {
             string ipString = args[0];
@@ -38,7 +43,6 @@ internal static class Program
         else
         {
             Console.WriteLine($"port or ip is not recognised");
-            Console.WriteLine($"CLI expects 3 arguments in the following order: ip, port, request ");
         }
     }
 }
