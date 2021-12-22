@@ -1,10 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace MyFTP;
 
@@ -27,6 +23,11 @@ public class Server
     /// Ip of the server
     /// </summary>
     public IPAddress Ip { get; private set; }
+
+    /// <summary>
+    /// To stop the server, all requests recieved before cancellation will be processed.
+    /// </summary>
+    public CancellationTokenSource cts { get; set; } = new();
 
     /// <summary>
     /// Constructor for Server
@@ -114,7 +115,7 @@ public class Server
         var listener = new TcpListener(Ip, Port);
         listener.Start();
         var list = new List<Task>();
-        while (true)
+        while (!cts.IsCancellationRequested)
         {
             list.Add(Task.Run(async () =>
             {
@@ -148,6 +149,6 @@ public class Server
                 }
             }));
         }
-        Task.WhenAll(list);
+        await Task.WhenAll(list);
     }
 }
