@@ -24,11 +24,6 @@ public class Client
     private TcpClient tcpClient;
 
     /// <summary>
-    /// Containing the stream of the current connection
-    /// </summary>
-    private NetworkStream? MyStreamReader;
-
-    /// <summary>
     /// Constructor for the Client, creating new TCP client and connecting to the server
     /// </summary>
     public Client(string ipString, int port)
@@ -75,10 +70,10 @@ public class Client
         using var streamWriter = new StreamWriter(networkStream);
         streamWriter.WriteLine(2 + " " + path);
         streamWriter.Flush();
-        MyStreamReader = tcpClient.GetStream();
-        var streamReader = new StreamReader(MyStreamReader);
+        var myStreamReader = tcpClient.GetStream();
+        var streamReader = new StreamReader(myStreamReader);
         var messageLength = int.Parse(streamReader.ReadLine());
-        using var streamBinaryReader = new BinaryReader(MyStreamReader);
+        using var streamBinaryReader = new BinaryReader(myStreamReader);
         var bytes = streamBinaryReader.ReadBytes(messageLength);
         var result = new GetResponseStruct(bytes);
         return result;
