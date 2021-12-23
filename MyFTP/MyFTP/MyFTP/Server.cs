@@ -84,9 +84,9 @@ public class Server
     /// </summary>
     /// <param name="path">path to the directory we need to look at</param>
     /// <returns>srting in format string with server respond</returns>
-    public string List(string path)
+    public async Task<string> List(string path)
     {
-        var (size, name) = ListProsess(path);
+        var (size, name) = await Task.Run(() => ListProsess(path));
 
         return size != -1 ? $"{size} {name}" : "-1";
     }
@@ -96,11 +96,11 @@ public class Server
     /// </summary>
     /// <param name="path">File path</param>
     /// <returns>Size of file, massive of bytes(file)</returns>
-    public (long size, byte[] content) Get(string path)
+    public async Task<(long size, byte[] content)> Get(string path)
     {
         if (File.Exists(path))
         {
-            var dataBytes = File.ReadAllBytes(path);
+            var dataBytes = await Task.Run(() => File.ReadAllBytes(path));
             return (dataBytes.Length, dataBytes);
         }
         return (-1, new byte[0]);
@@ -130,13 +130,13 @@ public class Server
                     case 1: // List request Case
                         {
                             using var streamWriter = new StreamWriter(networkStream);
-                            streamWriter.WriteLine(List(DataPath + requestPath));
+                            streamWriter.WriteLine(List(DataPath + requestPath).Result);
                             streamWriter.Flush();
                             break;
                         }
                     case 2: // Get request Case
                         {
-                            var (size, bytes) = Get(DataPath + requestPath);
+                            var (size, bytes) = Get(DataPath + requestPath).Result;
                             using var streamWriter = new StreamWriter(networkStream);
                             var sizeOfMessage = bytes.Length;
                             streamWriter.WriteLine(sizeOfMessage);

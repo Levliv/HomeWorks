@@ -8,12 +8,17 @@
         /// <summary>
         /// Data in bytes received by tcp
         /// </summary>
-        public byte[] Data { get; }
+        public byte[] Data { get; set; }
 
         /// <summary>
         /// Message size
         /// </summary>
         public long Size() => Data.Length;
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public GetResponseStruct() {}
 
         /// <summary>
         /// Constructor for GetResponse, conains data about the lenght and the content of the message

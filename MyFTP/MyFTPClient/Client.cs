@@ -2,7 +2,6 @@
 
 namespace MyFTPClient;
 
-
 /// <summary>
 /// Class for Client of TCP protocol
 /// </summary>
@@ -38,23 +37,27 @@ public class Client
     /// </summary>
     /// <param name="path">provided path, where to look</param>
     /// <returns>Sequence of data in base ResponseFormat</returns>
-    public List<ResponseFormat> List(string path)
+    public async Task<List<ResponseFormat>> List(string path)
     {
-        if (!tcpClient.Connected)
+        var files = await Task.Run(() =>
         {
-            tcpClient.Connect(IpString, Port);
-        }
-        var networkStream = tcpClient.GetStream();
-        var streamWriter = new StreamWriter(networkStream);
-        streamWriter.WriteLine(1 + " " + path);
-        streamWriter.Flush();
-        var streamReader = new StreamReader(networkStream);
-        var strings = streamReader.ReadLine().Split(" ");
-        var files = new List<ResponseFormat>();
-        for (var i = 1; i < int.Parse(strings[0]) * 2; i += 2)
-        {
-            files.Add(new ResponseFormat(strings[i], strings[i + 1]));
-        }
+            if (!tcpClient.Connected)
+            {
+                tcpClient.Connect(IpString, Port);
+            }
+            var networkStream = tcpClient.GetStream();
+            var streamWriter = new StreamWriter(networkStream);
+            streamWriter.WriteLine(1 + " " + path);
+            streamWriter.Flush();
+            var streamReader = new StreamReader(networkStream);
+            var strings = streamReader.ReadLine().Split(" ");
+            var files = new List<ResponseFormat>();
+            for (var i = 1; i < int.Parse(strings[0]) * 2; i += 2)
+            {
+                files.Add(new ResponseFormat(strings[i], strings[i + 1]));
+            }
+            return files;
+        });
         return files;
     }
 
@@ -63,19 +66,22 @@ public class Client
     /// </summary>
     /// <param name="path">provided relative path</param>
     /// <returns> Base struct GetResponseStruct</returns>
-    public GetResponseStruct Get(string path)
+    public async Task<GetResponseStruct> Get(string path)
     {
-        tcpClient.Connect(IpString, Port);
-        using var networkStream = tcpClient.GetStream();
-        using var streamWriter = new StreamWriter(networkStream);
-        streamWriter.WriteLine(2 + " " + path);
-        streamWriter.Flush();
-        var myStreamReader = tcpClient.GetStream();
-        var streamReader = new StreamReader(myStreamReader);
-        var messageLength = int.Parse(streamReader.ReadLine());
-        using var streamBinaryReader = new BinaryReader(myStreamReader);
-        var bytes = streamBinaryReader.ReadBytes(messageLength);
-        var result = new GetResponseStruct(bytes);
+        GetResponseStruct result = await Task.Run(() =>
+        {
+            tcpClient.Connect(IpString, Port);
+            using var networkStream = tcpClient.GetStream();
+            using var streamWriter = new StreamWriter(networkStream);
+            streamWriter.WriteLine(2 + " " + path);
+            streamWriter.Flush();
+            var myStreamReader = tcpClient.GetStream();
+            var streamReader = new StreamReader(myStreamReader);
+            var messageLength = int.Parse(streamReader.ReadLine());
+            using var streamBinaryReader = new BinaryReader(myStreamReader);
+            var bytes = streamBinaryReader.ReadBytes(messageLength);
+            return new GetResponseStruct(bytes);
+        });
         return result;
     }
 }

@@ -45,7 +45,7 @@ public class MyFTPTests
             expectedString.Append(fileName);
             expectedString.Append(' ');
         }
-        var result = client.List("./Tests/Files");
+        var result = client.List("./Tests/Files").Result;
         var resultString = new StringBuilder();
         foreach (var file in result)
         {
@@ -65,7 +65,7 @@ public class MyFTPTests
     {
 
         var client = new Client("127.0.0.1", 8000);
-        var result = client.Get("./Tests/Files/TestFile.txt");
+        var result = client.Get("./Tests/Files/TestFile.txt").Result;
         Assert.AreEqual("Abracanabra\r\n2nd line", (Encoding.UTF8.GetString(result.Data)));
     }
 }

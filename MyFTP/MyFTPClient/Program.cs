@@ -26,12 +26,12 @@ internal static class Program
                 var client = new Client(ipString, port);
                 if (requestCode == 2)
                 {
-                    var GetResponse = client.Get(path);
+                    var GetResponse = client.Get(path).Result;
                     Console.WriteLine(Encoding.UTF8.GetString(GetResponse.Data));
                 }
                 else if (requestCode == 1)
                 {
-                    var ResultsOfListResponse = client.List(path);
+                    var ResultsOfListResponse = client.List(path).Result;
                     Console.Write(ResultsOfListResponse.Count() + " ");
                     foreach (var item in ResultsOfListResponse)
                     {

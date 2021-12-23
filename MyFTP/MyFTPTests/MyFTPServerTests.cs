@@ -27,7 +27,7 @@ class MyFTPServerTests
     public void TestServerGet()
     {
         string path = "../../../.." + "/Tests/Files/TestFile.txt";
-        var (size, data) = server.Get(path);
+        var (size, data) = server.Get(path).Result;
         Assert.AreEqual(21, size);
         Assert.AreEqual("Abracanabra\r\n2nd line", Encoding.UTF8.GetString(data));
     }
@@ -39,7 +39,7 @@ class MyFTPServerTests
     public void TestServerList()
     {
         string path = "../../../.." + "/Tests/Files";
-        var responseString = server.List(path);
+        var responseString = server.List(path).Result;
         Assert.AreEqual("2 ./Tests/Files/TestFile.txt false ./Tests/Files/TestDir true", responseString);
     }
 }
