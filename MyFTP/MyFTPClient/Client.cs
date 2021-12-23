@@ -38,7 +38,7 @@ public class Client
     /// </summary>
     /// <param name="path">provided path, where to look</param>
     /// <returns>Sequence of data in base ResponseFormat</returns>
-    public IEnumerable<ResponseFormat> List(string path)
+    public List<ResponseFormat> List(string path)
     {
         if (!tcpClient.Connected)
         {
