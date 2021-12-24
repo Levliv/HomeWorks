@@ -5,15 +5,16 @@
 /// </summary>
 public class MyThreadPool
 {
-    private int bumberOfThreads;
+    private int numberOfThreads;
     private Queue<Action> actions = new();
     private readonly CancellationTokenSource cancellationTokenSource = new();
     private AutoResetEvent shutDownResetEvent = new(false);
+    private Thread[] threads;
 
     /// <summary>
     /// Returns number of active threads
     /// </summary>
-    public int ActiveThreads => bumberOfThreads;
+    public int ActiveThreads => numberOfThreads;
 
     /// <summary>
     /// Constructor for thread pool
@@ -27,8 +28,8 @@ public class MyThreadPool
         {
             throw new ArgumentOutOfRangeException("Number of threads must be positive");
         }
-        bumberOfThreads = numberOfThreads;
-        var threads = new Thread[numberOfThreads];
+        this.numberOfThreads = numberOfThreads;
+        threads = new Thread[this.numberOfThreads];
         for (var i = 0; i < threads.Length; i++)
         {
             threads[i] = new Thread(() =>
@@ -38,7 +39,7 @@ public class MyThreadPool
                     if (token.IsCancellationRequested)
                     {
                         shutDownResetEvent.Set();
-                        Interlocked.Decrement(ref bumberOfThreads);
+                        Interlocked.Decrement(ref this.numberOfThreads);
                         break;
                     }
                     if (actions.TryDequeue(out Action action))
@@ -59,11 +60,11 @@ public class MyThreadPool
         cancellationTokenSource.Cancel();
         lock (actions)
         {
-            while (bumberOfThreads > 0)
+            while (numberOfThreads > 0)
             {
                 shutDownResetEvent.WaitOne();
             }
-            Interlocked.Decrement(ref bumberOfThreads);
+            Interlocked.Decrement(ref numberOfThreads);
         }
     }
 
@@ -98,15 +99,14 @@ public class MyThreadPool
     {
         private TResult result;
         private Func<TResult> func;
-        private readonly Queue<Action> continueWithTasks = new();
+        private Queue<Action> continueWithTasks;
         private MyThreadPool myThreadPool;
-        private object locker = new();
-        private ManualResetEvent manualReset = new(false);
+        private ManualResetEvent manualReset;
 
         /// <summary>
         /// Contains the information whether the task is completed
         /// </summary>
-        public bool IsCompleted { get; set; } = false;
+        public bool IsCompleted { get; private set; } = false;
 
         /// <summary>
         /// Contains an exception in case it has occured while Running the task
@@ -135,12 +135,11 @@ public class MyThreadPool
         /// <exception cref="ArgumentNullException">throws in case func is null </exception>
         public MyTask(Func<TResult> func, MyThreadPool threadPool)
         {
-            if (func == null)
-            {
-                throw new ArgumentNullException(nameof(func));
-            }
+            ArgumentNullException.ThrowIfNull(func);
             myThreadPool = threadPool;
             this.func = func;
+            continueWithTasks = new();
+            manualReset = new(false);
         }
 
         /// <summary>
@@ -149,7 +148,7 @@ public class MyThreadPool
         public IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> func)
         {
             var task = new MyTask<TNewResult>(() => func(Result), myThreadPool);
-            lock (locker)
+            lock (continueWithTasks)
             {
                 lock (myThreadPool.actions) 
                 {
@@ -183,7 +182,7 @@ public class MyThreadPool
             }
             finally
             {
-                lock (locker)
+                lock (continueWithTasks)
                 {
                     while (continueWithTasks.Count > 0)
                     {
