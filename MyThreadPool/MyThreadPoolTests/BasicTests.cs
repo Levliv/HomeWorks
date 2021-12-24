@@ -34,7 +34,7 @@ namespace MyThreadPoolTests
         public void TaskAfterShutDownTest()
         {
             threadPool.ShutDown();
-            Assert.Throws<InvalidOperationException>(delegate { threadPool.Add(() => 12); });
+            Assert.Throws<InvalidOperationException>(() => threadPool.Add(() => 12));
         }
 
         [Test]

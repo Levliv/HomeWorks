@@ -5,17 +5,15 @@
 /// </summary>
 public class MyThreadPool
 {
-    private int NumberOfThreads;
-    private Queue<Action>? actions = new();
+    private int bumberOfThreads;
+    private Queue<Action> actions = new();
     private readonly CancellationTokenSource cancellationTokenSource = new();
-    private object lockerQueue = new object();
     private AutoResetEvent shutDownResetEvent = new(false);
-    private CancellationToken token;
 
     /// <summary>
     /// Returns number of active threads
     /// </summary>
-    public int ActiveThreads => NumberOfThreads;
+    public int ActiveThreads => bumberOfThreads;
 
     /// <summary>
     /// Constructor for thread pool
@@ -29,7 +27,7 @@ public class MyThreadPool
         {
             throw new ArgumentOutOfRangeException("Number of threads must be positive");
         }
-        NumberOfThreads = numberOfThreads;
+        bumberOfThreads = numberOfThreads;
         var threads = new Thread[numberOfThreads];
         for (var i = 0; i < threads.Length; i++)
         {
@@ -40,7 +38,7 @@ public class MyThreadPool
                     if (token.IsCancellationRequested)
                     {
                         shutDownResetEvent.Set();
-                        Interlocked.Decrement(ref NumberOfThreads);
+                        Interlocked.Decrement(ref bumberOfThreads);
                         break;
                     }
                     if (actions.TryDequeue(out Action action))
@@ -59,13 +57,13 @@ public class MyThreadPool
     public void ShutDown()
     {
         cancellationTokenSource.Cancel();
-        lock (lockerQueue)
+        lock (actions)
         {
-            while (NumberOfThreads > 0)
+            while (bumberOfThreads > 0)
             {
                 shutDownResetEvent.WaitOne();
             }
-            Interlocked.Decrement(ref NumberOfThreads);
+            Interlocked.Decrement(ref bumberOfThreads);
         }
     }
 
@@ -76,11 +74,8 @@ public class MyThreadPool
     /// <exception cref="InvalidOperationException"> Throws if cancellation was requested before adding a task </exception>
     public IMyTask<T> Add<T>(Func<T> func)
     {
-        if (func == null)
-        {
-            throw new ArgumentNullException(nameof(func));
-        }
-        lock (lockerQueue)
+        ArgumentNullException.ThrowIfNull(func);
+        lock (actions)
         {
             if (cancellationTokenSource.IsCancellationRequested)
             {
@@ -146,7 +141,6 @@ public class MyThreadPool
             }
             myThreadPool = threadPool;
             this.func = func;
-
         }
 
         /// <summary>
@@ -157,7 +151,8 @@ public class MyThreadPool
             var task = new MyTask<TNewResult>(() => func(Result), myThreadPool);
             lock (locker)
             {
-                lock (myThreadPool.lockerQueue) {
+                lock (myThreadPool.actions) 
+                {
                     if (IsCompleted)
                     {
                         return myThreadPool.Add(() => func(Result));
@@ -174,7 +169,7 @@ public class MyThreadPool
         /// <exception cref="ArgumentException"> Throws in case shut down was requested before task was run </exception>
         public void RunTask()
         {
-            if (myThreadPool.token.IsCancellationRequested)
+            if (myThreadPool.cancellationTokenSource.IsCancellationRequested)
             {
                 throw new ArgumentException("TreadPool was shuted down before you added this task");
             }
