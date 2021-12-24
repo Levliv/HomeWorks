@@ -60,7 +60,6 @@ namespace MyThreadPoolTests
             Assert.AreEqual(1, threadPool.ActiveThreads);
         }
 
-        /*
         [Test]
         public void ContinueWithTest()
         {
@@ -68,6 +67,5 @@ namespace MyThreadPoolTests
             task = task.ContinueWith((x) => 222);
             Assert.AreEqual(222, task.Result);
         }
-        */
     }
 }
