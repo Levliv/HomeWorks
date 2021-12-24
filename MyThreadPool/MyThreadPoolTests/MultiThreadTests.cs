@@ -24,16 +24,6 @@ namespace MyThreadPoolTests
         }
 
         [Test]
-        public void TwoTaskMultiThreadComputationTest()
-        {
-            var threadPool = new MyThreadPool.MyThreadPool(2);
-            var task1 = threadPool.Add(() => 1);
-            var task2 = threadPool.Add(() => 2);
-            Assert.AreEqual(1, task1.Result);
-            Assert.AreEqual(2, task2.Result);
-        }
-
-        [Test]
         public void MultiTaskMultiThreadComputationTest()
         {
             var threadPool = new MyThreadPool.MyThreadPool(2);

@@ -8,7 +8,6 @@ public class MyThreadPool
     private int numberOfThreads;
     private Queue<Action> actions = new();
     private readonly CancellationTokenSource cancellationTokenSource = new();
-    private AutoResetEvent shutDownResetEvent = new(false);
     private AutoResetEvent newTask = new(false);
     private Thread[] threads;
 
@@ -37,15 +36,17 @@ public class MyThreadPool
             {
                 while (!token.IsCancellationRequested)
                 {
-                    newTask.WaitOne();
+                    while (actions.Count == 0)
+                    {
+                        if (token.IsCancellationRequested)
+                        {
+                            break;
+                        }
+                    }
                     if (actions.TryDequeue(out Action action))
                     {
                         action();
                     }
-                }
-                if (token.IsCancellationRequested)
-                {
-                    shutDownResetEvent.Set();
                 }
             });
             threads[i].Start();
@@ -61,7 +62,10 @@ public class MyThreadPool
         for (int i = 0; i < threads.Length; ++i)
         {
             newTask.Set();
-            threads[i].Join();
+            while(actions.Count() > 0)
+            {
+                continue;
+            }
         }
     }
 
@@ -75,21 +79,21 @@ public class MyThreadPool
         ArgumentNullException.ThrowIfNull(func);
         lock (actions)
         {
-            if (cancellationTokenSource.IsCancellationRequested)
+            if (!cancellationTokenSource.IsCancellationRequested)
             {
-                throw new InvalidOperationException("Cancellation was requested before you added this task");
+                var task = new MyTask<T>(func, this);
+                try
+                {
+                    actions.Enqueue(task.RunTask);
+                    newTask.Set();
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException(ex.Message);
+                }
+                return task;
             }
-            var task = new MyTask<T>(func, this);
-            try
-            {
-                actions.Enqueue(task.RunTask);
-                newTask.Set();
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException(ex.Message);
-            }
-            return task;
+            throw new InvalidOperationException();
         }
     }
 

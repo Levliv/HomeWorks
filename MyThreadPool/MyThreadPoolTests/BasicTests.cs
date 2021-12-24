@@ -33,7 +33,6 @@ namespace MyThreadPoolTests
             Assert.AreEqual(2, task2.Result);
         }
 
-        /*
         [Test]
         public void MultipleTasksComputationTests()
         {
@@ -44,7 +43,6 @@ namespace MyThreadPoolTests
             Assert.AreEqual(3, task3.Result);
             Assert.AreEqual(2, task2.Result);
         }
-        */
 
         /// <summary>
         /// Testing that if we try to add task after shut down ThreadPool won't accept it
