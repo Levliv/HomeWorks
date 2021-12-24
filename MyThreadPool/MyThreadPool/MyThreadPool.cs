@@ -9,6 +9,7 @@ public class MyThreadPool
     private Queue<Action> actions = new();
     private readonly CancellationTokenSource cancellationTokenSource = new();
     private AutoResetEvent shutDownResetEvent = new(false);
+    private AutoResetEvent newTask = new(false);
     private Thread[] threads;
 
     /// <summary>
@@ -34,18 +35,17 @@ public class MyThreadPool
         {
             threads[i] = new Thread(() =>
             {
-                while (true)
+                while (!token.IsCancellationRequested)
                 {
-                    if (token.IsCancellationRequested)
-                    {
-                        shutDownResetEvent.Set();
-                        Interlocked.Decrement(ref this.numberOfThreads);
-                        break;
-                    }
+                    newTask.WaitOne();
                     if (actions.TryDequeue(out Action action))
                     {
                         action();
                     }
+                }
+                if (token.IsCancellationRequested)
+                {
+                    shutDownResetEvent.Set();
                 }
             });
             threads[i].Start();
@@ -56,15 +56,12 @@ public class MyThreadPool
     /// Shuts threads pool down after finishing counting the processed tasks
     /// </summary>
     public void ShutDown()
-    {
+    {   
         cancellationTokenSource.Cancel();
-        lock (actions)
+        for (int i = 0; i < threads.Length; ++i)
         {
-            while (numberOfThreads > 0)
-            {
-                shutDownResetEvent.WaitOne();
-            }
-            Interlocked.Decrement(ref numberOfThreads);
+            newTask.Set();
+            threads[i].Join();
         }
     }
 
@@ -86,6 +83,7 @@ public class MyThreadPool
             try
             {
                 actions.Enqueue(task.RunTask);
+                newTask.Set();
             }
             catch (Exception ex)
             {
@@ -101,7 +99,7 @@ public class MyThreadPool
         private Func<TResult> func;
         private Queue<Action> continueWithTasks;
         private MyThreadPool myThreadPool;
-        private ManualResetEvent manualReset;
+        private ManualResetEvent manualReset = new(false);
 
         /// <summary>
         /// Contains the information whether the task is completed
@@ -139,7 +137,6 @@ public class MyThreadPool
             myThreadPool = threadPool;
             this.func = func;
             continueWithTasks = new();
-            manualReset = new(false);
         }
 
         /// <summary>
@@ -168,10 +165,6 @@ public class MyThreadPool
         /// <exception cref="ArgumentException"> Throws in case shut down was requested before task was run </exception>
         public void RunTask()
         {
-            if (myThreadPool.cancellationTokenSource.IsCancellationRequested)
-            {
-                throw new ArgumentException("TreadPool was shuted down before you added this task");
-            }
             try
             {
                 result = func();
@@ -182,15 +175,15 @@ public class MyThreadPool
             }
             finally
             {
+                IsCompleted = true;
+                manualReset.Set();
+                func = null;
                 lock (continueWithTasks)
                 {
                     while (continueWithTasks.Count > 0)
                     {
-                        myThreadPool.actions.Enqueue(continueWithTasks.Dequeue());
+                        myThreadPool.Add(() => continueWithTasks.Dequeue());
                     }
-                    IsCompleted = true;
-                    func = null;
-                    manualReset.Set();
                 }
             }
         }
