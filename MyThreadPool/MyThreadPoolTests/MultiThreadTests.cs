@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Threading;
 
 namespace MyThreadPoolTests
 {
@@ -12,7 +11,7 @@ namespace MyThreadPoolTests
         [Test]
         public void NegativeThreadsTest()
         {
-            Assert.Throws<ArgumentOutOfRangeException> (() => new MyThreadPool.MyThreadPool(-3));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MyThreadPool.MyThreadPool(-3));
         }
 
         [Test]
