@@ -27,7 +27,9 @@ public class Server
     /// <summary>
     /// To stop the server, all requests recieved before cancellation will be processed.
     /// </summary>
-    public CancellationTokenSource cts { get; set; } = new();
+    public CancellationTokenSource Cts { get; set; } = new();
+
+    private List<Task> requests = new();
 
     /// <summary>
     /// Constructor for Server
@@ -40,7 +42,7 @@ public class Server
         Ip = ip;
     }
 
-    private (int, string) ProsessFiles(FileInfo[] files)
+    private async Task<(int, string)> ProsessFiles(FileInfo[] files)
     {
         var stringBuilder = new StringBuilder();
         var dir = Path.GetFullPath(DataPath + ".");
@@ -52,7 +54,7 @@ public class Server
         return (files.Length, resultString);
     }
 
-    private (int, string) ProsessDirectories(DirectoryInfo[] directories)
+    private async Task<(int, string)> ProsessDirectories(DirectoryInfo[] directories)
     {
         var stringBuilder = new StringBuilder();
         var dir = Path.GetFullPath(DataPath + ".");
@@ -60,33 +62,33 @@ public class Server
         {
             stringBuilder.Append("." + directory.ToString().Replace(dir, "").Replace('\\', '/') + " true");
         }
-        var ResultString = stringBuilder.ToString();
-        return (directories.Length, ResultString);
+        var resultString = stringBuilder.ToString();
+        return (directories.Length, resultString);
     }
 
     /// <summary>
     /// Server's method for seraching in order to create list of files and dirs in the directory
     /// </summary>
-    public (int size, string name) ListProsess(string path)
+    public async Task<(int size, string name)> ListProsess(string path)
     {
         var di = new DirectoryInfo(path);
         if (di.Exists)
         {
-            var (numberOfFiles, strFiles) = ProsessFiles(di.GetFiles());
-            var (numberOfDirectories, strDirs) = ProsessDirectories(di.GetDirectories());
+            var (numberOfFiles, strFiles) = await ProsessFiles(di.GetFiles());
+            var (numberOfDirectories, strDirs) = await ProsessDirectories(di.GetDirectories());
             return (numberOfFiles + numberOfDirectories, strFiles + " " + strDirs);
         }
         return (-1, "");
     }
 
     /// <summary>
-    /// Creates server respond
+    /// Creates server response
     /// </summary>
     /// <param name="path">path to the directory we need to look at</param>
     /// <returns>srting in format string with server respond</returns>
     public async Task<string> List(string path)
     {
-        var (size, name) = await Task.Run(() => ListProsess(path));
+        var (size, name) = await ListProsess(path);
 
         return size != -1 ? $"{size} {name}" : "-1";
     }
@@ -100,7 +102,7 @@ public class Server
     {
         if (File.Exists(path))
         {
-            var dataBytes = await Task.Run(() => File.ReadAllBytes(path));
+            var dataBytes = await File.ReadAllBytesAsync(path, cancellationToken: Cts.Token);
             return (dataBytes.Length, dataBytes);
         }
         return (-1, new byte[0]);
@@ -110,45 +112,40 @@ public class Server
     /// <summary>
     /// Sends response for clients reqest and interrupts connection
     /// </summary>
-    public async Task ServerMethodAsync()
+    public void ServerMethod()
     {
         var listener = new TcpListener(Ip, Port);
         listener.Start();
-        var list = new List<Task>();
-        while (!cts.IsCancellationRequested)
+        requests.Add(Task.Run(async () =>
         {
-            list.Add(Task.Run(async () =>
+            using var socket = await listener.AcceptSocketAsync();
+            using var networkStream = new NetworkStream(socket);
+            using var streamReader = new StreamReader(networkStream);
+            var data = await streamReader.ReadLineAsync();
+            var strings = data.Split(' ');
+            var requestPath = strings[1];
+            switch (int.Parse(strings[0]))
             {
-                using var socket = await listener.AcceptSocketAsync();
-                using var networkStream = new NetworkStream(socket);
-                using var streamReader = new StreamReader(networkStream);
-                var data = await streamReader.ReadLineAsync();
-                var strings = data.Split(' ');
-                var requestPath = strings[1];
-                switch (int.Parse(strings[0]))
-                {
-                    case 1: // List request Case
-                        {
-                            using var streamWriter = new StreamWriter(networkStream);
-                            streamWriter.WriteLine(List(DataPath + requestPath).Result);
-                            streamWriter.Flush();
-                            break;
-                        }
-                    case 2: // Get request Case
-                        {
-                            var (size, bytes) = Get(DataPath + requestPath).Result;
-                            using var streamWriter = new StreamWriter(networkStream);
-                            var sizeOfMessage = bytes.Length;
-                            streamWriter.WriteLine(sizeOfMessage);
-                            streamWriter.Flush();
-                            using var streamBinaryWriter = new BinaryWriter(networkStream);
-                            streamBinaryWriter.Write(bytes);
-                            streamBinaryWriter.Flush();
-                            break;
-                        }
-                }
-            }));
-        }
-        await Task.WhenAll(list);
+                case 1: // List request Case
+                    {
+                        using var streamWriter = new StreamWriter(networkStream);
+                        streamWriter.WriteLine(await List(DataPath + requestPath));
+                        streamWriter.Flush();
+                        break;
+                    }
+                case 2: // Get request Case
+                    {
+                        var (size, bytes) = await Get(DataPath + requestPath);
+                        using var streamWriter = new StreamWriter(networkStream);
+                        var sizeOfMessage = bytes.Length;
+                        streamWriter.WriteLine(sizeOfMessage);
+                        streamWriter.Flush();
+                        using var streamBinaryWriter = new BinaryWriter(networkStream);
+                        streamBinaryWriter.Write(bytes);
+                        streamBinaryWriter.Flush();
+                        break;
+                    }
+            }
+        }));
     }
 }
