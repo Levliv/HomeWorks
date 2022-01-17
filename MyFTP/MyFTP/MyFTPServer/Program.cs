@@ -9,7 +9,7 @@ public static class Program
         {
             var server = new ServerEngine(ip, port);
             var t = server.Run();
-            var command = "";
+            var command = string.Empty;
             while (command != "exit")
             {
                 Console.WriteLine("To stop server write: \"exit\"");
