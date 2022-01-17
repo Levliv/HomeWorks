@@ -1,4 +1,4 @@
-﻿namespace MyFTPClient
+﻿namespace MyFTP
 {
     /// <summary>
     /// Contating the information about the information got from the server
@@ -18,7 +18,7 @@
         /// <summary>
         /// Default constructor
         /// </summary>
-        public GetResponseStruct() {}
+        public GetResponseStruct() { }
 
         /// <summary>
         /// Constructor for GetResponse, conains data about the lenght and the content of the message

@@ -1,12 +1,13 @@
-﻿namespace MyFTPClient;
+﻿namespace MyFTP;
 
 /// <summary>
-/// Struct to contain the information about each file
+/// Struct to contain the information about each file.
 /// </summary>
 public class ResponseFormat
 {
     /// <summary>
-    /// Constructor for item from response
+    /// Initializes a new instance of the <see cref="ResponseFormat"/> class.
+    /// Constructor for item from response.
     /// </summary>
     public ResponseFormat(string name, string isDir)
     {
@@ -15,12 +16,12 @@ public class ResponseFormat
     }
 
     /// <summary>
-    /// Contains the imformation about the name of the file/dir
+    /// Contains the imformation about the name of the file/dir.
     /// </summary>
     public string? Name { get; }
 
     /// <summary>
-    /// Contains the imformation about whether this file is Directory
+    /// Contains the imformation about whether this file is Directory.
     /// </summary>
     public bool IsDir { get; }
 }

@@ -1,23 +1,27 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using System.Threading.Tasks;
 using System.Net;
 using System.Text;
 
 namespace MyFTP;
 
+/// <summary>
+/// Tests for server's part.
+/// </summary>
 class MyFTPServerTests
 {
-    Server server;
+    ServerEngine server;
+
     /// <summary>
     /// Seting up the server
     /// </summary>
-    [SetUp]
+    [OneTimeSetUp]
     public void ServerSetUp()
     {
         IPAddress ip;
         IPAddress.TryParse("127.0.0.1", out ip);
-        server = new Server(ip, 8000);
-        server.ServerMethod();
+        server = new ServerEngine(ip, 8000);
+        server.Run();
     }
 
     /// <summary>
@@ -27,7 +31,7 @@ class MyFTPServerTests
     public void TestServerGet()
     {
         string path = "../../../.." + "/Tests/Files/TestFile.txt";
-        var (size, data) = server.Get(path).Result;
+        var (size, data) = server.Get(path);
         Assert.AreEqual(21, size);
         Assert.AreEqual("Abracanabra\r\n2nd line", Encoding.UTF8.GetString(data));
     }
