@@ -3,7 +3,7 @@
 namespace MyFTP;
 public static class Program
 {
-    private static void Main(string[] args)
+    public static void Main(string[] args)
     {
         if (args.Length == 2 && IPAddress.TryParse(args[0], out IPAddress? ip) && int.TryParse(args[1], out int port))
         {

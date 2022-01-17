@@ -5,7 +5,7 @@ namespace MyFTP;
 
 internal static class Program
 {
-    private static async void Main(string[] args)
+    public static void Main(string[] args)
     {
         if (args.Length != 3)
         {
@@ -27,7 +27,7 @@ internal static class Program
                 if (requestCode == 2)
                 {
                     var GetResponse = client.Get(path);
-                    var t = await GetResponse;
+                    var t = GetResponse.Result;
                     Console.WriteLine(Encoding.UTF8.GetString(t.Data));
                 }
                 else if (requestCode == 1)
