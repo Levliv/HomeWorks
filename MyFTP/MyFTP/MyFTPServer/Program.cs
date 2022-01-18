@@ -1,5 +1,4 @@
 ﻿using System.Net;
-
 namespace MyFTP;
 public static class Program
 {

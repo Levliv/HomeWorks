@@ -12,6 +12,7 @@ internal static class Program
             Console.WriteLine($"CLI expects 3 arguments in the following order: ip, port, request ");
             return;
         }
+
         if (int.TryParse(args[1], out int port) && IPAddress.TryParse(args[0], out IPAddress? ip) && int.TryParse(args[2], out int requestCode))
         {
             string ipString = args[0];
@@ -23,6 +24,7 @@ internal static class Program
                 {
                     throw new ArgumentNullException("Path should not be NULL");
                 }
+
                 var client = new ClientEngine(ipString, port);
                 if (requestCode == 2)
                 {

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net.Sockets;
-
+﻿using System.Net.Sockets;
 namespace MyFTP;
 public class ClientEngine
 {
@@ -53,6 +47,11 @@ public class ClientEngine
         var streamReader = new StreamReader(networkStream);
         var strings = streamReader.ReadLine()?.Split(" ");
         var files = new List<ResponseFormat>();
+        if (strings == null)
+        {
+            return files;
+        }
+
         for (var i = 1; i < int.Parse(strings[0]) * 2; i += 2)
         {
             files.Add(new ResponseFormat(strings[i], strings[i + 1]));

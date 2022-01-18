@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
-
 namespace MyFTP;
 
 /// <summary>
@@ -27,7 +26,7 @@ public class ServerEngine
     /// <summary>
     /// Gets or sets to stop the server, all requests recieved before cancellation will be processed.
     /// </summary>
-    public CancellationTokenSource Cts { get; set; } = new ();
+    public CancellationTokenSource Cts { get; set; } = new();
 
     private readonly TcpListener listener;
 

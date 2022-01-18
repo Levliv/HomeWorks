@@ -1,16 +1,14 @@
 using NUnit.Framework;
-using System.Threading.Tasks;
 using System.Net;
 using System.Text;
-
 namespace MyFTP;
 
 /// <summary>
 /// Tests for server's part.
 /// </summary>
-class MyFTPServerTests
+internal class MyFTPServerTests
 {
-    ServerEngine server;
+    private ServerEngine server;
 
     /// <summary>
     /// Seting up the server
