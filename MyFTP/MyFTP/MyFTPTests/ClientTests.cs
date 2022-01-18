@@ -4,7 +4,6 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System;
-
 namespace MyFTP;
 
 /// <summary>
