@@ -32,9 +32,9 @@ internal static class Program
                 }
                 else if (requestCode == 1)
                 {
-                    var ResultsOfListResponse = client.List(path).Result;
-                    Console.Write(ResultsOfListResponse.Count() + " ");
-                    foreach (var item in ResultsOfListResponse)
+                    var resultsOfListResponse = client.List(path);
+                    Console.Write(resultsOfListResponse.Count() + " ");
+                    foreach (var item in resultsOfListResponse)
                     {
                         Console.WriteLine(item.Name + " " + item.IsDir + " ");
                     }

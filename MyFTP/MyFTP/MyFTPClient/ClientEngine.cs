@@ -35,27 +35,29 @@ public class ClientEngine
     }
 
     /// <summary>
-    /// List request method, getting information about the files and dirictories found by the provided path  
+    /// List request method, getting information about the files and dirictories found by the provided path.
     /// </summary>
     /// <param name="path">provided path, where to look</param>
     /// <returns>Sequence of data in base ResponseFormat</returns>
-    public async Task<List<ResponseFormat>> List(string path)
+    public List<ResponseFormat> List(string path)
     {
         if (!tcpClient.Connected)
         {
             tcpClient.Connect(IpString, Port);
         }
+
         var networkStream = tcpClient.GetStream();
         var streamWriter = new StreamWriter(networkStream);
         streamWriter.WriteLine(1 + " " + path);
         streamWriter.Flush();
         var streamReader = new StreamReader(networkStream);
-        var strings = streamReader.ReadLine().Split(" ");
+        var strings = streamReader.ReadLine()?.Split(" ");
         var files = new List<ResponseFormat>();
         for (var i = 1; i < int.Parse(strings[0]) * 2; i += 2)
         {
             files.Add(new ResponseFormat(strings[i], strings[i + 1]));
         }
+
         return files;
     }
 

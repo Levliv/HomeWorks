@@ -48,7 +48,7 @@ public class MyFTPTests
             expectedString.Append(fileName);
             expectedString.Append(' ');
         }
-        var result = await client.List("./Tests/Files");
+        var result = client.List("./Tests/Files");
         var resultString = new StringBuilder();
         foreach (var file in result)
         {
