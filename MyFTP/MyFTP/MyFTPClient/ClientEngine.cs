@@ -4,6 +4,11 @@ namespace MyFTP;
 public class ClientEngine
 {
     /// <summary>
+    /// Tcp Client string inforation about current connection.
+    /// </summary>
+    private TcpClient tcpClient;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="ClientEngine"/> class.
     /// Constructor for the Client, creating new TCP client and connecting to the server.
     /// </summary>
@@ -13,11 +18,6 @@ public class ClientEngine
         IpString = ipString;
         Port = port;
     }
-
-    /// <summary>
-    /// Tcp Client string inforation about current connection.
-    /// </summary>
-    private TcpClient tcpClient;
 
     /// <summary>
     /// Ip to listen.
