@@ -77,7 +77,7 @@ public class ClientEngine
         using var streamWriter = new StreamWriter(networkStream);
         await streamWriter.WriteLineAsync(2 + " " + path);
         streamWriter.Flush();
-        var streamReader = new StreamReader(networkStream);
+        using var streamReader = new StreamReader(networkStream);
         var messageLength = int.Parse(streamReader.ReadLine() ?? "0");
         using var streamBinaryReader = new BinaryReader(networkStream);
         var bytes = streamBinaryReader.ReadBytes(messageLength);
