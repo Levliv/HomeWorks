@@ -4,6 +4,17 @@ namespace MyFTP;
 public class ClientEngine
 {
     /// <summary>
+    /// Initializes a new instance of the <see cref="ClientEngine"/> class.
+    /// Constructor for the Client, creating new TCP client and connecting to the server.
+    /// </summary>
+    public ClientEngine(string ipString, int port)
+    {
+        tcpClient = new TcpClient();
+        IpString = ipString;
+        Port = port;
+    }
+
+    /// <summary>
     /// Tcp Client string inforation about current connection.
     /// </summary>
     private TcpClient tcpClient;
@@ -17,17 +28,6 @@ public class ClientEngine
     /// Port to listen.
     /// </summary>
     public int Port { get; private set; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ClientEngine"/> class.
-    /// Constructor for the Client, creating new TCP client and connecting to the server.
-    /// </summary>
-    public ClientEngine(string ipString, int port)
-    {
-        tcpClient = new TcpClient();
-        IpString = ipString;
-        Port = port;
-    }
 
     /// <summary>
     /// List request method, getting information about the files and dirictories found by the provided path.
