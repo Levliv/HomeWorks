@@ -40,7 +40,7 @@ internal class MyFTPServerTests
     public void TestServerList()
     {
         string path = "../../../.." + "/Tests/Files";
-        var responseString = server.List(path).Result;
+        var responseString = server.ListAsync(path).Result;
         Assert.AreEqual("2 ./Tests/Files/TestFile.txt false ./Tests/Files/TestDir true", responseString);
     }
 }

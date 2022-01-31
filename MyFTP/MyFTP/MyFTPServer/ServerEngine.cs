@@ -71,7 +71,7 @@ public class ServerEngine
             case 1: // List request Case
                 {
                     using var streamWriter = new StreamWriter(networkStream);
-                    streamWriter.WriteLine(await List(DataPath + requestPath));
+                    await streamWriter.WriteLineAsync(await ListAsync(DataPath + requestPath));
                     streamWriter.Flush();
                     break;
                 }
@@ -111,13 +111,13 @@ public class ServerEngine
     /// </summary>
     /// <param name="path">path to the directory we need to look at</param>
     /// <returns>srting in format string with server respond</returns>
-    public async Task<string> List(string path)
+    public async Task<string> ListAsync(string path)
     {
-        var (size, name) = await ListProсess(path);
+        var (size, name) = await ListProсessAsync(path);
         return size != -1 ? $"{size} {name}" : "-1";
     }
 
-    private async Task<(int, string)> ProсessFiles(FileInfo[] files)
+    private (int, string) ProсessFiles(FileInfo[] files)
     {
         var stringBuilder = new StringBuilder();
         var dir = Path.GetFullPath(DataPath + ".");
@@ -130,7 +130,7 @@ public class ServerEngine
         return (files.Length, resultString);
     }
 
-    private async Task<(int, string)> ProсessDirectories(DirectoryInfo[] directories)
+    private (int, string) ProсessDirectories(DirectoryInfo[] directories)
     {
         var stringBuilder = new StringBuilder();
         var dir = Path.GetFullPath(DataPath + ".");
@@ -146,13 +146,13 @@ public class ServerEngine
     /// <summary>
     /// Server's method for seraching in order to create list of files and dirs in the directory
     /// </summary>
-    public async Task<(int size, string name)> ListProсess(string path)
+    public async Task<(int size, string name)> ListProсessAsync(string path)
     {
-        var di = new DirectoryInfo(path);
-        if (di.Exists)
+        var directory = new DirectoryInfo(path);
+        if (directory.Exists)
         {
-            var (numberOfFiles, strFiles) = await ProсessFiles(di.GetFiles());
-            var (numberOfDirectories, strDirs) = await ProсessDirectories(di.GetDirectories());
+            var (numberOfFiles, strFiles) = ProсessFiles(directory.GetFiles());
+            var (numberOfDirectories, strDirs) = ProсessDirectories(directory.GetDirectories());
             return (numberOfFiles + numberOfDirectories, strFiles + " " + strDirs);
         }
 
