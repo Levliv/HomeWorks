@@ -1,7 +1,7 @@
 ﻿namespace MyFTP
 {
     /// <summary>
-    /// Contating the information about the information got from the server
+    /// Contating the information about the information got from the server.
     /// </summary>
     public class GetResponseStruct
     {
@@ -13,7 +13,15 @@
         /// <summary>
         /// Message size.
         /// </summary>
-        public long Size() => Data.Length;
+        public long Size()
+        {
+            if (Data != null)
+            {
+                return Data.Length;
+            }
+
+            return 0;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetResponseStruct"/> class.

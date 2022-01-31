@@ -1,4 +1,5 @@
 ﻿using System.Net.Sockets;
+
 namespace MyFTP;
 public class ClientEngine
 {
@@ -33,18 +34,18 @@ public class ClientEngine
     /// </summary>
     /// <param name="path">provided path, where to look</param>
     /// <returns>Sequence of data in base ResponseFormat</returns>
-    public List<ResponseFormat> List(string path)
+    public async Task<List<ResponseFormat>> ListAsync(string path)
     {
         if (!tcpClient.Connected)
         {
-            tcpClient.Connect(IpString, Port);
+            await tcpClient.ConnectAsync(IpString, Port);
         }
 
-        var networkStream = tcpClient.GetStream();
-        var streamWriter = new StreamWriter(networkStream);
-        streamWriter.WriteLine(1 + " " + path);
+        using var networkStream = tcpClient.GetStream();
+        using var streamWriter = new StreamWriter(networkStream);
+        await streamWriter.WriteLineAsync(1 + " " + path);
         streamWriter.Flush();
-        var streamReader = new StreamReader(networkStream);
+        using var streamReader = new StreamReader(networkStream);
         var strings = streamReader.ReadLine()?.Split(" ");
         var files = new List<ResponseFormat>();
         if (strings == null)
@@ -65,16 +66,19 @@ public class ClientEngine
     /// </summary>
     /// <param name="path">provided relative path</param>
     /// <returns> Base struct GetResponseStruct</returns>
-    public async Task<GetResponseStruct> Get(string path)
+    public async Task<GetResponseStruct> GetAsync(string path)
     {
-        tcpClient.Connect(IpString, Port);
+        if (!tcpClient.Connected)
+        {
+            await tcpClient.ConnectAsync(IpString, Port);
+        }
+
         using var networkStream = tcpClient.GetStream();
         using var streamWriter = new StreamWriter(networkStream);
         await streamWriter.WriteLineAsync(2 + " " + path);
         streamWriter.Flush();
-        Console.WriteLine("Thirsty");
         var streamReader = new StreamReader(networkStream);
-        var messageLength = int.Parse(streamReader.ReadLine());
+        var messageLength = int.Parse(streamReader.ReadLine() ?? "0");
         using var streamBinaryReader = new BinaryReader(networkStream);
         var bytes = streamBinaryReader.ReadBytes(messageLength);
         return new GetResponseStruct(bytes);

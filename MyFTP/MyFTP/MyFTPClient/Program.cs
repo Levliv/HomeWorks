@@ -5,7 +5,7 @@ namespace MyFTP;
 
 internal static class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         if (args.Length != 3)
         {
@@ -19,7 +19,7 @@ internal static class Program
             Console.WriteLine($"port {port} and ip {ip} recognised successfully");
             while (true)
             {
-                string? path = args[3];
+                string? path = args[2];
                 if (path == null || ip == null)
                 {
                     throw new ArgumentNullException("Path should not be NULL");
@@ -28,13 +28,12 @@ internal static class Program
                 var client = new ClientEngine(ipString, port);
                 if (requestCode == 2)
                 {
-                    var GetResponse = client.Get(path);
-                    var t = GetResponse.Result;
-                    Console.WriteLine(Encoding.UTF8.GetString(t.Data));
+                    var getResponse = await client.GetAsync(path);
+                    Console.WriteLine(Encoding.UTF8.GetString(getResponse.Data));
                 }
                 else if (requestCode == 1)
                 {
-                    var resultsOfListResponse = client.List(path);
+                    var resultsOfListResponse = await client.ListAsync(path);
                     Console.Write(resultsOfListResponse.Count() + " ");
                     foreach (var item in resultsOfListResponse)
                     {

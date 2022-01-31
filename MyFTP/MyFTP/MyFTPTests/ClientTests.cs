@@ -46,7 +46,7 @@ public class MyFTPTests
             expectedString.Append(fileName);
             expectedString.Append(' ');
         }
-        var result = client.List("./Tests/Files");
+        var result = await client.ListAsync("./Tests/Files");
         var resultString = new StringBuilder();
         foreach (var file in result)
         {
@@ -65,7 +65,7 @@ public class MyFTPTests
     public async Task TestClientRequestGet()
     {
         var client = new ClientEngine("127.0.0.1", 8000);
-        var result = await client.Get("./Tests/Files/TestFile.txt");
+        var result = await client.GetAsync("./Tests/Files/TestFile.txt");
         Assert.AreEqual("Abracanabra\r\n2nd line", Encoding.UTF8.GetString(result.Data));
     }
 }
