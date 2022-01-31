@@ -27,10 +27,9 @@ internal static class Program
             if (requestCode == 2)
             {
                 var getResponse = await client.GetAsync(path);
-                if (getResponse != null)
+                if (getResponse.Data != null)
                 {
                     Console.WriteLine(Encoding.UTF8.GetString(getResponse.Data));
-
                 }
                 else
                 {
