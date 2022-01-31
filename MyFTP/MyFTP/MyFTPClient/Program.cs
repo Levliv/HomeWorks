@@ -17,28 +17,33 @@ internal static class Program
         {
             string ipString = args[0];
             Console.WriteLine($"port {port} and ip {ip} recognised successfully");
-            while (true)
+            string? path = args[2];
+            if (path == null || ip == null)
             {
-                string? path = args[2];
-                if (path == null || ip == null)
-                {
-                    throw new ArgumentNullException("Path should not be NULL");
-                }
+                throw new ArgumentNullException("Path should not be NULL");
+            }
 
-                var client = new ClientEngine(ipString, port);
-                if (requestCode == 2)
+            var client = new ClientEngine(ipString, port);
+            if (requestCode == 2)
+            {
+                var getResponse = await client.GetAsync(path);
+                if (getResponse != null)
                 {
-                    var getResponse = await client.GetAsync(path);
                     Console.WriteLine(Encoding.UTF8.GetString(getResponse.Data));
+
                 }
-                else if (requestCode == 1)
+                else
                 {
-                    var resultsOfListResponse = await client.ListAsync(path);
-                    Console.Write(resultsOfListResponse.Count() + " ");
-                    foreach (var item in resultsOfListResponse)
-                    {
-                        Console.WriteLine(item.Name + " " + item.IsDir + " ");
-                    }
+                    Console.WriteLine("File is empty of does not exist");
+                }
+            }
+            else if (requestCode == 1)
+            {
+                var resultsOfListResponse = await client.ListAsync(path);
+                Console.Write(resultsOfListResponse.Count() + " ");
+                foreach (var item in resultsOfListResponse)
+                {
+                    Console.WriteLine(item.Name + " " + item.IsDir + " ");
                 }
             }
         }
