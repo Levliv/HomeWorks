@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
+
 namespace MyFTP;
 
 /// <summary>
@@ -8,6 +9,8 @@ namespace MyFTP;
 /// </summary>
 public class ServerEngine
 {
+    private readonly TcpListener listener;
+
     /// <summary>
     /// Gets path to the base directory where the search is supposed to begin.
     /// </summary>
@@ -24,17 +27,15 @@ public class ServerEngine
     public IPAddress Ip { get; private set; }
 
     /// <summary>
-    /// Gets or sets to stop the server, all requests recieved before cancellation will be processed.
+    /// Stops the server, all requests recieved before cancellation will be processed.
     /// </summary>
-    public CancellationTokenSource Cts { get; set; } = new();
-
-    private readonly TcpListener listener;
+    public CancellationTokenSource Cts { get; private set; } = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ServerEngine"/> class.
     /// Constructor for Server.
     /// </summary>
-    /// <param name="dirBackPath">Path to the base directory where the search is supposed to begin</param>
+    /// <param name="dirBackPath">Path to the base directory where the search is supposed to begin.</param>
     public ServerEngine(IPAddress ip, int port, string dirBackPath = "../../../.")
     {
         DataPath = dirBackPath;
@@ -44,7 +45,7 @@ public class ServerEngine
     }
 
     /// <summary>
-    /// Start serving clients
+    /// Start serving clients.
     /// </summary>
     public async Task Run()
     {
@@ -54,6 +55,7 @@ public class ServerEngine
             var socket = await listener.AcceptSocketAsync();
             Task.Run(() => ServerMethod(socket));
         }
+
         listener.Stop();
     }
 
@@ -61,8 +63,7 @@ public class ServerEngine
     {
         using var networkStream = new NetworkStream(socket);
         using var streamReader = new StreamReader(networkStream);
-        var t = streamReader.ReadLineAsync();
-        var data = await t;
+        var data = await streamReader.ReadLineAsync();
         var strings = data.Split(' ');
         var requestPath = strings[1];
         switch (int.Parse(strings[0]))
@@ -101,6 +102,7 @@ public class ServerEngine
             var dataBytes = File.ReadAllBytes(path);
             return (dataBytes.Length, dataBytes);
         }
+
         return (-1, new byte[0]);
     }
 
@@ -123,6 +125,7 @@ public class ServerEngine
         {
             stringBuilder.Append("." + file.ToString().Replace(dir, string.Empty).Replace('\\', '/') + " false");
         }
+
         var resultString = stringBuilder.ToString();
         return (files.Length, resultString);
     }
@@ -135,6 +138,7 @@ public class ServerEngine
         {
             stringBuilder.Append("." + directory.ToString().Replace(dir, string.Empty).Replace('\\', '/') + " true");
         }
+
         var resultString = stringBuilder.ToString();
         return (directories.Length, resultString);
     }
@@ -151,6 +155,7 @@ public class ServerEngine
             var (numberOfDirectories, strDirs) = await ProсessDirectories(di.GetDirectories());
             return (numberOfFiles + numberOfDirectories, strFiles + " " + strDirs);
         }
+
         return (-1, string.Empty);
     }
 }

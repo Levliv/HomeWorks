@@ -16,8 +16,7 @@ internal class MyFTPServerTests
     [OneTimeSetUp]
     public void ServerSetUp()
     {
-        IPAddress ip;
-        IPAddress.TryParse("127.0.0.1", out ip);
+        IPAddress.TryParse("127.0.0.1", out IPAddress? ip);
         server = new ServerEngine(ip, 8000);
         server.Run();
     }
