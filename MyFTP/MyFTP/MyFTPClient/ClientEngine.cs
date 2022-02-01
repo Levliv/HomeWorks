@@ -90,6 +90,6 @@ public class ClientEngine
         Console.WriteLine($"Got string len: {messageLength}");
         using var streamBinaryReader = new BinaryReader(networkStream);
         var bytes = streamBinaryReader.ReadBytes(messageLength);
-        return new GetResponseStruct();
+        return new GetResponseStruct(bytes);
     }
 }
