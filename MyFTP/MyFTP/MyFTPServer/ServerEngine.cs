@@ -11,6 +11,7 @@ public class ServerEngine
 {
     private readonly TcpListener listener;
 
+    private Queue<Task> clientsTaskQueue = new ();
     /// <summary>
     /// Gets path to the base directory where the search is supposed to begin.
     /// </summary>
@@ -53,9 +54,11 @@ public class ServerEngine
         while (!Cts.IsCancellationRequested)
         {
             var socket = await listener.AcceptSocketAsync();
-            Task.Run(() => ServerMethod(socket));
+            var clientTask = Task.Run(() => ServerMethod(socket));
+            clientsTaskQueue.Append(clientTask);
         }
 
+        Task.WaitAll(clientsTaskQueue.ToArray());
         listener.Stop();
     }
 
