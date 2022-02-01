@@ -3,6 +3,8 @@ using System.Collections;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System;
+
 namespace MyFTP;
 
 /// <summary>
@@ -13,7 +15,8 @@ public class MyFTPTests
     /// <summary>
     /// Starting up the server to test Client's Get and List methods.
     /// </summary>
-    [OneTimeSetUp]
+    /// //OneTime
+    [SetUp]
     public void ServerStart()
     {
         IPAddress.TryParse("127.0.0.1", out IPAddress ip);
@@ -55,6 +58,7 @@ public class MyFTPTests
             resultString.Append(file.IsDir);
             resultString.Append(' ');
         }
+
         Assert.IsTrue(expectedString.Equals(resultString));
     }
 
@@ -65,7 +69,7 @@ public class MyFTPTests
     public async Task TestClientRequestGet()
     {
         var client = new ClientEngine("127.0.0.1", 8000);
-        var result = await client.GetAsync("./Tests/Files/TestFile.txt");
+        var result = await client.GetAsync("./Tests/Files/TestFile.txt"); // На этой строке все ломается
         Assert.AreEqual("Abracanabra\r\n2nd line", Encoding.UTF8.GetString(result.Data));
     }
 }

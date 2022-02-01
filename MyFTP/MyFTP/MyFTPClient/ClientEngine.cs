@@ -1,4 +1,5 @@
 ﻿using System.Net.Sockets;
+using System.Text;
 
 namespace MyFTP;
 public class ClientEngine
@@ -76,11 +77,19 @@ public class ClientEngine
         using var networkStream = tcpClient.GetStream();
         using var streamWriter = new StreamWriter(networkStream);
         await streamWriter.WriteLineAsync(2 + " " + path);
-        streamWriter.Flush();
+        await streamWriter.FlushAsync();
         using var streamReader = new StreamReader(networkStream);
-        var messageLength = int.Parse(streamReader.ReadLine() ?? "0");
+        var size = new StringBuilder();
+        int symbol = new ();
+        while ((symbol = streamReader.Read()) != ' ')
+        {
+            size.Append((char)symbol);
+        }
+
+        var messageLength = Convert.ToInt32(size.ToString());
+        Console.WriteLine($"Got string len: {messageLength}");
         using var streamBinaryReader = new BinaryReader(networkStream);
         var bytes = streamBinaryReader.ReadBytes(messageLength);
-        return new GetResponseStruct(bytes);
+        return new GetResponseStruct();
     }
 }

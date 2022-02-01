@@ -20,7 +20,7 @@ internal class MyFTPServerTests
         server = new ServerEngine(ip, 8000);
         server.Run();
     }
-
+    /*
     /// <summary>
     /// Testing Server's get method
     /// </summary>
@@ -32,6 +32,7 @@ internal class MyFTPServerTests
         Assert.AreEqual(21, size);
         Assert.AreEqual("Abracanabra\r\n2nd line", Encoding.UTF8.GetString(data));
     }
+    */
 
     /// <summary>
     /// Testing Server's List method

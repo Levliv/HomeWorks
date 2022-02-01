@@ -59,10 +59,64 @@ public class ServerEngine
         listener.Stop();
     }
 
+    /// <summary>
+    /// Returns datagram as a response to Get request.
+    /// </summary>
+    /// <param name="streamWriter">File stream to push results in.</param>
+    /// <param name="path">File path.</param>
+    /// <returns>Size of file, massive of bytes(file).</returns>
+    public async Task GetServerAsync(StreamWriter streamWriter, string path)
+    {
+        if (File.Exists(path))
+        {
+            var size = new FileInfo(path).Length;
+            await streamWriter.WriteAsync($"{size} ");
+            await streamWriter.FlushAsync();
+            using var fileStream = File.Open(path, FileMode.Open);
+            await fileStream.CopyToAsync(streamWriter.BaseStream);
+            await streamWriter.FlushAsync();
+        }
+        else
+        {
+            await streamWriter.WriteLineAsync("-1");
+        }
+
+        await streamWriter.FlushAsync();
+        return;
+    }
+
+    /// <summary>
+    /// Creates server response.
+    /// </summary>
+    /// <param name="path">path to the directory we need to look at.</param>
+    /// <returns>srting in format string with server response.</returns>
+    public async Task<string> ListAsync(string path)
+    {
+        var (size, name) = await ListProсessAsync(path);
+        return size != -1 ? $"{size} {name}" : "-1";
+    }
+
+    /// <summary>
+    /// Server's method for seraching in order to create list of files and dirs in the directory.
+    /// </summary>
+    public async Task<(int size, string name)> ListProсessAsync(string path)
+    {
+        var directory = new DirectoryInfo(path);
+        if (directory.Exists)
+        {
+            var (numberOfFiles, strFiles) = ProсessFiles(directory.GetFiles());
+            var (numberOfDirectories, strDirs) = ProсessDirectories(directory.GetDirectories());
+            return (numberOfFiles + numberOfDirectories, strFiles + " " + strDirs);
+        }
+
+        return (-1, string.Empty);
+    }
+
     private async Task ServerMethod(Socket socket)
     {
         using var networkStream = new NetworkStream(socket);
         using var streamReader = new StreamReader(networkStream);
+        using var streamWriter = new StreamWriter(networkStream);
         var data = await streamReader.ReadLineAsync();
         var strings = data.Split(' ');
         var requestPath = strings[1];
@@ -70,64 +124,17 @@ public class ServerEngine
         {
             case 1: // List request Case
                 {
-                    using var streamWriter = new StreamWriter(networkStream);
                     await streamWriter.WriteLineAsync(await ListAsync(DataPath + requestPath));
                     streamWriter.Flush();
-                    break;
+                    return;
                 }
+
             case 2: // Get request Case
                 {
-                    var (size, bytes) = Get(DataPath + requestPath);
-                    using var streamWriter = new StreamWriter(networkStream);
-                    var sizeOfMessage = bytes.Length;
-                    streamWriter.WriteLine(sizeOfMessage);
-                    streamWriter.Flush();
-                    using var streamBinaryWriter = new BinaryWriter(networkStream);
-                    streamBinaryWriter.Write(bytes);
-                    streamBinaryWriter.Flush();
-                    break;
+                    await GetServerAsync(streamWriter, DataPath + requestPath);
+                    return;
                 }
         }
-    }
-
-    /// <summary>
-    /// Returns datagram in respond of Get request
-    /// </summary>
-    /// <param name="path">File path</param>
-    /// <returns>Size of file, massive of bytes(file)</returns>
-    public (long size, byte[] content) Get(string path)
-    {
-        if (File.Exists(path))
-        {
-            var dataBytes = File.ReadAllBytes(path);
-            return (dataBytes.Length, dataBytes);
-        }
-
-        return (-1, new byte[0]);
-    }
-
-    /// <summary>
-    /// Creates server response
-    /// </summary>
-    /// <param name="path">path to the directory we need to look at</param>
-    /// <returns>srting in format string with server respond</returns>
-    public async Task<string> ListAsync(string path)
-    {
-        var (size, name) = await ListProсessAsync(path);
-        return size != -1 ? $"{size} {name}" : "-1";
-    }
-
-    private (int, string) ProсessFiles(FileInfo[] files)
-    {
-        var stringBuilder = new StringBuilder();
-        var dir = Path.GetFullPath(DataPath + ".");
-        foreach (var file in files)
-        {
-            stringBuilder.Append("." + file.ToString().Replace(dir, string.Empty).Replace('\\', '/') + " false");
-        }
-
-        var resultString = stringBuilder.ToString();
-        return (files.Length, resultString);
     }
 
     private (int, string) ProсessDirectories(DirectoryInfo[] directories)
@@ -143,19 +150,16 @@ public class ServerEngine
         return (directories.Length, resultString);
     }
 
-    /// <summary>
-    /// Server's method for seraching in order to create list of files and dirs in the directory
-    /// </summary>
-    public async Task<(int size, string name)> ListProсessAsync(string path)
+    private (int, string) ProсessFiles(FileInfo[] files)
     {
-        var directory = new DirectoryInfo(path);
-        if (directory.Exists)
+        var stringBuilder = new StringBuilder();
+        var dir = Path.GetFullPath(DataPath + ".");
+        foreach (var file in files)
         {
-            var (numberOfFiles, strFiles) = ProсessFiles(directory.GetFiles());
-            var (numberOfDirectories, strDirs) = ProсessDirectories(directory.GetDirectories());
-            return (numberOfFiles + numberOfDirectories, strFiles + " " + strDirs);
+            stringBuilder.Append("." + file.ToString().Replace(dir, string.Empty).Replace('\\', '/') + " false");
         }
 
-        return (-1, string.Empty);
+        var resultString = stringBuilder.ToString();
+        return (files.Length, resultString);
     }
 }
