@@ -12,15 +12,17 @@ namespace MyFTP;
 /// </summary>
 public class MyFTPTests
 {
+    private ServerEngine server;
+
     /// <summary>
     /// Starting up the server to test Client's Get and List methods.
     /// </summary>
     /// //OneTime
-    [SetUp]
+    [OneTimeSetUp]
     public void ServerStart()
     {
         IPAddress.TryParse("127.0.0.1", out IPAddress ip);
-        var server = new ServerEngine(ip, 8000);
+        server = new ServerEngine(ip, 8000);
         server.Run();
     }
 
@@ -69,7 +71,18 @@ public class MyFTPTests
     public async Task TestClientRequestGet()
     {
         var client = new ClientEngine("127.0.0.1", 8000);
-        var result = await client.GetAsync("./Tests/Files/TestFile.txt"); // На этой строке все ломается
+        var result = await client.GetAsync("./Tests/Files/TestFile.txt");
         Assert.AreEqual("Abracanabra\r\n2nd line", Encoding.UTF8.GetString(result.Data));
+    }
+
+    /// <summary>
+    /// IF file doesn't exist size of the message should be -1.
+    /// </summary>
+    [Test]
+    public async Task TestIfFileDoesNotExist()
+    {
+        var client = new ClientEngine("127.0.0.1", 8000);
+        var result = await client.GetAsync("./Tests/Files/TestFiles.txt");
+        Assert.AreEqual(-1, result.Size());
     }
 }

@@ -23,7 +23,7 @@ internal class MyFTPServerTests
     }
 
     /// <summary>
-    /// Testing Server's List method
+    /// Testing Server's List method.
     /// </summary>
     [TestCase(ExpectedResult = "2 ./Tests/Files/TestFile.txt false ./Tests/Files/TestDir true")]
     public async Task<string> TestServerList()

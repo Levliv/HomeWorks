@@ -10,8 +10,8 @@ namespace MyFTP;
 public class ServerEngine
 {
     private readonly TcpListener listener;
-
     private Queue<Task> clientsTaskQueue = new ();
+
     /// <summary>
     /// Gets path to the base directory where the search is supposed to begin.
     /// </summary>
@@ -53,7 +53,7 @@ public class ServerEngine
         listener.Start();
         while (!Cts.IsCancellationRequested)
         {
-            var socket = await listener.AcceptSocketAsync();
+            var socket = await listener.AcceptSocketAsync(Cts.Token);
             var clientTask = Task.Run(() => ServerMethod(socket));
             clientsTaskQueue.Append(clientTask);
         }
@@ -63,11 +63,10 @@ public class ServerEngine
     }
 
     /// <summary>
-    /// Returns datagram as a response to Get request.
+    /// Sends a datagram as a response to Get request.
     /// </summary>
     /// <param name="streamWriter">File stream to push results in.</param>
     /// <param name="path">File path.</param>
-    /// <returns>Size of file, massive of bytes(file).</returns>
     public async Task GetServerAsync(StreamWriter streamWriter, string path)
     {
         if (File.Exists(path))
@@ -81,7 +80,7 @@ public class ServerEngine
         }
         else
         {
-            await streamWriter.WriteLineAsync("-1");
+            await streamWriter.WriteLineAsync($"{-1} ");
         }
 
         await streamWriter.FlushAsync();
@@ -128,7 +127,7 @@ public class ServerEngine
             case 1: // List request Case
                 {
                     await streamWriter.WriteLineAsync(await ListAsync(DataPath + requestPath));
-                    streamWriter.Flush();
+                    await streamWriter.FlushAsync();
                     return;
                 }
 

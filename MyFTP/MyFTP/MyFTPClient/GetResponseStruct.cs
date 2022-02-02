@@ -28,14 +28,14 @@
         /// <summary>
         /// Message size.
         /// </summary>
-        public long Size()
+        public int Size()
         {
             if (Data != null)
             {
                 return Data.Length;
             }
 
-            return 0;
+            return -1;
         }
     }
 }

@@ -63,10 +63,10 @@ public class ClientEngine
     }
 
     /// <summary>
-    /// Getting the file data, stroing in the current file, by provided path
+    /// Getting the file data, stroing in the current file, by provided path.
     /// </summary>
-    /// <param name="path">provided relative path</param>
-    /// <returns> Base struct GetResponseStruct</returns>
+    /// <param name="path">provided relative path.</param>
+    /// <returns> Base struct GetResponseStruct.</returns>
     public async Task<GetResponseStruct> GetAsync(string path)
     {
         if (!tcpClient.Connected)
@@ -83,11 +83,15 @@ public class ClientEngine
         int symbol = new ();
         while ((symbol = streamReader.Read()) != ' ')
         {
+            if (symbol == '-' && (char)streamReader.Read() == '1')
+            {
+                return new GetResponseStruct();
+            }
+
             size.Append((char)symbol);
         }
 
         var messageLength = Convert.ToInt32(size.ToString());
-        Console.WriteLine($"Got string len: {messageLength}");
         using var streamBinaryReader = new BinaryReader(networkStream);
         var bytes = streamBinaryReader.ReadBytes(messageLength);
         return new GetResponseStruct(bytes);
