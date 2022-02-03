@@ -6,7 +6,7 @@ namespace MyThreadPoolTests
     public class MultiThreadTests
     {
         /// <summary>
-        /// Testing negtive number of threads
+        /// Testing negtive number of threads.
         /// </summary>
         [Test]
         public void NegativeThreadsTest()
