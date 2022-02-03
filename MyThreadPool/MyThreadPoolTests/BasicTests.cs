@@ -4,7 +4,7 @@ using System;
 namespace MyThreadPoolTests
 {
     /// <summary>
-    /// Testing TPL with some one thread scenario to catch some mistakes
+    /// Testing TPL with some one thread scenario to catch some mistakes.
     /// </summary>
     public class BasicTests
     {
@@ -45,7 +45,7 @@ namespace MyThreadPoolTests
         }
 
         /// <summary>
-        /// Testing that if we try to add task after shut down ThreadPool won't accept it
+        /// Testing that if we try to add task after shut down ThreadPool won't accept it.
         /// </summary>
         [Test]
         public void TaskAfterShutDownTest()
