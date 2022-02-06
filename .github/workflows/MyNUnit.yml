@@ -28,7 +28,7 @@ jobs:
     - name: set up
       uses: actions/setup-dotnet@v1
       with:
-          dotnet-version: '5.0'
+          dotnet-version: '6.0'
      # check for dotnet
     - name: dotnet check
       run:  dotnet --version
