@@ -5,17 +5,6 @@
 /// </summary>
 public class MyThreadPool
 {
-    private readonly CancellationTokenSource cts = new ();
-    private int numberOfThreads;
-    private Queue<Action> actions = new ();
-    private AutoResetEvent newTask = new (false);
-    private Thread[] threads;
-
-    /// <summary>
-    /// Gets number of active threads.
-    /// </summary>
-    public int ActiveThreads => numberOfThreads;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="MyThreadPool"/> class.
     /// Constructor for thread pool.
@@ -48,7 +37,7 @@ public class MyThreadPool
                         break;
                     }
 
-                    if (actions.TryDequeue(out Action action))
+                    if (actions.TryDequeue(out Action? action))
                     {
                         action();
                     }
@@ -61,6 +50,17 @@ public class MyThreadPool
             threads[i].Start();
         }
     }
+
+    private readonly CancellationTokenSource cts = new ();
+    private int numberOfThreads;
+    private Queue<Action> actions = new ();
+    private AutoResetEvent newTask = new (false);
+    private Thread[] threads;
+
+    /// <summary>
+    /// Gets number of active threads.
+    /// </summary>
+    public int ActiveThreads => numberOfThreads;
 
     /// <summary>
     /// Shuts threads pool down after finishing counting the processed tasks.
@@ -112,6 +112,19 @@ public class MyThreadPool
 
     public class MyTask<TResult> : IMyTask<TResult>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MyTask{TResult}"/> class.
+        /// Constructor for a MyTask instance.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">throws in case func is null. </exception>
+        public MyTask(Func<TResult>? func, MyThreadPool threadPool)
+        {
+            ArgumentNullException.ThrowIfNull(func);
+            myThreadPool = threadPool;
+            this.func = func;
+            continueWithTasks = new();
+        }
+
         private TResult result;
         private Func<TResult>? func;
         private Queue<Action> continueWithTasks;
@@ -143,19 +156,6 @@ public class MyThreadPool
 
                 throw AggregateException;
             }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MyTask{TResult}"/> class.
-        /// Constructor for a MyTask instance.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">throws in case func is null. </exception>
-        public MyTask(Func<TResult>? func, MyThreadPool threadPool)
-        {
-            ArgumentNullException.ThrowIfNull(func);
-            myThreadPool = threadPool;
-            this.func = func;
-            continueWithTasks = new();
         }
 
         /// <summary>
