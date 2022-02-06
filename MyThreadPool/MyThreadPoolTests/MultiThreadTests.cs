@@ -21,7 +21,8 @@ namespace MyThreadPoolTests
             var task1 = threadPool.Add(() => 1);
             Assert.AreEqual(1, task1.Result);
         }
-        /*
+        
+        
         [Test]
         public void MultiTaskMultiThreadComputationTest()
         {
@@ -35,6 +36,6 @@ namespace MyThreadPoolTests
             Assert.AreEqual(3, task3.Result);
             Assert.AreEqual(4, task4.Result);
         }
-        */
+        
     }
 }

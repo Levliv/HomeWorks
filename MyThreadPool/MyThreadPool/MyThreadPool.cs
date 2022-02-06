@@ -13,7 +13,6 @@ public class MyThreadPool
     /// <exception cref="ArgumentOutOfRangeException"> Exception throws if the number of threads is negative.</exception>
     public MyThreadPool(int numberOfThreads)
     {
-        var token = cts.Token;
         if (numberOfThreads <= 0)
         {
             throw new ArgumentOutOfRangeException("Number of threads must be positive");
@@ -25,9 +24,9 @@ public class MyThreadPool
         {
             threads[i] = new Thread(() =>
             {
-                while (!token.IsCancellationRequested)
+                while (true)
                 {
-                    if (token.IsCancellationRequested)
+                    if (cts.IsCancellationRequested)
                     {
                         break;
                     }
@@ -51,7 +50,6 @@ public class MyThreadPool
     private Queue<Action> actions = new ();
     private AutoResetEvent newTask = new (false);
     private Thread[] threads;
-    private int taskInQueue = 0;
 
     /// <summary>
     /// Gets number of active threads.
@@ -63,16 +61,14 @@ public class MyThreadPool
     /// </summary>
     public void ShutDown()
     {
-        lock (actions)
+        lock (cts)
         {
             cts.Cancel();
-            for (int i = 0; i < threads.Length; ++i)
-            {
-                while (actions.Count > 0)
-                {
-                    continue;
-                }
-            }
+        }
+
+        while (actions.Count > 0)
+        {
+            continue;
         }
     }
 
@@ -86,24 +82,31 @@ public class MyThreadPool
         ArgumentNullException.ThrowIfNull(func);
         lock (actions)
         {
-            if (!cts.IsCancellationRequested)
+            if (cts.IsCancellationRequested)
             {
-                var task = new MyTask<T>(func, this);
-                try
-                {
-                    actions.Enqueue(task.RunTask);
-                    newTask.Set();
-                    Interlocked.Increment(ref taskInQueue);
-                }
-                catch (Exception ex)
-                {
-                    throw new InvalidOperationException(ex.Message);
-                }
-
-                return task;
+                throw new InvalidOperationException();
             }
 
-            throw new InvalidOperationException();
+            lock (cts)
+            {
+                if (!cts.IsCancellationRequested)
+                {
+                    var task = new MyTask<T>(func, this);
+                    try
+                    {
+                        actions.Enqueue(task.RunTask);
+                        newTask.Set();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new InvalidOperationException(ex.Message);
+                    }
+
+                    return task;
+                }
+
+                throw new InvalidOperationException();
+            }
         }
     }
 
@@ -161,17 +164,25 @@ public class MyThreadPool
         public IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> func)
         {
             var task = new MyTask<TNewResult>(() => func(Result), myThreadPool);
-            lock (continueWithTasks)
+            lock (myThreadPool.cts)
             {
-                lock (myThreadPool.actions)
+                if (myThreadPool.cts.Token.IsCancellationRequested)
                 {
-                    if (IsCompleted)
-                    {
-                        return myThreadPool.Add(() => func(Result));
-                    }
+                    throw new InvalidOperationException();
+                }
 
-                    continueWithTasks.Enqueue(task.RunTask);
-                    return task;
+                lock (continueWithTasks)
+                {
+                    lock (myThreadPool.actions)
+                    {
+                        if (IsCompleted)
+                        {
+                            return myThreadPool.Add(() => func(Result));
+                        }
+
+                        continueWithTasks.Enqueue(task.RunTask);
+                        return task;
+                    }
                 }
             }
         }
