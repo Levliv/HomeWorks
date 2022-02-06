@@ -45,6 +45,7 @@ namespace MyNUnitTests
             Assert.AreEqual(resultBlock, Test3.Test3.array);
         }
 
+        /*
         /// <summary>
         /// Testing Expected arg in MyTest attribute
         /// </summary>
@@ -58,6 +59,8 @@ namespace MyNUnitTests
             Assert.AreEqual(10, methodWithExpected.Expected);
         }
 
+        */
+        /*
         /// <summary>
         /// Testing Ignore arg in MyTest attribute
         /// </summary>
@@ -71,7 +74,8 @@ namespace MyNUnitTests
             Assert.True(methodWithExpected.IsIgnored);
             Assert.AreEqual("TestIgnoreMessage", methodWithExpected.IgnoreMessage);
         }
-
+        */
+        /*
         /// <summary>
         /// Testing Expected as Error arg in MyTest attribute
         /// </summary>
@@ -84,5 +88,6 @@ namespace MyNUnitTests
             var MethodWithExpected = MethodsWithExpected.Last();
             Assert.AreEqual(typeof(ArgumentException), MethodWithExpected.Expected);
         }
+        */
     }
 }
