@@ -8,7 +8,7 @@ namespace MyThreadPoolTests
     /// </summary>
     public class BasicTests
     {
-        private MyThreadPool.MyThreadPool threadPool;
+        private MyThreadPool.MyThreadPool? threadPool;
 
         [SetUp]
         public void Setup()

@@ -29,6 +29,7 @@ public class MyThreadPool
         {
             throw new ArgumentOutOfRangeException("Number of threads must be positive");
         }
+
         this.numberOfThreads = numberOfThreads;
         threads = new Thread[this.numberOfThreads];
         for (var i = 0; i < threads.Length; i++)
@@ -37,17 +38,23 @@ public class MyThreadPool
             {
                 while (!token.IsCancellationRequested)
                 {
-                    while (actions.Count == 0)
+                    if (actions.Count == 0)
                     {
-                        if (token.IsCancellationRequested)
-                        {
-                            break;
-                        }
+                        newTask.WaitOne();
+                    }
+
+                    if (token.IsCancellationRequested)
+                    {
+                        break;
                     }
 
                     if (actions.TryDequeue(out Action action))
                     {
                         action();
+                    }
+                    else
+                    {
+                        throw new AggregateException("Unexpected erroe"); // Надо додумать
                     }
                 }
             });
@@ -60,13 +67,15 @@ public class MyThreadPool
     /// </summary>
     public void ShutDown()
     {
-        cts.Cancel();
-        for (int i = 0; i < threads.Length; ++i)
+        lock (actions)
         {
-            newTask.Set();
-            while (actions.Count > 0)
+            cts.Cancel();
+            for (int i = 0; i < threads.Length; ++i)
             {
-                continue;
+                while (actions.Count > 0)
+                {
+                    continue;
+                }
             }
         }
     }
@@ -76,7 +85,7 @@ public class MyThreadPool
     /// </summary>
     /// <exception cref="ArgumentNullException"> Throws if the function is null. </exception>
     /// <exception cref="InvalidOperationException"> Throws if cancellation was requested before adding a task. </exception>
-    public IMyTask<T> Add<T>(Func<T> func)
+    public IMyTask<T> Add<T>(Func<T>? func)
     {
         ArgumentNullException.ThrowIfNull(func);
         lock (actions)
@@ -104,10 +113,10 @@ public class MyThreadPool
     public class MyTask<TResult> : IMyTask<TResult>
     {
         private TResult result;
-        private Func<TResult> func;
+        private Func<TResult>? func;
         private Queue<Action> continueWithTasks;
         private MyThreadPool myThreadPool;
-        private ManualResetEvent manualReset = new(false);
+        private ManualResetEvent manualReset = new (false);
 
         /// <summary>
         /// Contains the information whether the task is completed.
@@ -141,7 +150,7 @@ public class MyThreadPool
         /// Constructor for a MyTask instance.
         /// </summary>
         /// <exception cref="ArgumentNullException">throws in case func is null. </exception>
-        public MyTask(Func<TResult> func, MyThreadPool threadPool)
+        public MyTask(Func<TResult>? func, MyThreadPool threadPool)
         {
             ArgumentNullException.ThrowIfNull(func);
             myThreadPool = threadPool;
