@@ -45,7 +45,7 @@ public class MyThreadPool
                     }
                     else
                     {
-                        throw new AggregateException("Unexpected error"); // Надо додумать
+                        throw new AggregateException($"Unexpected error, tasks in queue: {taskInQueue}"); // Надо додумать
                     }
                 }
             });
