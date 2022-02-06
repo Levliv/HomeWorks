@@ -1,12 +1,11 @@
-﻿using System;
+﻿namespace MyNUnit;
 
-namespace MyNUnit
+using System;
+
+/// <summary>
+/// Label for after-class tests.
+/// </summary>
+[AttributeUsage(AttributeTargets.Method)]
+public class AfterClassAttribute : Attribute
 {
-    /// <summary>
-    /// Label for after-class tests
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Method)]
-    public class AfterClassAttribute : Attribute
-    {
-    }
 }

@@ -180,7 +180,7 @@ public static class TestRunner
     /// </summary>
     public static void MethodsWithBeforeAndAfterClassAttribute(MethodInfo methodInfo, object obj)
     {
-        if (!methodInfo.IsStatic && ((methodInfo.GetCustomAttribute(typeof(BeforeClassAttribute)) != null) 
+        if (!methodInfo.IsStatic && ((methodInfo.GetCustomAttribute(typeof(BeforeClassAttribute)) != null)
             || (methodInfo.GetCustomAttribute(typeof(AfterClassAttribute)) != null)))
         {
             throw new InvalidOperationException("Method to call must me static");

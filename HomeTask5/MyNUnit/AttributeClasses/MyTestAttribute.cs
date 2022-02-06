@@ -1,21 +1,20 @@
-﻿using System;
+﻿namespace MyNUnit;
 
-namespace MyNUnit
+using System;
+
+/// <summary>
+/// A meta data for Tests
+/// </summary>
+[AttributeUsage(AttributeTargets.Method)]
+public class MyTestAttribute : Attribute
 {
     /// <summary>
-    /// A meta data for Tests
+    /// Expected value
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method)]
-    public class MyTestAttribute : Attribute
-    {
-        /// <summary>
-        /// Expected value
-        /// </summary>
-        public object Expected { get; set; } = null;
+    public object Expected { get; set; } = null;
 
-        /// <summary>
-        /// Message in case test supposed to be ignored
-        /// </summary>
-        public string Ignore { get; set; } = null;
-    }
+    /// <summary>
+    /// Message in case test supposed to be ignored
+    /// </summary>
+    public string Ignore { get; set; } = null;
 }
