@@ -27,10 +27,12 @@ public class MyThreadPool
             {
                 while (!token.IsCancellationRequested)
                 {
-                    if (actions.Count == 0)
+                    if (taskInQueue == 0)
                     {
                         newTask.WaitOne();
                     }
+
+                    Interlocked.Decrement(ref taskInQueue);
 
                     if (token.IsCancellationRequested)
                     {
@@ -43,7 +45,7 @@ public class MyThreadPool
                     }
                     else
                     {
-                        throw new AggregateException("Unexpected erroe"); // Надо додумать
+                        throw new AggregateException("Unexpected error"); // Надо додумать
                     }
                 }
             });
@@ -56,6 +58,7 @@ public class MyThreadPool
     private Queue<Action> actions = new ();
     private AutoResetEvent newTask = new (false);
     private Thread[] threads;
+    private int taskInQueue = 0;
 
     /// <summary>
     /// Gets number of active threads.
@@ -95,12 +98,13 @@ public class MyThreadPool
                 var task = new MyTask<T>(func, this);
                 try
                 {
-                    if (actions.Count == 0)
+                    actions.Enqueue(task.RunTask);
+                    if (taskInQueue == 0)
                     {
                         newTask.Set();
                     }
 
-                    actions.Enqueue(task.RunTask);
+                    Interlocked.Increment(ref taskInQueue);
                 }
                 catch (Exception ex)
                 {
