@@ -95,8 +95,12 @@ public class MyThreadPool
                 var task = new MyTask<T>(func, this);
                 try
                 {
+                    if (actions.Count == 0)
+                    {
+                        newTask.Set();
+                    }
+
                     actions.Enqueue(task.RunTask);
-                    newTask.Set();
                 }
                 catch (Exception ex)
                 {
