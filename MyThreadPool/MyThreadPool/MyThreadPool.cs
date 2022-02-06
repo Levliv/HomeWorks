@@ -27,13 +27,6 @@ public class MyThreadPool
             {
                 while (!token.IsCancellationRequested)
                 {
-                    if (taskInQueue == 0)
-                    {
-                        newTask.WaitOne();
-                    }
-
-                    Interlocked.Decrement(ref taskInQueue);
-
                     if (token.IsCancellationRequested)
                     {
                         break;
@@ -45,7 +38,7 @@ public class MyThreadPool
                     }
                     else
                     {
-                        throw new AggregateException($"Unexpected error, tasks in queue: {taskInQueue}"); // Надо додумать
+                        newTask.WaitOne();
                     }
                 }
             });
@@ -99,11 +92,7 @@ public class MyThreadPool
                 try
                 {
                     actions.Enqueue(task.RunTask);
-                    if (taskInQueue == 0)
-                    {
-                        newTask.Set();
-                    }
-
+                    newTask.Set();
                     Interlocked.Increment(ref taskInQueue);
                 }
                 catch (Exception ex)
