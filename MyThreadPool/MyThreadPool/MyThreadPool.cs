@@ -1,10 +1,18 @@
 ﻿namespace MyThreadPool;
 
+using System.Collections.Concurrent;
+
 /// <summary>
 /// MyTPL.
 /// </summary>
 public class MyThreadPool
 {
+    private readonly CancellationTokenSource cts = new();
+    private int numberOfThreads;
+    private ConcurrentQueue<Action> actions = new();
+    private AutoResetEvent newTask = new(false);
+    private Thread[] threads;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MyThreadPool"/> class.
     /// Constructor for thread pool.
@@ -39,12 +47,6 @@ public class MyThreadPool
             threads[i].Start();
         }
     }
-
-    private readonly CancellationTokenSource cts = new ();
-    private int numberOfThreads;
-    private Queue<Action> actions = new ();
-    private AutoResetEvent newTask = new (false);
-    private Thread[] threads;
 
     /// <summary>
     /// Gets number of active threads.
@@ -102,6 +104,12 @@ public class MyThreadPool
 
     public class MyTask<TResult> : IMyTask<TResult>
     {
+        private TResult? result;
+        private Func<TResult>? func;
+        private Queue<Action> continueWithTasks;
+        private MyThreadPool myThreadPool;
+        private ManualResetEvent manualReset = new (false);
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MyTask{TResult}"/> class.
         /// Constructor for a MyTask instance.
@@ -112,14 +120,8 @@ public class MyThreadPool
             ArgumentNullException.ThrowIfNull(func);
             myThreadPool = threadPool;
             this.func = func;
-            continueWithTasks = new();
+            continueWithTasks = new ();
         }
-
-        private TResult result;
-        private Func<TResult>? func;
-        private Queue<Action> continueWithTasks;
-        private MyThreadPool myThreadPool;
-        private ManualResetEvent manualReset = new (false);
 
         /// <summary>
         /// Contains the information whether the task is completed.
@@ -189,7 +191,7 @@ public class MyThreadPool
             }
             catch (Exception ex)
             {
-                AggregateException = new(ex);
+                AggregateException = new (ex);
             }
             finally
             {
