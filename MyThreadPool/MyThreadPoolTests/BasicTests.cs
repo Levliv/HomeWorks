@@ -59,7 +59,6 @@ namespace MyThreadPoolTests
         {
             Assert.AreEqual(1, threadPool.ActiveThreads);
         }
-
         
         [Test]
         public void ContinueWithTest()

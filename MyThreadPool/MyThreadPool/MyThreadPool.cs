@@ -26,11 +26,6 @@ public class MyThreadPool
             {
                 while (true)
                 {
-                    if (cts.IsCancellationRequested)
-                    {
-                        break;
-                    }
-
                     if (actions.TryDequeue(out Action? action))
                     {
                         action();
@@ -64,11 +59,6 @@ public class MyThreadPool
         lock (cts)
         {
             cts.Cancel();
-        }
-
-        while (actions.Count > 0)
-        {
-            continue;
         }
     }
 
