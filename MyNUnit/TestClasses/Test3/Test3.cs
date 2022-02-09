@@ -7,7 +7,7 @@ public class Test3
     /// <summary>
     /// String to be sure in order of invokation
     /// </summary>
-    public static bool[] array = new []{ false, false, false, false, false};
+    public static bool[] checker { get; set; } = { false, false, false, false, false };
 
     /// <summary>
     /// Adds one symbol to the test string
@@ -15,7 +15,7 @@ public class Test3
     [MyTest]
     public void MainMethod()
     {
-        array[0] = true;
+        checker[0] = true;
     }
 
     /// <summary>
@@ -24,7 +24,7 @@ public class Test3
     [Before]
     public void BeforeMethod()
     {
-        array[1] = true;
+        checker[1] = true;
     }
 
 
@@ -34,7 +34,7 @@ public class Test3
     [Before]
     public void BeforeMethod2()
     {
-        array[2] = true;
+        checker[2] = true;
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ public class Test3
     [After]
     public void AfterMethod()
     {
-        array[3] = true;
+        checker[3] = true;
     }
 
     /// <summary>
@@ -52,6 +52,6 @@ public class Test3
     [After]
     public void AfterMethod2()
     {
-        array[4] = true;
+        checker[4] = true;
     }
 }

@@ -1,23 +1,25 @@
-﻿namespace Test2;
+﻿namespace Test7;
 
 using MyAttributes;
 
-public class Test2
+public class Test7
 {
     public static bool[] checker { get; set; } = { false, false, false };
 
-    public static void BeforeClassMethod()
+    [BeforeClass]
+    public void BeforeClassMethod()
     {
         checker[0] = true;
     }
 
     [MyTest]
-    public static void MyTestMethod()
+    public void MyTestMethod()
     {
         checker[1] = true;
     }
 
-    public static void AfterClassMethod()
+    [AfterClass]
+    public void AfterClassMethod()
     {
         checker[2] = true;
     }

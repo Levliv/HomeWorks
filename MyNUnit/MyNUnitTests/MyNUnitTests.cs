@@ -4,9 +4,6 @@ using NUnit.Framework;
 using MyNUnit;
 using System.Linq;
 using System;
-using Test1;
-using Test2;
-using Test3;
 
 public class MyNUnitTests
 {
@@ -24,16 +21,7 @@ public class MyNUnitTests
     [Test]
     public void OneMethodWithMyTestAttribute()
     {
-        Assert.IsTrue(Test1.WasInvoked);
-    }
-    
-    /// <summary>
-    /// Checking, when there is one method with MyTest and one with before
-    /// </summary>
-    [Test]
-    public void OneMethodWithBeforeAttribute()
-    {
-        Assert.AreEqual("ab", Test2.Checker);
+        Assert.IsTrue(Test1.Test1.WasInvoked);
     }
 
     /// <summary>
@@ -43,7 +31,7 @@ public class MyNUnitTests
     public void MultiBeforeAndAfterAndMyTestAttribute()
     {
         var resultBlock = new bool[] { true, true, true, true, true };
-        Assert.AreEqual(resultBlock, Test3.array);
+        Assert.AreEqual(resultBlock, Test3.Test3.checker);
     }
 
     /// <summary>
@@ -79,4 +67,16 @@ public class MyNUnitTests
         var MethodWithExpected = MethodsWithExpected.Last();
         Assert.AreEqual(typeof(ArgumentException), MethodWithExpected.Expected);
     }
+
+    /*
+    /// <summary>
+    /// Checking, when there is one method with MyTest and one with before
+    /// </summary>
+    [Test]
+    public void BeforeClassAndAfterClassAttribute()
+    {
+        var resultBlock = new bool[] { true, true, true };
+        Assert.AreEqual(resultBlock, Test2.Test2.checker);
+    }
+    */
 }

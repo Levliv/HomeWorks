@@ -110,9 +110,8 @@ public static class TestRunner
             return;
         }
 
-        MethodsInvoker<BeforeAttribute>(methodInfo.DeclaringType);
+        MethodsInvoker<BeforeAttribute>(methodInfo.DeclaringType, obj);
         var watch = Stopwatch.StartNew();
-
         try
         {
             methodInfo.Invoke(obj, null);
@@ -129,14 +128,14 @@ public static class TestRunner
                 MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isFailed: true));
             }
         }
+        MethodsInvoker<AfterAttribute>(methodInfo.DeclaringType, obj);
     }
 
     /// <summary>
     /// Invoking methods with Before and After Attribute.
     /// </summary>
-    public static void MethodsWithAfterAndBeforeAttribute(MethodInfo methodInfo, object obj)
+    public static void MethodsWithAfterAndBeforeAttribute(MethodInfo methodInfo, object obj = null)
     {
-        obj = Activator.CreateInstance(methodInfo.DeclaringType);
         methodInfo.Invoke(obj, null);
     }
 
@@ -145,6 +144,7 @@ public static class TestRunner
     /// </summary>
     public static void MethodsWithBeforeAndAfterClassAttribute(MethodInfo methodInfo, object obj)
     {
+        Console.WriteLine("Fuck it ");
         if (!methodInfo.IsStatic && ((methodInfo.GetCustomAttribute(typeof(BeforeClassAttribute)) != null) || (methodInfo.GetCustomAttribute(typeof(AfterClassAttribute)) != null)))
         {
             throw new InvalidOperationException("Method to call must me static");
