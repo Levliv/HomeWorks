@@ -38,22 +38,22 @@ public static class TestRunner
         MyTests = new BlockingCollection<TestStrcuct>();
         var dllFiles = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories);
         var dllFilesNotRepeated = new HashSet<string>();
-        var downloadeddlls = new HashSet<string>();
+        var downloadedDlls = new HashSet<string>();
         foreach (var dll in dllFiles)
         {
-            if (!downloadeddlls.Contains(dll.Split("\\")[^1]))
+            if (!downloadedDlls.Contains(dll.Split("\\")[^1]))
             {
-                downloadeddlls.Add(dll.Split("\\")[^1]);
+                downloadedDlls.Add(dll.Split("\\")[^1]);
                 dllFilesNotRepeated.Add(dll);
             }
-
         }
-        foreach (var dll in dllFilesNotRepeated)
+
+        Parallel.ForEach(dllFilesNotRepeated, dll =>
         {
             var assembly = Assembly.LoadFrom(dll);
             var types = assembly.GetTypes();
             Parallel.ForEach(types, TestStarter);
-        }
+        });
     }
 
     /// <summary>
@@ -82,7 +82,6 @@ public static class TestRunner
         else
         if (typeof(AttributeType) == typeof(BeforeClassAttribute) || typeof(AttributeType) == typeof(AfterClassAttribute))
         {
-
             test = x => MethodsWithBeforeAndAfterClassAttribute(x, obj);
         }
         else
@@ -94,6 +93,7 @@ public static class TestRunner
         {
             throw new Exception("Wrong attribute type");
         }
+
         Parallel.ForEach(methodsWithAttribute, test);
     }
 
@@ -117,46 +117,45 @@ public static class TestRunner
         if (attribute.Ignore != null)
         {
             MyTests.Add(new TestStrcuct(methodInfo, isIgnored: true, ignoreMessage: attribute.Ignore));
+            return;
+        }
+
+        if (attribute.Expected == null)
+        {
+            MethodsInvoker<BeforeAttribute>(methodInfo.DeclaringType);
+            var watch = Stopwatch.StartNew();
+            object result = methodInfo.Invoke(obj, null);
+            watch.Stop();
+            MyTests.Add(new TestStrcuct(methodInfo, isPassed: true, timeConsumed: watch.ElapsedMilliseconds));
+            MethodsInvoker<AfterAttribute>(methodInfo.DeclaringType);
         }
         else
         {
-            if (attribute.Expected == null)
+            try
             {
                 MethodsInvoker<BeforeAttribute>(methodInfo.DeclaringType);
                 var watch = Stopwatch.StartNew();
                 object result = methodInfo.Invoke(obj, null);
                 watch.Stop();
-                MyTests.Add(new TestStrcuct(methodInfo, isPassed: true, timeConsumed: watch.ElapsedMilliseconds));
                 MethodsInvoker<AfterAttribute>(methodInfo.DeclaringType);
-            }
-            else
-            {
-                try
+                if (attribute.Expected.Equals(result))
                 {
-                    MethodsInvoker<BeforeAttribute>(methodInfo.DeclaringType);
-                    var watch = Stopwatch.StartNew();
-                    object result = methodInfo.Invoke(obj, null);
-                    watch.Stop();
-                    MethodsInvoker<AfterAttribute>(methodInfo.DeclaringType);
-                    if (attribute.Expected.Equals(result))
-                    {
-                        MyTests.Add(new TestStrcuct(methodInfo, isPassed: true, expected: attribute.Expected, timeConsumed: watch.ElapsedMilliseconds)); ;
-                    }
-                    else
-                    {
-                        MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isFailed: true));
-                    }
+                    MyTests.Add(new TestStrcuct(methodInfo, isPassed: true, expected: attribute.Expected, timeConsumed: watch.ElapsedMilliseconds)); ;
                 }
-                catch (Exception exception)
+                else
                 {
-                    if (attribute.Expected.Equals(exception.InnerException.GetType()))
-                    {
-                        MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isPassed: true));
-                    }
-                    else
-                    {
-                        MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isFailed: true));
-                    }
+                    MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isFailed: true));
+                }
+            }
+            catch (Exception exception)
+            {
+                if (attribute.Expected.Equals(exception.InnerException.GetType()))
+                {
+                    MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isPassed: true));
+                }
+                else
+                {
+                    MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isFailed: true));
                 }
             }
         }
@@ -168,7 +167,7 @@ public static class TestRunner
     public static void MethodsWithAfterAndBeforeAttribute(MethodInfo methodInfo, object obj)
     {
         obj = ConstuctorFinder(methodInfo);
-        object result = methodInfo.Invoke(obj, null);
+        methodInfo.Invoke(obj, null);
 
     }
 
