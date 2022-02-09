@@ -98,21 +98,11 @@ public static class TestRunner
     }
 
     /// <summary>
-    /// Constructing the object as an instance of this type by methodInfo information.
-    /// </summary>
-    public static object ConstuctorFinder(MethodInfo methodInfo)
-    {
-        var ctor = methodInfo.DeclaringType.GetConstructor(Type.EmptyTypes);
-        var obj = ctor.Invoke(null);
-        return obj;
-    }
-
-    /// <summary>
     /// Invoking Methods with MyTestAttribute.
     /// </summary>
     public static void MethodsWithMyTestInvoker(MethodInfo methodInfo, object obj)
     {
-        obj = ConstuctorFinder(methodInfo);
+        obj = Activator.CreateInstance(methodInfo.DeclaringType);
         MyTestAttribute attribute = (MyTestAttribute)methodInfo.GetCustomAttribute(typeof(MyTestAttribute), true);
         if (attribute.Ignore != null)
         {
@@ -124,7 +114,7 @@ public static class TestRunner
         {
             MethodsInvoker<BeforeAttribute>(methodInfo.DeclaringType);
             var watch = Stopwatch.StartNew();
-            object result = methodInfo.Invoke(obj, null);
+            methodInfo.Invoke(obj, null);
             watch.Stop();
             MyTests.Add(new TestStrcuct(methodInfo, isPassed: true, timeConsumed: watch.ElapsedMilliseconds));
             MethodsInvoker<AfterAttribute>(methodInfo.DeclaringType);
@@ -135,7 +125,7 @@ public static class TestRunner
             {
                 MethodsInvoker<BeforeAttribute>(methodInfo.DeclaringType);
                 var watch = Stopwatch.StartNew();
-                object result = methodInfo.Invoke(obj, null);
+                methodInfo.Invoke(obj, null);
                 watch.Stop();
                 MethodsInvoker<AfterAttribute>(methodInfo.DeclaringType);
                 if (attribute.Expected.Equals(result))
@@ -166,9 +156,8 @@ public static class TestRunner
     /// </summary>
     public static void MethodsWithAfterAndBeforeAttribute(MethodInfo methodInfo, object obj)
     {
-        obj = ConstuctorFinder(methodInfo);
+        obj = Activator.CreateInstance(methodInfo.DeclaringType);
         methodInfo.Invoke(obj, null);
-
     }
 
     /// <summary>
@@ -180,9 +169,7 @@ public static class TestRunner
         {
             throw new InvalidOperationException("Method to call must me static");
         }
-        else
-        {
-            methodInfo.Invoke(obj, null);
-        }
+
+        methodInfo.Invoke(obj, null);
     }
 }
