@@ -110,43 +110,23 @@ public static class TestRunner
             return;
         }
 
-        if (attribute.Expected == null)
+        MethodsInvoker<BeforeAttribute>(methodInfo.DeclaringType);
+        var watch = Stopwatch.StartNew();
+
+        try
         {
-            MethodsInvoker<BeforeAttribute>(methodInfo.DeclaringType);
-            var watch = Stopwatch.StartNew();
             methodInfo.Invoke(obj, null);
-            watch.Stop();
-            MyTests.Add(new TestStrcuct(methodInfo, isPassed: true, timeConsumed: watch.ElapsedMilliseconds));
-            MethodsInvoker<AfterAttribute>(methodInfo.DeclaringType);
         }
-        else
+        catch (Exception exception)
         {
-            try
+            watch.Stop();
+            if (attribute.Expected.Equals(exception.InnerException.GetType()))
             {
-                MethodsInvoker<BeforeAttribute>(methodInfo.DeclaringType);
-                var watch = Stopwatch.StartNew();
-                methodInfo.Invoke(obj, null);
-                watch.Stop();
-                MethodsInvoker<AfterAttribute>(methodInfo.DeclaringType);
-                if (attribute.Expected.Equals(result))
-                {
-                    MyTests.Add(new TestStrcuct(methodInfo, isPassed: true, expected: attribute.Expected, timeConsumed: watch.ElapsedMilliseconds)); ;
-                }
-                else
-                {
-                    MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isFailed: true));
-                }
+                MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isPassed: true));
             }
-            catch (Exception exception)
+            else
             {
-                if (attribute.Expected.Equals(exception.InnerException.GetType()))
-                {
-                    MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isPassed: true));
-                }
-                else
-                {
-                    MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isFailed: true));
-                }
+                MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isFailed: true));
             }
         }
     }
