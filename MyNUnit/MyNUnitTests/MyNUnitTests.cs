@@ -68,7 +68,6 @@ public class MyNUnitTests
         Assert.AreEqual(typeof(ArgumentException), MethodWithExpected.Expected);
     }
 
-    /*
     /// <summary>
     /// Checking, when there is one method with MyTest and one with before
     /// </summary>
@@ -78,5 +77,4 @@ public class MyNUnitTests
         var resultBlock = new bool[] { true, true, true };
         Assert.AreEqual(resultBlock, Test2.Test2.checker);
     }
-    */
 }
