@@ -35,35 +35,11 @@ jobs:
     #- name: DIR
     #  run: dir
     - name: Restore
-      run: nuget restore HomeTask5/MyNunit/MyNUnit.sln
-    - name: Restore TestClass1
-      run: nuget restore HomeTask5/Testdata/Test1/Test1/Test1.sln
-    - name: Restore TestClass2
-      run: nuget restore HomeTask5/Testdata/Test2/Test2/Test2.sln
-    - name: Restore TestClass3
-      run: nuget restore HomeTask5/Testdata/Test3/Test3/Test3.sln
-    - name: Restore TestClass4
-      run: nuget restore HomeTask5/Testdata/Test4/Test4/Test4.sln
-    - name: Restore TestClass5
-      run: nuget restore HomeTask5/Testdata/Test5/Test5/Test5.sln
-    - name: Restore TestClass6
-      run: nuget restore HomeTask5/Testdata/Test6/Test6/Test6.sln
+      run: nuget restore MyNunit/MyNunit/MyNUnit.sln
       
     - name: building
-      run: dotnet build HomeTask5/MyNunit/MyNUnit.csproj
-    - name: building TestClass1
-      run: dotnet build HomeTask5/Testdata/Test1/Test1/Test1.sln
-    - name: building TestClass2
-      run: dotnet build HomeTask5/Testdata/Test2/Test2/Test2.sln
-    - name: building TestClass3
-      run: dotnet build HomeTask5/Testdata/Test3/Test3/Test3.sln
-    - name: building TestClass4
-      run: dotnet build HomeTask5/Testdata/Test4/Test4/Test4.sln
-    - name: building TestClass5
-      run: dotnet build HomeTask5/Testdata/Test5/Test5/Test5.sln
-    - name: building TestClass6
-      run: dotnet build HomeTask5/Testdata/Test6/Test6/Test6.sln
+      run: dotnet build MyNunit/MyNunit/MyNUnit.csproj
     - name: building
-      run: dotnet build HomeTask5/MyNunitTests/MyNUnitTests.csproj
+      run: dotnet build MyNunit/MyNunitTests/MyNUnitTests.csproj
     - name: test
-      run: dotnet test HomeTask5/MyNunit/MyNUnit.sln
+      run: dotnet test MyNunit/MyNunit/MyNUnit.sln
