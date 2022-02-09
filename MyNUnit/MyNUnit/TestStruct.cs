@@ -58,7 +58,7 @@ public class TestStrcuct
     /// Constructor to store the information about tests.
     /// </summary>
     public TestStrcuct(MethodInfo methodInfo, bool isPassed = false, bool isFailed = false,
-        bool isIgnored = false, long timeConsumed = 0, string errorMessage = null, object expected = null, object got = null, string ignoreMessage = null)
+        bool isIgnored = false, long timeConsumed = 0, string? errorMessage = null, object? expected = null, object? got = null, string? ignoreMessage = null)
     {
         MethodInformation = methodInfo;
         IsPassed = isPassed;

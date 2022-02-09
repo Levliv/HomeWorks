@@ -24,9 +24,7 @@ public class MyNUnitTests
     [Test]
     public void OneMethodWithMyTestAttribute()
     {
-        TestRunner.PrintTestResults();
         Assert.IsTrue(Test1.WasInvoked);
-        TestRunner.PrintTestResults();
     }
     
     /// <summary>
@@ -56,7 +54,6 @@ public class MyNUnitTests
     {
         var methodsWithExpected = from i in TestRunner.MyTests where i.MethodInformation.Name == "Test4Method" select i;
         var methodWithExpected = methodsWithExpected.Last();
-        TestRunner.PrintTestResults();
         Assert.AreEqual(typeof(ArgumentOutOfRangeException), methodWithExpected.Expected);
     }
 
