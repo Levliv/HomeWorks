@@ -115,13 +115,15 @@ public static class TestRunner
         try
         {
             methodInfo.Invoke(obj, null);
+            watch.Stop();
+            MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isPassed: true, timeConsumed: watch.ElapsedMilliseconds));
         }
         catch (Exception exception)
         {
             watch.Stop();
             if (attribute.Expected.Equals(exception.InnerException.GetType()))
             {
-                MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isPassed: true));
+                MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isPassed: true, timeConsumed: watch.ElapsedMilliseconds));
             }
             else
             {
@@ -144,7 +146,6 @@ public static class TestRunner
     /// </summary>
     public static void MethodsWithBeforeAndAfterClassAttribute(MethodInfo methodInfo, object obj)
     {
-        Console.WriteLine("Fuck it ");
         if (!methodInfo.IsStatic && ((methodInfo.GetCustomAttribute(typeof(BeforeClassAttribute)) != null) || (methodInfo.GetCustomAttribute(typeof(AfterClassAttribute)) != null)))
         {
             throw new InvalidOperationException("Method to call must me static");
