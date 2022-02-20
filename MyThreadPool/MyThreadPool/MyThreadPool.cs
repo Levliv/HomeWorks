@@ -164,26 +164,20 @@ public class MyThreadPool
         public IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> func)
         {
             var task = new MyTask<TNewResult>(() => func(Result), myThreadPool);
-            lock (myThreadPool.cts)
+            if (myThreadPool.cts.Token.IsCancellationRequested)
             {
-                if (myThreadPool.cts.Token.IsCancellationRequested)
+                throw new InvalidOperationException();
+            }
+
+            lock (continueWithTasks)
+            {
+                if (IsCompleted)
                 {
-                    throw new InvalidOperationException();
+                    return myThreadPool.Add(() => func(Result));
                 }
 
-                lock (continueWithTasks)
-                {
-                    lock (myThreadPool.actions)
-                    {
-                        if (IsCompleted)
-                        {
-                            return myThreadPool.Add(() => func(Result));
-                        }
-
-                        continueWithTasks.Enqueue(task.RunTask);
-                        return task;
-                    }
-                }
+                continueWithTasks.Enqueue(task.RunTask);
+                return task;
             }
         }
 
