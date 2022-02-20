@@ -1,7 +1,7 @@
 ﻿namespace MyThreadPool;
 
 using System.Collections.Concurrent;
-
+using System;
 /// <summary>
 /// My TPL.
 /// </summary>
@@ -88,24 +88,18 @@ public class MyThreadPool
     public IMyTask<T> Add<T>(Func<T>? func)
     {
         ArgumentNullException.ThrowIfNull(func);
-        lock (actions)
+        lock (cts)
         {
             if (cts.IsCancellationRequested)
             {
                 throw new InvalidOperationException();
             }
-
-            lock (cts)
+            else
             {
-                if (!cts.IsCancellationRequested)
-                {
-                    var task = new MyTask<T>(func, this);
-                    actions.Enqueue(task.RunTask);
-                    newTask.Set();
-                    return task;
-                }
-
-                throw new InvalidOperationException();
+                var task = new MyTask<T>(func, this);
+                actions.Enqueue(task.RunTask);
+                newTask.Set();
+                return task;
             }
         }
     }
@@ -163,12 +157,12 @@ public class MyThreadPool
         /// </summary>
         public IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> func)
         {
-            var task = new MyTask<TNewResult>(() => func(Result), myThreadPool);
             if (myThreadPool.cts.Token.IsCancellationRequested)
             {
                 throw new InvalidOperationException();
             }
 
+            var task = new MyTask<TNewResult>(() => func(Result), myThreadPool);
             lock (continueWithTasks)
             {
                 if (IsCompleted)
