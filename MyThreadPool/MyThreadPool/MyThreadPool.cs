@@ -100,16 +100,8 @@ public class MyThreadPool
                 if (!cts.IsCancellationRequested)
                 {
                     var task = new MyTask<T>(func, this);
-                    try
-                    {
-                        actions.Enqueue(task.RunTask);
-                        newTask.Set();
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new InvalidOperationException(ex.Message);
-                    }
-
+                    actions.Enqueue(task.RunTask);
+                    newTask.Set();
                     return task;
                 }
 
