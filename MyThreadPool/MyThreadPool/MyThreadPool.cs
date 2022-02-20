@@ -3,14 +3,16 @@
 using System.Collections.Concurrent;
 
 /// <summary>
-/// MyTPL.
+/// My TPL.
 /// </summary>
 public class MyThreadPool
 {
-    private readonly CancellationTokenSource cts = new();
+    private readonly CancellationTokenSource cts = new ();
     private int numberOfThreads;
-    private ConcurrentQueue<Action> actions = new();
-    private AutoResetEvent newTask = new(false);
+    private ConcurrentQueue<Action> actions = new ();
+    private AutoResetEvent newTask = new (false);
+    private AutoResetEvent shutDown = new (false);
+    private int shutDownThreads;
     private Thread[] threads;
 
     /// <summary>
@@ -32,7 +34,7 @@ public class MyThreadPool
         {
             threads[i] = new Thread(() =>
             {
-                while (true)
+                while (!(actions.IsEmpty && cts.Token.IsCancellationRequested))
                 {
                     if (actions.TryDequeue(out Action? action))
                     {
@@ -41,8 +43,15 @@ public class MyThreadPool
                     else
                     {
                         newTask.WaitOne();
+                        if (!actions.IsEmpty)
+                        {
+                            newTask.Set();
+                        }
                     }
                 }
+
+                Interlocked.Increment(ref shutDownThreads);
+                shutDown.Set();
             });
             threads[i].Start();
         }
@@ -61,6 +70,13 @@ public class MyThreadPool
         lock (cts)
         {
             cts.Cancel();
+            newTask.Set();
+        }
+
+        while (shutDownThreads < numberOfThreads)
+        {
+            shutDown.WaitOne();
+            newTask.Set();
         }
     }
 
@@ -102,7 +118,7 @@ public class MyThreadPool
         }
     }
 
-    public class MyTask<TResult> : IMyTask<TResult>
+    internal class MyTask<TResult> : IMyTask<TResult>
     {
         private TResult? result;
         private Func<TResult>? func;
