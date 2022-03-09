@@ -91,7 +91,6 @@ public class ServerEngine
             await streamWriter.FlushAsync();
             using var fileStream = File.Open(path, FileMode.Open);
             await fileStream.CopyToAsync(streamWriter.BaseStream);
-            await streamWriter.FlushAsync();
         }
         else
         {
@@ -99,7 +98,6 @@ public class ServerEngine
         }
 
         await streamWriter.FlushAsync();
-        return;
     }
 
     /// <summary>
