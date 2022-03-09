@@ -1,4 +1,8 @@
-﻿namespace MyFTP;
+﻿// <copyright file="ResponseFormat.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace MyFTP;
 
 /// <summary>
 /// Struct to contain the information about each file.

@@ -1,4 +1,8 @@
-﻿namespace MyFTP;
+﻿// <copyright file="GetResponseStruct.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace MyFTP;
 
 /// <summary>
 /// Contating the information about the information got from the server.

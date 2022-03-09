@@ -1,4 +1,8 @@
-﻿using System.Net;
+﻿// <copyright file="Program.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+using System.Net;
 using System.Text;
 
 namespace MyFTP;
@@ -24,9 +28,9 @@ internal static class Program
             }
 
             var client = new ClientEngine(ipString, port);
-            if (requestCode == 2)
+            /*if (requestCode == 2)
             {
-                var getResponse = await client.GetAsync(path);
+                var getResponse = await client.GetAsync(path, "aaa");
                 if (getResponse.Data != null)
                 {
                     Console.WriteLine(Encoding.UTF8.GetString(getResponse.Data));
@@ -49,6 +53,8 @@ internal static class Program
         else
         {
             Console.WriteLine($"port or ip is not recognised");
+        }
+            */
         }
     }
 }

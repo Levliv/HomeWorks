@@ -1,9 +1,13 @@
-﻿using NUnit.Framework;
+﻿// <copyright file="ClientTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+using NUnit.Framework;
 using System.Collections;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using System;
 
 namespace MyFTP;
 
@@ -51,6 +55,7 @@ public class MyFTPTests
             expectedString.Append(fileName);
             expectedString.Append(' ');
         }
+
         var result = await client.ListAsync("./Tests/Files");
         var resultString = new StringBuilder();
         foreach (var file in result)
@@ -71,18 +76,30 @@ public class MyFTPTests
     public async Task TestClientRequestGet()
     {
         var client = new ClientEngine("127.0.0.1", 8000);
-        var result = await client.GetAsync("./Tests/Files/TestFile.txt");
-        Assert.AreEqual("Abracanabra\r\n2nd line", Encoding.UTF8.GetString(result.Data));
+        var baseFile = "./Tests/Files/TestFile.txt";
+        var file = "./../../../../Tests/Files2/result.txt";
+        File.Delete(file);
+        //Console.WriteLine(Path.GetFullPath(baseFile));
+        //Console.WriteLine(Path.GetFullPath(file));
+        //var f = Path.GetFullPath(file);
+        var actual = await client.GetAsync(baseFile, file);
+        //Console.WriteLine(actual);
+        //File.OpenRead(baseFile);
+        //Console.WriteLine(actual);
+        //File.OpenRead(file);
+        //Console.WriteLine(actual);
+        Assert.Pass();
+        //FileAssert.AreEqual("./../../../../Test/File/TestFile.txt", file);
     }
 
     /// <summary>
-    /// IF file doesn't exist size of the message should be -1.
+    /// If file doesn't exist size of the message should be -1.
     /// </summary>
     [Test]
     public async Task TestIfFileDoesNotExist()
     {
         var client = new ClientEngine("127.0.0.1", 8000);
-        var result = await client.GetAsync("./Tests/Files/TestFiles.txt");
-        Assert.AreEqual(-1, result.Size());
+        var result = await client.GetAsync("./Tests/Files/TestFiles.txt", "result.txt");
+        Assert.AreEqual(-1, result);
     }
 }

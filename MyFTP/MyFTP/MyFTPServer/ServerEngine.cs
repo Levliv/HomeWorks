@@ -1,4 +1,4 @@
-﻿// <copyright file="ServerEngine.cs" company="IDK">
+﻿// <copyright file="ServerEngine.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
@@ -14,7 +14,7 @@ namespace MyFTP;
 public class ServerEngine
 {
     private readonly TcpListener listener;
-    private Queue<Task> clientsTaskQueue = new ();
+    private readonly Queue<Task> clientsTaskQueue = new();
 
     /// <summary>
     /// Gets path to the base directory where the search is supposed to begin.
@@ -54,6 +54,7 @@ public class ServerEngine
     /// </summary>
     public async Task Run()
     {
+        Console.WriteLine("Started");
         listener.Start();
         while (!Cts.IsCancellationRequested)
         {
@@ -89,7 +90,7 @@ public class ServerEngine
             var size = new FileInfo(path).Length;
             await streamWriter.WriteAsync($"{size} ");
             await streamWriter.FlushAsync();
-            using var fileStream = File.Open(path, FileMode.Open);
+            await using var fileStream = File.Open(path, FileMode.Open);
             await fileStream.CopyToAsync(streamWriter.BaseStream);
         }
         else

@@ -1,7 +1,11 @@
+// <copyright file="ServerTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using NUnit.Framework;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
+
 namespace MyFTP;
 
 /// <summary>
@@ -12,7 +16,7 @@ internal class MyFTPServerTests
     private ServerEngine server;
 
     /// <summary>
-    /// Seting up the server
+    /// Seting up the server.
     /// </summary>
     [OneTimeSetUp]
     public void ServerSetUp()

@@ -1,4 +1,8 @@
-﻿using System.Net.Sockets;
+﻿// <copyright file="ClientEngine.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+using System.Net.Sockets;
 using System.Text;
 
 namespace MyFTP;
@@ -68,8 +72,9 @@ public class ClientEngine
     /// </summary>
     /// <param name="path">provided relative path.</param>
     /// <returns> Base struct GetResponseStruct.</returns>
-    public async Task<GetResponseStruct> GetAsync(string path)
+    public async Task<int> GetAsync(string path, string pathOnClient)
     {
+        Console.WriteLine($"Path: {Path.GetFullPath(path)}");
         if (!tcpClient.Connected)
         {
             await tcpClient.ConnectAsync(IpString, Port);
@@ -77,7 +82,7 @@ public class ClientEngine
 
         using var networkStream = tcpClient.GetStream();
         using var streamWriter = new StreamWriter(networkStream);
-        await streamWriter.WriteLineAsync($"2 {path}");
+        await streamWriter.WriteLineAsync($"2 {path} ");
         await streamWriter.FlushAsync();
         using var streamReader = new StreamReader(networkStream);
         var size = new StringBuilder();
@@ -86,15 +91,20 @@ public class ClientEngine
         {
             if (symbol == '-' && (char)streamReader.Read() == '1')
             {
-                return new GetResponseStruct();
+                return -1;
             }
 
             size.Append((char)symbol);
         }
 
+        await using var filestream = File.Create(pathOnClient);
+        await networkStream.CopyToAsync(filestream);
+        /*
+        using var t = new FileStream(pathOnClient, FileMode.OpenOrCreate);
+        await networkStream.CopyToAsync(t);
+        */
         var messageLength = Convert.ToInt32(size.ToString());
-        using var streamBinaryReader = new BinaryReader(networkStream);
-        var bytes = streamBinaryReader.ReadBytes(messageLength);
-        return new GetResponseStruct(bytes);
+        Console.WriteLine($"Ok, {messageLength}");
+        return messageLength;
     }
 }
