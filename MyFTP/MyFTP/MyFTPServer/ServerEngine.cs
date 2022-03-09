@@ -80,7 +80,7 @@ public class ServerEngine
         }
         else
         {
-            await streamWriter.WriteLineAsync($"{-1} ");
+            await streamWriter.WriteLineAsync("-1 ");
         }
 
         await streamWriter.FlushAsync();

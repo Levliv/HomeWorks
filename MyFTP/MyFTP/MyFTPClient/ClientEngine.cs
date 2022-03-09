@@ -2,10 +2,11 @@
 using System.Text;
 
 namespace MyFTP;
+
 public class ClientEngine
 {
     /// <summary>
-    /// Tcp Client string inforation about current connection.
+    /// Tcp Client string information about current connection.
     /// </summary>
     private TcpClient tcpClient;
 
@@ -31,7 +32,7 @@ public class ClientEngine
     public int Port { get; private set; }
 
     /// <summary>
-    /// List request method, getting information about the files and dirictories found by the provided path.
+    /// List request method, getting information about the files and directories found by the provided path.
     /// </summary>
     /// <param name="path">provided path, where to look</param>
     /// <returns>Sequence of data in base ResponseFormat</returns>
@@ -44,7 +45,7 @@ public class ClientEngine
 
         using var networkStream = tcpClient.GetStream();
         using var streamWriter = new StreamWriter(networkStream);
-        await streamWriter.WriteLineAsync(1 + " " + path);
+        await streamWriter.WriteLineAsync($"1 {path}");
         streamWriter.Flush();
         using var streamReader = new StreamReader(networkStream);
         var strings = streamReader.ReadLine()?.Split(" ");
@@ -63,7 +64,7 @@ public class ClientEngine
     }
 
     /// <summary>
-    /// Getting the file data, stroing in the current file, by provided path.
+    /// Getting the file data, storing in the current file, by provided path.
     /// </summary>
     /// <param name="path">provided relative path.</param>
     /// <returns> Base struct GetResponseStruct.</returns>
@@ -76,7 +77,7 @@ public class ClientEngine
 
         using var networkStream = tcpClient.GetStream();
         using var streamWriter = new StreamWriter(networkStream);
-        await streamWriter.WriteLineAsync(2 + " " + path);
+        await streamWriter.WriteLineAsync($"2 {path}");
         await streamWriter.FlushAsync();
         using var streamReader = new StreamReader(networkStream);
         var size = new StringBuilder();

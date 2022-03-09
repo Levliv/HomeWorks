@@ -42,7 +42,7 @@ internal static class Program
                 Console.Write(resultsOfListResponse.Count() + " ");
                 foreach (var item in resultsOfListResponse)
                 {
-                    Console.WriteLine(item.Name + " " + item.IsDir + " ");
+                    Console.WriteLine($"{item.Name} {item.IsDir} ");
                 }
             }
         }
