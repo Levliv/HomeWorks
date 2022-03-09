@@ -1,4 +1,8 @@
-﻿using System.Net;
+﻿// <copyright file="ServerEngine.cs" company="IDK">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -63,11 +67,22 @@ public class ServerEngine
     }
 
     /// <summary>
+    /// Creates server response.
+    /// </summary>
+    /// <param name="path">path to the directory we need to look at.</param>
+    /// <returns>srting in format string with server response.</returns>
+    public async Task<string> ListAsync(string path)
+    {
+        var (size, name) = await ListProсessAsync(path);
+        return size != -1 ? $"{size} {name}" : "-1";
+    }
+
+    /// <summary>
     /// Sends a datagram as a response to Get request.
     /// </summary>
     /// <param name="streamWriter">File stream to push results in.</param>
     /// <param name="path">File path.</param>
-    public async Task GetServerAsync(StreamWriter streamWriter, string path)
+    private async Task GetServerAsync(StreamWriter streamWriter, string path)
     {
         if (File.Exists(path))
         {
@@ -88,20 +103,9 @@ public class ServerEngine
     }
 
     /// <summary>
-    /// Creates server response.
-    /// </summary>
-    /// <param name="path">path to the directory we need to look at.</param>
-    /// <returns>srting in format string with server response.</returns>
-    public async Task<string> ListAsync(string path)
-    {
-        var (size, name) = await ListProсessAsync(path);
-        return size != -1 ? $"{size} {name}" : "-1";
-    }
-
-    /// <summary>
     /// Server's method for seraching in order to create list of files and dirs in the directory.
     /// </summary>
-    public async Task<(int size, string name)> ListProсessAsync(string path)
+    private async Task<(int size, string name)> ListProсessAsync(string path)
     {
         var directory = new DirectoryInfo(path);
         if (directory.Exists)
