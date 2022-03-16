@@ -12,7 +12,7 @@ public class ClientEngine
     /// <summary>
     /// Tcp Client string information about current connection.
     /// </summary>
-    private TcpClient tcpClient;
+    private readonly TcpClient tcpClient;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ClientEngine"/> class.
@@ -26,12 +26,12 @@ public class ClientEngine
     }
 
     /// <summary>
-    /// Ip to listen.
+    /// Gets ip to listen.
     /// </summary>
     public string IpString { get; private set; }
 
     /// <summary>
-    /// Port to listen.
+    /// Gets port to listen.
     /// </summary>
     public int Port { get; private set; }
 
@@ -47,8 +47,8 @@ public class ClientEngine
             await tcpClient.ConnectAsync(IpString, Port);
         }
 
-        using var networkStream = tcpClient.GetStream();
-        using var streamWriter = new StreamWriter(networkStream);
+        await using var networkStream = tcpClient.GetStream();
+        await using var streamWriter = new StreamWriter(networkStream);
         await streamWriter.WriteLineAsync($"1 {path}");
         streamWriter.Flush();
         using var streamReader = new StreamReader(networkStream);
@@ -70,7 +70,8 @@ public class ClientEngine
     /// <summary>
     /// Getting the file data, storing in the current file, by provided path.
     /// </summary>
-    /// <param name="path">provided relative path.</param>
+    /// <param name="path"> provided relative path. </param>
+    /// <param name="pathOnClient"> Where file should be stored. </param>
     /// <returns> Base struct GetResponseStruct.</returns>
     public async Task<int> GetAsync(string path, string pathOnClient)
     {
@@ -80,8 +81,8 @@ public class ClientEngine
             await tcpClient.ConnectAsync(IpString, Port);
         }
 
-        using var networkStream = tcpClient.GetStream();
-        using var streamWriter = new StreamWriter(networkStream);
+        await using var networkStream = tcpClient.GetStream();
+        await using var streamWriter = new StreamWriter(networkStream);
         await streamWriter.WriteLineAsync($"2 {path} ");
         await streamWriter.FlushAsync();
         using var streamReader = new StreamReader(networkStream);

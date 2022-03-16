@@ -19,9 +19,9 @@ internal static class Program
 
         if (int.TryParse(args[1], out int port) && IPAddress.TryParse(args[0], out IPAddress? ip) && int.TryParse(args[2], out int requestCode))
         {
-            string ipString = args[0];
+            var ipString = args[0];
             Console.WriteLine($"port {port} and ip {ip} recognised successfully");
-            string? path = args[2];
+            var path = args[2];
             if (path == null || ip == null)
             {
                 throw new ArgumentNullException("Path should not be NULL");

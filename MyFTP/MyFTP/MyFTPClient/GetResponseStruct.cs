@@ -5,7 +5,7 @@
 namespace MyFTP;
 
 /// <summary>
-/// Contating the information about the information got from the server.
+/// Containing the information about the information got from the server.
 /// </summary>
 public class GetResponseStruct
 {
@@ -13,7 +13,9 @@ public class GetResponseStruct
     /// Initializes a new instance of the <see cref="GetResponseStruct"/> class.
     /// Default constructor.
     /// </summary>
-    public GetResponseStruct() { }
+    public GetResponseStruct()
+    {
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GetResponseStruct"/> class.
@@ -27,11 +29,12 @@ public class GetResponseStruct
     /// <summary>
     /// Data in bytes received by tcp.
     /// </summary>
-    public byte[]? Data { get; set; }
+    private byte[]? Data { get; set; }
 
     /// <summary>
     /// Message size.
     /// </summary>
+    /// <returns> File size or -1 if file wasn't found. </returns>
     public int Size()
     {
         if (Data != null)

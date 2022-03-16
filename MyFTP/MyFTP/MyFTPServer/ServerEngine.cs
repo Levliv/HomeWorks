@@ -14,27 +14,27 @@ namespace MyFTP;
 public class ServerEngine
 {
     private readonly TcpListener listener;
-    private readonly Queue<Task> clientsTaskQueue = new();
+    private readonly Queue<Task> clientsTaskQueue = new ();
 
     /// <summary>
     /// Gets path to the base directory where the search is supposed to begin.
     /// </summary>
-    public string DataPath { get; private set; }
+    private string DataPath { get; set; }
 
     /// <summary>
     /// Gets port for the server.
     /// </summary>
-    public int Port { get; private set; }
+    private int Port { get; set; }
 
     /// <summary>
     /// Gets ip of the server.
     /// </summary>
-    public IPAddress Ip { get; private set; }
+    private IPAddress Ip { get; set; }
 
     /// <summary>
-    /// Stops the server, all requests recieved before cancellation will be processed.
+    /// Gets stops the server, all requests received before cancellation will be processed.
     /// </summary>
-    public CancellationTokenSource Cts { get; private set; } = new();
+    public CancellationTokenSource Cts { get; private set; } = new ();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ServerEngine"/> class.
@@ -119,9 +119,9 @@ public class ServerEngine
 
     private async Task ServerMethod(Socket socket)
     {
-        using var networkStream = new NetworkStream(socket);
+        await using var networkStream = new NetworkStream(socket);
         using var streamReader = new StreamReader(networkStream);
-        using var streamWriter = new StreamWriter(networkStream);
+        await using var streamWriter = new StreamWriter(networkStream);
         var data = await streamReader.ReadLineAsync();
         var strings = data.Split(' ');
         var requestPath = strings[1];
