@@ -4,57 +4,55 @@
 
 using System.Net;
 using System.Text;
+using System;
 
-namespace MyFTP;
+Console.WriteLine("Abc");
 
-internal static class Program
-{
-    public static async Task Main(string[] args)
+
+
+/*
+if (args.Length != 3)
     {
-        if (args.Length != 3)
-        {
-            Console.WriteLine($"CLI expects 3 arguments in the following order: ip, port, request ");
-            return;
-        }
+        Console.WriteLine($"CLI expects 3 arguments in the following order: ip, port, request ");
+        //return;
+    }
 
-        if (int.TryParse(args[1], out int port) && IPAddress.TryParse(args[0], out IPAddress? ip) && int.TryParse(args[2], out int requestCode))
-        {
-            var ipString = args[0];
-            Console.WriteLine($"port {port} and ip {ip} recognised successfully");
-            var path = args[2];
-            if (path == null || ip == null)
-            {
-                throw new ArgumentNullException("Path should not be NULL");
-            }
+if (int.TryParse(args[1], out int port) && IPAddress.TryParse(args[0], out IPAddress? ip) &&
+    int.TryParse(args[2], out int requestCode))
+{
+    var ipString = args[0];
+    Console.WriteLine($"port {port} and ip {ip} recognised successfully");
+    var path = args[2];
+    if (path == null || ip == null)
+    {
+        throw new ArgumentNullException("Path should not be NULL");
+    }
 
-            var client = new ClientEngine(ipString, port);
-            /*if (requestCode == 2)
-            {
-                var getResponse = await client.GetAsync(path, "aaa");
-                if (getResponse.Data != null)
-                {
-                    Console.WriteLine(Encoding.UTF8.GetString(getResponse.Data));
-                }
-                else
-                {
-                    Console.WriteLine("File is empty of does not exist");
-                }
-            }
-            else if (requestCode == 1)
-            {
-                var resultsOfListResponse = await client.ListAsync(path);
-                Console.Write(resultsOfListResponse.Count() + " ");
-                foreach (var item in resultsOfListResponse)
-                {
-                    Console.WriteLine($"{item.Name} {item.IsDir} ");
-                }
-            }
+    var client = new ClientEngine(ipString, port);
+    /*if (requestCode == 2)
+    {
+        var getResponse = await client.GetAsync(path, "aaa");
+        if (getResponse.Data != null)
+        {
+            Console.WriteLine(Encoding.UTF8.GetString(getResponse.Data));
         }
         else
         {
-            Console.WriteLine($"port or ip is not recognised");
+            Console.WriteLine("File is empty of does not exist");
         }
-            */
+    }
+    else if (requestCode == 1)
+    {
+        var resultsOfListResponse = await client.ListAsync(path);
+        Console.Write(resultsOfListResponse.Count() + " ");
+        foreach (var item in resultsOfListResponse)
+        {
+            Console.WriteLine($"{item.Name} {item.IsDir} ");
         }
     }
 }
+else
+{
+    Console.WriteLine($"port or ip is not recognised");
+}
+*/

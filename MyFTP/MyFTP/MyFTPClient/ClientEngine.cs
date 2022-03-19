@@ -10,9 +10,9 @@ namespace MyFTP;
 public class ClientEngine
 {
     /// <summary>
-    /// Tcp Client string information about current connection.
+    /// Gets stops the Client, all requests sent before cancellation will be processed.
     /// </summary>
-    private readonly TcpClient tcpClient;
+    public CancellationTokenSource Cts { get; private set; } = new ();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ClientEngine"/> class.
@@ -20,7 +20,6 @@ public class ClientEngine
     /// </summary>
     public ClientEngine(string ipString, int port)
     {
-        tcpClient = new TcpClient();
         IpString = ipString;
         Port = port;
     }
@@ -42,15 +41,11 @@ public class ClientEngine
     /// <returns>Sequence of data in base ResponseFormat</returns>
     public async Task<List<ResponseFormat>> ListAsync(string path)
     {
-        if (!tcpClient.Connected)
-        {
-            await tcpClient.ConnectAsync(IpString, Port);
-        }
-
-        await using var networkStream = tcpClient.GetStream();
-        await using var streamWriter = new StreamWriter(networkStream);
+        using var tcpClient = new TcpClient();
+        await tcpClient.ConnectAsync(IpString, Port, Cts.Token);
+        using var networkStream = tcpClient.GetStream();
+        using var streamWriter = new StreamWriter(networkStream) { AutoFlush = true };
         await streamWriter.WriteLineAsync($"1 {path}");
-        streamWriter.Flush();
         using var streamReader = new StreamReader(networkStream);
         var strings = streamReader.ReadLine()?.Split(" ");
         var files = new List<ResponseFormat>();
@@ -73,18 +68,13 @@ public class ClientEngine
     /// <param name="path"> provided relative path. </param>
     /// <param name="pathOnClient"> Where file should be stored. </param>
     /// <returns> Base struct GetResponseStruct.</returns>
-    public async Task<int> GetAsync(string path, string pathOnClient)
+    public async Task<int> GetAsync(string path, MemoryStream memoryStream)
     {
-        Console.WriteLine($"Path: {Path.GetFullPath(path)}");
-        if (!tcpClient.Connected)
-        {
-            await tcpClient.ConnectAsync(IpString, Port);
-        }
-
-        await using var networkStream = tcpClient.GetStream();
-        await using var streamWriter = new StreamWriter(networkStream);
-        await streamWriter.WriteLineAsync($"2 {path} ");
-        await streamWriter.FlushAsync();
+        using var tcpClient = new TcpClient();
+        await tcpClient.ConnectAsync(IpString, Port, Cts.Token);
+        using var networkStream = tcpClient.GetStream();
+        using var streamWriter = new StreamWriter(networkStream) { AutoFlush = true };
+        await streamWriter.WriteLineAsync($"2 {path}");
         using var streamReader = new StreamReader(networkStream);
         var size = new StringBuilder();
         int symbol = new ();
@@ -92,20 +82,14 @@ public class ClientEngine
         {
             if (symbol == '-' && (char)streamReader.Read() == '1')
             {
-                return -1;
+                break;
             }
 
             size.Append((char)symbol);
         }
-
-        await using var filestream = File.Create(pathOnClient);
-        await networkStream.CopyToAsync(filestream);
-        /*
-        using var t = new FileStream(pathOnClient, FileMode.OpenOrCreate);
-        await networkStream.CopyToAsync(t);
-        */
+        
+        await networkStream.CopyToAsync(memoryStream, Cts.Token);
         var messageLength = Convert.ToInt32(size.ToString());
-        Console.WriteLine($"Ok, {messageLength}");
         return messageLength;
     }
 }

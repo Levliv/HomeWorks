@@ -11,12 +11,12 @@ namespace MyFTP;
 /// <summary>
 /// Tests for server's part.
 /// </summary>
-internal class MyFTPServerTests
+internal class MyFtpServerTests
 {
     private ServerEngine server;
 
     /// <summary>
-    /// Seting up the server.
+    /// Setting up the server.
     /// </summary>
     [OneTimeSetUp]
     public void ServerSetUp()
@@ -29,7 +29,7 @@ internal class MyFTPServerTests
     /// <summary>
     /// Testing Server's List method.
     /// </summary>
-    [TestCase(ExpectedResult = "2 ./Tests/Files/TestFile.txt false ./Tests/Files/TestDir true")]
+    [TestCase(ExpectedResult = "2 C:/project/Code2021/MyFTP/MyFTP/Tests/Files/TestFile.txt false C:/project/Code2021/MyFTP/MyFTP/Tests/Files/TestDir true")]
     public async Task<string> TestServerList()
     {
         string path = "../../../.." + "/Tests/Files";

@@ -8,13 +8,16 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System;
+using System.Threading;
+using Microsoft.VisualBasic;
 
 namespace MyFTP;
 
 /// <summary>
 /// Tests for Client's side.
 /// </summary>
-public class MyFTPTests
+public class MyFtpTests
 {
     private ServerEngine server;
 
@@ -22,7 +25,7 @@ public class MyFTPTests
     /// Starting up the server to test Client's Get and List methods.
     /// </summary>
     /// //OneTime
-    [OneTimeSetUp]
+    [SetUp]
     public void ServerStart()
     {
         IPAddress.TryParse("127.0.0.1", out IPAddress ip);
@@ -68,30 +71,28 @@ public class MyFTPTests
 
         Assert.IsTrue(expectedString.Equals(resultString));
     }
-
+    
     /// <summary>
-    /// Testing Get Request.
+    /// Testing Get Request if file exists.
     /// </summary>
     [Test]
-    public async Task TestClientRequestGet()
+    public async Task TestGet()
     {
+        var fileStream = new MemoryStream();
         var client = new ClientEngine("127.0.0.1", 8000);
-        var baseFile = "./Tests/Files/TestFile.txt";
-        var file = "./../../../../Tests/Files2/result.txt";
-        File.Delete(file);
-        //Console.WriteLine(Path.GetFullPath(baseFile));
-        //Console.WriteLine(Path.GetFullPath(file));
-        //var f = Path.GetFullPath(file);
-        var actual = await client.GetAsync(baseFile, file);
-        //Console.WriteLine(actual);
-        //File.OpenRead(baseFile);
-        //Console.WriteLine(actual);
-        //File.OpenRead(file);
-        //Console.WriteLine(actual);
+        //throw new Exception("Durty");
+        await client.GetAsync("../../../../Tests/Files/TestFile.txt", fileStream);
+        //Assert.AreEqual(21, size);
+        
+        //using var file = File.Open("../../../../Tests/Files/TestFile.txt", FileMode.Open);
+        //using var resultStream = new StreamReader(fileStream);
+        //var result = await resultStreamReader.ReadToEndAsync();
+        //using var answerStream = new StreamReader(file);
+        //var answer = await answerStream.ReadToEndAsync();
         Assert.Pass();
-        //FileAssert.AreEqual("./../../../../Test/File/TestFile.txt", file);
+        //FileAssert.AreEqual(file, fileStream);
     }
-
+    
     /// <summary>
     /// If file doesn't exist size of the message should be -1.
     /// </summary>
@@ -99,7 +100,8 @@ public class MyFTPTests
     public async Task TestIfFileDoesNotExist()
     {
         var client = new ClientEngine("127.0.0.1", 8000);
-        var result = await client.GetAsync("./Tests/Files/TestFiles.txt", "result.txt");
-        Assert.AreEqual(-1, result);
+        var fileStream = new MemoryStream();
+        await client.GetAsync("../../../../Tests/Files/TestFiles.txt", fileStream);
+        Assert.AreEqual(-1, 12);
     }
 }

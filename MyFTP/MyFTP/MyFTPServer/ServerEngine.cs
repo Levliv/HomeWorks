@@ -17,11 +17,6 @@ public class ServerEngine
     private readonly Queue<Task> clientsTaskQueue = new ();
 
     /// <summary>
-    /// Gets path to the base directory where the search is supposed to begin.
-    /// </summary>
-    private string DataPath { get; set; }
-
-    /// <summary>
     /// Gets port for the server.
     /// </summary>
     private int Port { get; set; }
@@ -40,10 +35,8 @@ public class ServerEngine
     /// Initializes a new instance of the <see cref="ServerEngine"/> class.
     /// Constructor for Server.
     /// </summary>
-    /// <param name="dirBackPath">Path to the base directory where the search is supposed to begin.</param>
-    public ServerEngine(IPAddress ip, int port, string dirBackPath = "../../../.")
+    public ServerEngine(IPAddress ip, int port)
     {
-        DataPath = dirBackPath;
         Port = port;
         Ip = ip;
         listener = new TcpListener(Ip, Port);
@@ -56,7 +49,7 @@ public class ServerEngine
     {
         Console.WriteLine("Started");
         listener.Start();
-        while (!Cts.IsCancellationRequested)
+        while (!Cts.Token.IsCancellationRequested)
         {
             var socket = await listener.AcceptSocketAsync(Cts.Token);
             var clientTask = Task.Run(() => ServerMethod(socket));
@@ -67,11 +60,13 @@ public class ServerEngine
         listener.Stop();
     }
 
+    public void Stop() => Cts.Cancel();
+
     /// <summary>
     /// Creates server response.
     /// </summary>
-    /// <param name="path">path to the directory we need to look at.</param>
-    /// <returns>srting in format string with server response.</returns>
+    /// <param name="path"> Path to the directory we need to look at. </param>
+    /// <returns> -1 if files weren't found, else string with paths and meta info whether it is a directory </returns>
     public async Task<string> ListAsync(string path)
     {
         var (size, name) = await ListProсessAsync(path);
@@ -81,36 +76,36 @@ public class ServerEngine
     /// <summary>
     /// Sends a datagram as a response to Get request.
     /// </summary>
-    /// <param name="streamWriter">File stream to push results in.</param>
-    /// <param name="path">File path.</param>
+    /// <param name="streamWriter"> File stream to push results in. </param>
+    /// <param name="path"> File path. </param>
     private async Task GetServerAsync(StreamWriter streamWriter, string path)
     {
         if (File.Exists(path))
         {
             var size = new FileInfo(path).Length;
             await streamWriter.WriteAsync($"{size} ");
-            await streamWriter.FlushAsync();
-            await using var fileStream = File.Open(path, FileMode.Open);
+            await using var fileStream = new FileStream(path, FileMode.Open);
             await fileStream.CopyToAsync(streamWriter.BaseStream);
+            await streamWriter.WriteLineAsync();
         }
         else
         {
             await streamWriter.WriteLineAsync("-1 ");
         }
-
-        await streamWriter.FlushAsync();
     }
 
     /// <summary>
-    /// Server's method for seraching in order to create list of files and dirs in the directory.
+    /// Server's method for searching in order to create list of files and dirs in the directory.
     /// </summary>
     private async Task<(int size, string name)> ListProсessAsync(string path)
     {
         var directory = new DirectoryInfo(path);
         if (directory.Exists)
         {
-            var (numberOfFiles, strFiles) = ProсessFiles(directory.GetFiles());
-            var (numberOfDirectories, strDirs) = ProсessDirectories(directory.GetDirectories());
+            var t1 = Task.Run(() => ProсessFiles(directory.GetFiles()));
+            var t2 = Task.Run(() => ProсessDirectories(directory.GetDirectories()));
+            var (numberOfFiles, strFiles) = await t1;
+            var (numberOfDirectories, strDirs) = await t2;
             return (numberOfFiles + numberOfDirectories, strFiles + " " + strDirs);
         }
 
@@ -121,7 +116,7 @@ public class ServerEngine
     {
         await using var networkStream = new NetworkStream(socket);
         using var streamReader = new StreamReader(networkStream);
-        await using var streamWriter = new StreamWriter(networkStream);
+        await using var streamWriter = new StreamWriter(networkStream) { AutoFlush = true };
         var data = await streamReader.ReadLineAsync();
         var strings = data.Split(' ');
         var requestPath = strings[1];
@@ -129,14 +124,13 @@ public class ServerEngine
         {
             case 1: // List request Case
                 {
-                    await streamWriter.WriteLineAsync(await ListAsync(DataPath + requestPath));
-                    await streamWriter.FlushAsync();
+                    await streamWriter.WriteLineAsync(await ListAsync(requestPath));
                     return;
                 }
 
             case 2: // Get request Case
                 {
-                    await GetServerAsync(streamWriter, DataPath + requestPath);
+                    await GetServerAsync(streamWriter, requestPath);
                     return;
                 }
         }
@@ -145,10 +139,9 @@ public class ServerEngine
     private (int, string) ProсessDirectories(DirectoryInfo[] directories)
     {
         var stringBuilder = new StringBuilder();
-        var dir = Path.GetFullPath(DataPath + ".");
         foreach (var directory in directories)
         {
-            stringBuilder.Append("." + directory.ToString().Replace(dir, string.Empty).Replace('\\', '/') + " true");
+            stringBuilder.Append(directory.ToString().Replace('\\', '/') + " true");
         }
 
         var resultString = stringBuilder.ToString();
@@ -158,10 +151,9 @@ public class ServerEngine
     private (int, string) ProсessFiles(FileInfo[] files)
     {
         var stringBuilder = new StringBuilder();
-        var dir = Path.GetFullPath(DataPath + ".");
         foreach (var file in files)
         {
-            stringBuilder.Append("." + file.ToString().Replace(dir, string.Empty).Replace('\\', '/') + " false");
+            stringBuilder.Append(file.ToString().Replace('\\', '/') + " false");
         }
 
         var resultString = stringBuilder.ToString();
