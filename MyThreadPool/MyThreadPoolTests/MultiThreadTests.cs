@@ -11,7 +11,7 @@ using MyThreadPool;
 /// </summary>
 public class MultiThreadTests
 {
-    /*
+    
     private MyThreadPool threadPool;
     private ManualResetEvent manualResetEvent;
     private ConcurrentQueue<int> results;
@@ -34,8 +34,6 @@ public class MultiThreadTests
         int tasks = 100000;
         int numberOfThreadsInThreadPool = 2;
         int numberOfThreadsOutThreadPool = 10;
-        var threadPool = new MyThreadPool(numberOfThreadsInThreadPool);
-        var results = new ConcurrentQueue<IMyTask<int>>();
         var task = () => 0;
         var threads = new Thread[numberOfThreadsOutThreadPool];
         for (int i = 0; i < numberOfThreadsOutThreadPool; ++i)
@@ -45,7 +43,7 @@ public class MultiThreadTests
                 for (int i = 0; i < tasks / numberOfThreadsOutThreadPool; ++i)
                 {
                     var taskTakenByThreadPool = threadPool.Add(task);
-                    results.Enqueue(taskTakenByThreadPool);
+                    results.Enqueue(taskTakenByThreadPool.Result);
                 }
             });
         }
@@ -63,9 +61,10 @@ public class MultiThreadTests
         Assert.AreEqual(tasks, results.Count);
         foreach (var number in results)
         {
-            Assert.AreEqual(0, number.Result);
+            Assert.AreEqual(0, number);
         }
     }
+    /*
 
     [Test]
     public void TestResultIsThreadSafe()
