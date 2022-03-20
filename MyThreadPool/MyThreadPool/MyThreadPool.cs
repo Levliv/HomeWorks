@@ -107,7 +107,7 @@ public class MyThreadPool
     private class MyTask<TResult> : IMyTask<TResult>
     {
         private TResult? result;
-        private Func<TResult>? func;
+        private Func<TResult> func;
         private Queue<Action> continueWithTasks = new ();
         private MyThreadPool myThreadPool;
         private ManualResetEvent manualReset = new (false);
@@ -122,7 +122,7 @@ public class MyThreadPool
         /// Constructor for a MyTask instance.
         /// </summary>
         /// <exception cref="ArgumentNullException">throws in case func is null. </exception>
-        public MyTask(Func<TResult>? func, MyThreadPool threadPool)
+        public MyTask(Func<TResult> func, MyThreadPool threadPool)
         {
             myThreadPool = threadPool;
             this.func = func;

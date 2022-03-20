@@ -40,14 +40,14 @@ public class BasicTests
         Assert.AreEqual(3, task3.Result);
         Assert.AreEqual(2, task2.Result);
     }
-    /*
+
     [Test]
     public void TaskAfterShutDownTest()
     {
         threadPool.ShutDown();
         Assert.Throws<InvalidOperationException>(() => threadPool.Add(() => 12));
     }
-    */
+
     /*
     [Test]
     public void NumberOfThreadsTest()
