@@ -107,7 +107,7 @@ public class MyThreadPool
     private class MyTask<TResult> : IMyTask<TResult>
     {
         private TResult? result;
-        private Func<TResult> func;
+        private Func<TResult>? func;
         private Queue<Action> continueWithTasks = new ();
         private MyThreadPool myThreadPool;
         private ManualResetEvent manualReset = new (false);

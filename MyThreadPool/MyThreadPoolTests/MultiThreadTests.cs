@@ -7,7 +7,7 @@ using System.Collections.Concurrent;
 using MyThreadPool;
 
 /// <summary>
-/// Tests for multithread ThreadPool using muti tasks.
+/// Test ThreadSafe of the TPL.
 /// </summary>
 public class MultiThreadTests
 {
