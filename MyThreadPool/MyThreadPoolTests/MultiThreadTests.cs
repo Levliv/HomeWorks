@@ -29,7 +29,7 @@ public class MultiThreadTests
     }
 
     [Test]
-    public void ParallelThreadTest()
+    public void TestParallelThread()
     {
         int tasks = 100000;
         int numberOfThreadsInThreadPool = 2;
@@ -64,7 +64,6 @@ public class MultiThreadTests
             Assert.AreEqual(0, number);
         }
     }
-    /*
 
     [Test]
     public void TestResultIsThreadSafe()
@@ -97,6 +96,7 @@ public class MultiThreadTests
         }
     }
 
+    /*
     [Test]
     public void TestAddTasksIsThreadSafe()
     {
