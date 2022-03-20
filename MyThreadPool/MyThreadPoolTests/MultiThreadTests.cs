@@ -4,72 +4,27 @@ using NUnit.Framework;
 using System;
 using System.Threading;
 using System.Collections.Concurrent;
+using MyThreadPool;
 
 /// <summary>
 /// Tests for multithread ThreadPool using muti tasks.
 /// </summary>
 public class MultiThreadTests
 {
-    [Test]
-    public void NegativeThreadsTest()
-    {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new MyThreadPool.MyThreadPool(-3));
-    }
+    private MyThreadPool threadPool;
+    private ManualResetEvent manualResetEvent;
+    private ConcurrentQueue<int> results;
 
-    [Test]
-    public void OneTaskMultiThreadComputationTest()
-    {
-        var threadPool = new MyThreadPool.MyThreadPool(2);
-        var task1 = threadPool.Add(() => 1);
-        Assert.AreEqual(1, task1.Result);
-    }
-        
-    [Test]
-    public void MultiTaskMultiThreadComputationTest()
-    {
-        var threadPool = new MyThreadPool.MyThreadPool(2);
-        var task1 = threadPool.Add(() => 1);
-        var task2 = threadPool.Add(() => 2);
-        var task3 = threadPool.Add(() => 3);
-        var task4 = threadPool.Add(() => 4);
-        Assert.AreEqual(1, task1.Result);
-        Assert.AreEqual(2, task2.Result);
-        Assert.AreEqual(3, task3.Result);
-        Assert.AreEqual(4, task4.Result);
-    }
+    private const int numberOfThreads = 2;
+    private Thread[] threads;
 
-    [Test]
-    public void AfterShutDownTask()
+    [SetUp]
+    public void SetUp()
     {
-        var threadPool = new MyThreadPool.MyThreadPool(2);
-        var task1 = threadPool.Add(() => 1);
-        var task2 = threadPool.Add(() => 2);
-        var task3 = threadPool.Add(() => 3);
-        threadPool.ShutDown();
-        Assert.Throws<InvalidOperationException>(() => threadPool.Add(() => 12));
-        Assert.AreEqual(1, task1.Result);
-        Assert.AreEqual(2, task2.Result);
-        Assert.AreEqual(3, task3.Result);
-    }
-
-    [Test]
-    public void CancelAfterContinueWithTest()
-    {
-        var threadPool = new MyThreadPool.MyThreadPool(2);
-        var task = threadPool.Add(() => 111);
-        task = task.ContinueWith((x) => 222);
-        threadPool.ShutDown();
-        Assert.AreEqual(222, task.Result);
-    }
-
-    [Test]
-    public void ContinueWithAfterCancelTest()
-    {
-        var threadPool = new MyThreadPool.MyThreadPool(2);
-        var task = threadPool.Add(() => 111);
-        threadPool.ShutDown();
-        Assert.Throws<InvalidOperationException>(() => task.ContinueWith((x) => 222));
-        Assert.AreEqual(111, task.Result);
+        threadPool = new MyThreadPool(Environment.ProcessorCount);
+        manualResetEvent = new ManualResetEvent(false);
+        results = new ConcurrentQueue<int>();
+        threads = new Thread[numberOfThreads];
     }
 
     [Test]
@@ -78,8 +33,8 @@ public class MultiThreadTests
         int tasks = 100000;
         int numberOfThreadsInThreadPool = 2;
         int numberOfThreadsOutThreadPool = 10;
-        var threadPool = new MyThreadPool.MyThreadPool(numberOfThreadsInThreadPool);
-        var results = new ConcurrentQueue<MyThreadPool.IMyTask<int>>();
+        var threadPool = new MyThreadPool(numberOfThreadsInThreadPool);
+        var results = new ConcurrentQueue<IMyTask<int>>();
         var task = () => 0;
         var threads = new Thread[numberOfThreadsOutThreadPool];
         for (int i = 0; i < numberOfThreadsOutThreadPool; ++i)
@@ -108,6 +63,61 @@ public class MultiThreadTests
         foreach (var number in results)
         {
             Assert.AreEqual(0, number.Result);
+        }
+    }
+
+    [Test]
+    public void ResultThreadSafeTest()
+    {
+        var task = threadPool.Add(() =>
+        {
+            manualResetEvent.WaitOne();
+            return 1;
+        });
+
+        for (var i = 0; i < numberOfThreads; ++i)
+        {
+            threads[i] = new Thread(() => results.Enqueue(task.Result));
+            threads[i].Start();
+        }
+
+        manualResetEvent.Set();
+        foreach (var thread in threads)
+        {
+            if (!thread.Join(100))
+            {
+                Assert.Fail();
+            }
+        }
+
+        Assert.AreEqual(numberOfThreads, results.Count);
+        foreach (var result in results)
+        {
+            Assert.AreEqual(1, result);
+        }
+    }
+
+    [Test]
+    public void TestAddTasksIsThreadSafe()
+    {
+        for (var i = 0; i < numberOfThreads; ++i)
+        {
+            threads[i] = new Thread(() => results.Enqueue(threadPool.Add(() => 10).Result));
+            threads[i].Start();
+        }
+
+        foreach (var thread in threads)
+        {
+            if (!thread.Join(100))
+            {
+                Assert.Fail();
+            }
+        }
+
+        Assert.AreEqual(numberOfThreads, results.Count);
+        foreach (var result in results)
+        {
+            Assert.AreEqual(10, result);
         }
     }
 }
