@@ -11,6 +11,7 @@ using MyThreadPool;
 /// </summary>
 public class MultiThreadTests
 {
+    /*
     private MyThreadPool threadPool;
     private ManualResetEvent manualResetEvent;
     private ConcurrentQueue<int> results;
@@ -120,4 +121,5 @@ public class MultiThreadTests
             Assert.AreEqual(10, result);
         }
     }
+    */
 }
