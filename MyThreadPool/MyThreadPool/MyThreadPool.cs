@@ -60,7 +60,7 @@ public class MyThreadPool
     /// <summary>
     /// Gets number of active threads.
     /// </summary>
-    public int TotolNumberOfThreads => numberOfThreads;
+    public int TotalNumberOfThreads => numberOfThreads;
 
     /// <summary>
     /// Shuts threads pool down after finishing counting the processed tasks.

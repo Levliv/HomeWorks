@@ -48,13 +48,11 @@ public class BasicTests
         Assert.Throws<InvalidOperationException>(() => threadPool.Add(() => 12));
     }
 
-    /*
     [Test]
     public void NumberOfThreadsTest()
     {
-        Assert.AreEqual(1, threadPool.TotolNumberOfThreads);
+        Assert.AreEqual(1, threadPool.TotalNumberOfThreads);
     }
-    */
     
     [Test]
     public void ContinueWithTest()
