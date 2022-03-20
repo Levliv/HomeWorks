@@ -78,6 +78,11 @@ public class MyThreadPool
             shutDown.WaitOne();
         }
     }
+    private void EnqueueTask(Action task)
+    {
+        actions.Enqueue(task);
+        newTask.Set();
+    }
 
     /// <summary>
     /// Adding tasks in TaskQueue.
@@ -91,8 +96,7 @@ public class MyThreadPool
             if (activeThreads != 0 && !cts.Token.IsCancellationRequested)
             {
                 var task = new MyTask<T>(func, this);
-                actions.Enqueue(task.RunTask);
-                newTask.Set();
+                EnqueueTask(task.RunTask);
                 return task;
 
             }
@@ -142,7 +146,7 @@ public class MyThreadPool
                     return result;
                 }
 
-                throw new AggregateException(gotException);
+                throw gotException;
             }
         }
 
@@ -157,18 +161,20 @@ public class MyThreadPool
             }
             if (myThreadPool.cts.Token.IsCancellationRequested)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Thread Pool was shut down");
             }
 
             var task = new MyTask<TNewResult>(() => func(Result), myThreadPool);
             lock (continueWithTasks)
             {
-                if (IsCompleted)
+                if (!IsCompleted)
                 {
-                    return myThreadPool.Add(() => func(Result));
+                    continueWithTasks.Enqueue(task.RunTask);
                 }
-
-                continueWithTasks.Enqueue(task.RunTask);
+                else
+                {
+                    myThreadPool.EnqueueTask(task.RunTask);
+                }
                 return task;
             }
         }
@@ -185,18 +191,18 @@ public class MyThreadPool
             }
             catch (Exception ex)
             {
-                gotException = ex;
+                gotException = new AggregateException(ex); ;
             }
             finally
             {
-                IsCompleted = true;
-                manualReset.Set();
                 func = null;
                 lock (continueWithTasks)
                 {
+                    IsCompleted = true;
+                    manualReset.Set();
                     while (continueWithTasks.Count > 0)
                     {
-                        myThreadPool.Add(() => continueWithTasks.Dequeue());
+                        myThreadPool.EnqueueTask(continueWithTasks.Dequeue());
 
                     }
                 }

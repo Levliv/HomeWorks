@@ -22,12 +22,6 @@ public class BasicTests
         Assert.Throws<ArgumentOutOfRangeException>(() => new MyThreadPool.MyThreadPool(-3));
     }
 
-    [TearDown]
-    public void ThreadPoolShutDown()
-    {
-        threadPool.ShutDown();
-    }
-
     [Test]
     public void SimpleTaskComputationTest()
     {
@@ -88,5 +82,11 @@ public class BasicTests
         threadPool.ShutDown();
         Assert.Throws<InvalidOperationException>(() => task.ContinueWith((x) => 222));
         Assert.AreEqual(111, task.Result);
+    }
+
+    [TearDown]
+    public void ThreadPoolShutDown()
+    {
+        threadPool.ShutDown();
     }
 }
