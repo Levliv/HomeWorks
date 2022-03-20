@@ -72,7 +72,7 @@ public class MyThreadPool
             cts.Cancel();
         }
 
-        while (activeThreads != 0)
+        while (activeThreads > 0)
         {
             newTask.Set();
             shutDown.WaitOne();
@@ -93,13 +93,13 @@ public class MyThreadPool
     {
         lock (cts)
         {
-            if (activeThreads != 0 && !cts.Token.IsCancellationRequested)
+            if ((activeThreads != 0) && (!cts.Token.IsCancellationRequested))
             {
                 var task = new MyTask<T>(func, this);
                 EnqueueTask(task.RunTask);
                 return task;
-
             }
+
             throw new InvalidOperationException("Thread Pool was shut down");
         }
     }
