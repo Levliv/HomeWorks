@@ -89,7 +89,7 @@ public class MyThreadPool
     /// </summary>
     /// <exception cref="ArgumentNullException"> Throws if the function is null. </exception>
     /// <exception cref="InvalidOperationException"> Throws if cancellation was requested before adding a task. </exception>
-    public IMyTask<T> Add<T>(Func<T>? func)
+    public IMyTask<T> Add<T>(Func<T> func)
     {
         lock (cts)
         {
