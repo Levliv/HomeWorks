@@ -30,7 +30,6 @@ public class BasicTests
         Assert.AreEqual(1, task1.Result);
     }
 
-    /*
     [Test]
     public void MultipleTasksComputationTests()
     {
@@ -41,7 +40,6 @@ public class BasicTests
         Assert.AreEqual(3, task3.Result);
         Assert.AreEqual(2, task2.Result);
     }
-    */
     /*
     [Test]
     public void TaskAfterShutDownTest()
