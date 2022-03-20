@@ -115,7 +115,7 @@ public class MyThreadPool
         /// <summary>
         /// Contains an exception in case it has occured while Running the task.
         /// </summary>
-        private Exception? gotException { get; set; }
+        private AggregateException? gotException { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MyTask{TResult}"/> class.

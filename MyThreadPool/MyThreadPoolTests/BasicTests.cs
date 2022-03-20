@@ -60,7 +60,7 @@ public class BasicTests
         var task2 = task.ContinueWith((x) => 2*x);
         Assert.AreEqual(222, task2.Result);
     }
-
+    /*
     [Test]
     public void AfterShutDownTask()
     {
@@ -73,7 +73,8 @@ public class BasicTests
         Assert.AreEqual(2, task2.Result);
         Assert.AreEqual(3, task3.Result);
     }
-
+    */
+    /*
     [Test]
     public void ContinueWithAfterCancelTest()
     {
@@ -83,6 +84,7 @@ public class BasicTests
         Assert.Throws<InvalidOperationException>(() => task.ContinueWith((x) => 222));
         Assert.AreEqual(111, task.Result);
     }
+    */
 
     [TearDown]
     public void ThreadPoolShutDown()
