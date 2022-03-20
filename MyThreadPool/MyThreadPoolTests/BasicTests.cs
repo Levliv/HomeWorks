@@ -55,7 +55,7 @@ public class BasicTests
         Assert.AreEqual(1, threadPool.TotolNumberOfThreads);
     }
     */
-    /*
+    
     [Test]
     public void ContinueWithTest()
     {
@@ -63,7 +63,7 @@ public class BasicTests
         var task2 = task.ContinueWith((x) => 2*x);
         Assert.AreEqual(222, task2.Result);
     }
-    */
+
     /*
     [Test]
     public void AfterShutDownTask()
