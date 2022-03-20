@@ -78,17 +78,14 @@ public class BasicTests
         Assert.AreEqual(3, task3.Result);
     }
 
-    /*
     [Test]
     public void ContinueWithAfterCancelTest()
     {
-        var threadPool = new MyThreadPool.MyThreadPool(2);
         var task = threadPool.Add(() => 111);
         threadPool.ShutDown();
         Assert.Throws<InvalidOperationException>(() => task.ContinueWith((x) => 222));
         Assert.AreEqual(111, task.Result);
     }
-    */
 
     [TearDown]
     public void ThreadPoolShutDown()
