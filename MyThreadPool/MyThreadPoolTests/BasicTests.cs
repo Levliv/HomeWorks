@@ -64,7 +64,7 @@ public class BasicTests
         Assert.AreEqual(222, task2.Result);
     }
 
-    /*
+    
     [Test]
     public void AfterShutDownTask()
     {
@@ -77,7 +77,7 @@ public class BasicTests
         Assert.AreEqual(2, task2.Result);
         Assert.AreEqual(3, task3.Result);
     }
-    */
+
     /*
     [Test]
     public void ContinueWithAfterCancelTest()
