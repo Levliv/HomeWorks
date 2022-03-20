@@ -109,7 +109,7 @@ public class MyThreadPool
         private TResult? result;
         private Func<TResult>? func;
         private Queue<Action> continueWithTasks = new ();
-        private MyThreadPool myThreadPool;
+        private MyThreadPool myThreadPool = new MyThreadPool(2);
         private ManualResetEvent manualReset = new (false);
         
         /// <summary>
