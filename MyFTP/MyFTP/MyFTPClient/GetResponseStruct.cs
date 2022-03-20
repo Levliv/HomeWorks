@@ -19,7 +19,7 @@ public class GetResponseStruct
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GetResponseStruct"/> class.
-    /// Constructor for GetResponse, conains data about the lenght and the content of the message.
+    /// Constructor for GetResponse, contains data about the lenght and the content of the message.
     /// </summary>
     public GetResponseStruct(byte[] bytes)
     {
@@ -27,7 +27,7 @@ public class GetResponseStruct
     }
 
     /// <summary>
-    /// Data in bytes received by tcp.
+    /// Data in bytes.
     /// </summary>
     private byte[]? Data { get; set; }
 
@@ -41,7 +41,6 @@ public class GetResponseStruct
         {
             return Data.Length;
         }
-
         return -1;
     }
 }

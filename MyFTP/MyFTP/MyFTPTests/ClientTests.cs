@@ -9,6 +9,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System;
+using System.Net.Http;
 using System.Threading;
 using Microsoft.VisualBasic;
 
@@ -19,8 +20,9 @@ namespace MyFTP;
 /// </summary>
 public class MyFtpTests
 {
-    private ServerEngine server;
-
+    private const string ip = "127.0.0.1";
+    private ServerEngine server = new (IPAddress.Parse(ip), 8000);
+    private ClientEngine client = new (ip, 8000);
     /// <summary>
     /// Starting up the server to test Client's Get and List methods.
     /// </summary>
@@ -28,8 +30,6 @@ public class MyFtpTests
     [SetUp]
     public void ServerStart()
     {
-        IPAddress.TryParse("127.0.0.1", out IPAddress ip);
-        server = new ServerEngine(ip, 8000);
         server.Run();
     }
 
@@ -39,7 +39,6 @@ public class MyFtpTests
     [Test]
     public void TestClientSetUp()
     {
-        var client = new ClientEngine("127.0.0.1", 8000);
         Assert.AreEqual(8000, client.Port);
         Assert.AreEqual("127.0.0.1", client.IpString);
     }
@@ -50,7 +49,6 @@ public class MyFtpTests
     [Test]
     public async Task TestClientRequestList()
     {
-        var client = new ClientEngine("127.0.0.1", 8000);
         IEnumerable expectedFileNames = new[] { "./Tests/Files/TestFile.txt False", "./Tests/Files/TestDir True" };
         var expectedString = new StringBuilder();
         foreach (var fileName in expectedFileNames)
@@ -79,9 +77,8 @@ public class MyFtpTests
     public async Task TestGet()
     {
         var fileStream = new MemoryStream();
-        var client = new ClientEngine("127.0.0.1", 8000);
         //throw new Exception("Durty");
-        await client.GetAsync("../../../../Tests/Files/TestFile.txt", fileStream);
+        //await client.GetAsync("../../../../Tests/Files/TestFile.txt", "./fileStream.txt");
         //Assert.AreEqual(21, size);
         
         //using var file = File.Open("../../../../Tests/Files/TestFile.txt", FileMode.Open);
@@ -97,11 +94,11 @@ public class MyFtpTests
     /// If file doesn't exist size of the message should be -1.
     /// </summary>
     [Test]
-    public async Task TestIfFileDoesNotExist()
+    public async Task TestGetIfFileDoesNotExist()
     {
-        var client = new ClientEngine("127.0.0.1", 8000);
         var fileStream = new MemoryStream();
-        await client.GetAsync("../../../../Tests/Files/TestFiles.txt", fileStream);
+        var writer = new StreamWriter(fileStream);
+        await server.GetServerAsync(writer, "../../../../Tests/Files/TestFile.txt");
         Assert.AreEqual(-1, 12);
     }
 }

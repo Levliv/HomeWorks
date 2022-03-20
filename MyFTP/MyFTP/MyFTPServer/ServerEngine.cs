@@ -47,7 +47,7 @@ public class ServerEngine
     /// </summary>
     public async Task Run()
     {
-        Console.WriteLine("Started");
+        //Console.WriteLine("Started");
         listener.Start();
         while (!Cts.Token.IsCancellationRequested)
         {
@@ -76,7 +76,7 @@ public class ServerEngine
     /// <summary>
     /// Sends a datagram as a response to Get request.
     /// </summary>
-    /// <param name="streamWriter"> File stream to push results in. </param>
+    /// <param name="streamWriter"> File stream to push result in. </param>
     /// <param name="path"> File path. </param>
     private async Task GetServerAsync(StreamWriter streamWriter, string path)
     {
@@ -104,9 +104,10 @@ public class ServerEngine
         {
             var t1 = Task.Run(() => ProсessFiles(directory.GetFiles()));
             var t2 = Task.Run(() => ProсessDirectories(directory.GetDirectories()));
+            Console.WriteLine(Directory.GetCurrentDirectory());
             var (numberOfFiles, strFiles) = await t1;
             var (numberOfDirectories, strDirs) = await t2;
-            return (numberOfFiles + numberOfDirectories, strFiles + " " + strDirs);
+            return (numberOfFiles + numberOfDirectories, $"{strFiles} {strDirs}");
         }
 
         return (-1, string.Empty);

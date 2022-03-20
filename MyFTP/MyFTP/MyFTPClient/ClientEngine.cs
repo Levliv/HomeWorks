@@ -68,7 +68,7 @@ public class ClientEngine
     /// <param name="path"> provided relative path. </param>
     /// <param name="pathOnClient"> Where file should be stored. </param>
     /// <returns> Base struct GetResponseStruct.</returns>
-    public async Task<int> GetAsync(string path, MemoryStream memoryStream)
+    public async Task<int> GetAsync(string path, string destination)
     {
         using var tcpClient = new TcpClient();
         await tcpClient.ConnectAsync(IpString, Port, Cts.Token);
@@ -87,8 +87,9 @@ public class ClientEngine
 
             size.Append((char)symbol);
         }
-        
-        await networkStream.CopyToAsync(memoryStream, Cts.Token);
+
+        var destinationStream = File.Create(destination);
+        await networkStream.CopyToAsync(destinationStream, Cts.Token);
         var messageLength = Convert.ToInt32(size.ToString());
         return messageLength;
     }
