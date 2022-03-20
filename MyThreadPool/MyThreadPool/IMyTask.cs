@@ -6,7 +6,7 @@
 public interface IMyTask<out TResult>
 {
     /// <summary>
-    /// Gets flag representing whether the computation is completed.
+    /// Gets a value indicating whether the computation is completed.
     /// </summary>
     bool IsCompleted { get; }
 

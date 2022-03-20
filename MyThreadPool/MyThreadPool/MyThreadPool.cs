@@ -104,13 +104,18 @@ public class MyThreadPool
         }
     }
 
-    internal class MyTask<TResult> : IMyTask<TResult>
+    private class MyTask<TResult> : IMyTask<TResult>
     {
         private TResult? result;
         private Func<TResult>? func;
         private Queue<Action> continueWithTasks;
         private MyThreadPool myThreadPool;
         private ManualResetEvent manualReset = new (false);
+        
+        /// <summary>
+        /// Contains an exception in case it has occured while Running the task.
+        /// </summary>
+        private Exception? gotException { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MyTask{TResult}"/> class.
@@ -119,21 +124,14 @@ public class MyThreadPool
         /// <exception cref="ArgumentNullException">throws in case func is null. </exception>
         public MyTask(Func<TResult>? func, MyThreadPool threadPool)
         {
-            ArgumentNullException.ThrowIfNull(func);
             myThreadPool = threadPool;
             this.func = func;
-            continueWithTasks = new ();
         }
 
         /// <summary>
-        /// Contains the information whether the task is completed.
+        /// Gets a value indicating whether the task is completed.
         /// </summary>
         public bool IsCompleted { get; private set; } = false;
-
-        /// <summary>
-        /// Contains an exception in case it has occured while Running the task.
-        /// </summary>
-        public AggregateException? AggregateException { get; set; } = null;
 
         /// <summary>
         /// Contains the result of the task Excecution or throws AggregateException if case it has occured.
@@ -143,12 +141,12 @@ public class MyThreadPool
             get
             {
                 manualReset.WaitOne();
-                if (AggregateException == null)
+                if (gotException == null)
                 {
                     return result;
                 }
 
-                throw AggregateException;
+                throw new AggregateException(gotException);
             }
         }
 
@@ -157,6 +155,10 @@ public class MyThreadPool
         /// </summary>
         public IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> func)
         {
+            if (func == null)
+            {
+                throw new ArgumentNullException(nameof(func));
+            }
             if (myThreadPool.cts.Token.IsCancellationRequested)
             {
                 throw new InvalidOperationException();
@@ -187,7 +189,7 @@ public class MyThreadPool
             }
             catch (Exception ex)
             {
-                AggregateException = new (ex);
+                gotException = ex;
             }
             finally
             {
