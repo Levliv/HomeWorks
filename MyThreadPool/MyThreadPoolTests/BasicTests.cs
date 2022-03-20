@@ -22,14 +22,14 @@ public class BasicTests
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new MyThreadPool(-3));
     }
-    /*
+
     [Test]
     public void SimpleTaskComputationTest()
     {
         var task1 = threadPool.Add(() => 1);
         Assert.AreEqual(1, task1.Result);
     }
-    */
+
     /*
     [Test]
     public void MultipleTasksComputationTests()
