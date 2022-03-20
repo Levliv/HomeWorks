@@ -67,7 +67,7 @@ public class MultiThreadTests
     }
 
     [Test]
-    public void ResultThreadSafeTest()
+    public void TestResultIsThreadSafe()
     {
         var task = threadPool.Add(() =>
         {

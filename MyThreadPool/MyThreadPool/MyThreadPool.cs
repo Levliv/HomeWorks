@@ -12,7 +12,7 @@ public class MyThreadPool
     private ConcurrentQueue<Action> actions = new ();
     private AutoResetEvent newTask = new (false);
     private AutoResetEvent shutDown = new (false);
-    private int shutDownThreads;
+    private int activeThreads;
     private Thread[] threads;
 
     /// <summary>
@@ -34,8 +34,14 @@ public class MyThreadPool
         {
             threads[i] = new Thread(() =>
             {
-                while (!(actions.IsEmpty && cts.Token.IsCancellationRequested))
+                while (true)
                 {
+                    if (cts.Token.IsCancellationRequested && actions.IsEmpty)
+                    {
+                        Interlocked.Decrement(ref activeThreads);
+                        shutDown.Set();
+                        return;
+                    }
                     if (actions.TryDequeue(out Action? action))
                     {
                         action();
@@ -43,24 +49,18 @@ public class MyThreadPool
                     else
                     {
                         newTask.WaitOne();
-                        if (!actions.IsEmpty)
-                        {
-                            newTask.Set();
-                        }
                     }
                 }
-
-                Interlocked.Increment(ref shutDownThreads);
-                shutDown.Set();
             });
             threads[i].Start();
+            Interlocked.Increment(ref activeThreads);
         }
     }
 
     /// <summary>
     /// Gets number of active threads.
     /// </summary>
-    public int ActiveThreads => numberOfThreads;
+    public int TotolNumberOfThreads => numberOfThreads;
 
     /// <summary>
     /// Shuts threads pool down after finishing counting the processed tasks.
@@ -70,13 +70,12 @@ public class MyThreadPool
         lock (cts)
         {
             cts.Cancel();
-            newTask.Set();
         }
 
-        while (shutDownThreads < numberOfThreads)
+        while (activeThreads != 0)
         {
-            shutDown.WaitOne();
             newTask.Set();
+            shutDown.WaitOne();
         }
     }
 
@@ -87,20 +86,17 @@ public class MyThreadPool
     /// <exception cref="InvalidOperationException"> Throws if cancellation was requested before adding a task. </exception>
     public IMyTask<T> Add<T>(Func<T>? func)
     {
-        ArgumentNullException.ThrowIfNull(func);
         lock (cts)
         {
-            if (cts.IsCancellationRequested)
-            {
-                throw new InvalidOperationException();
-            }
-            else
+            if (activeThreads != 0 && !cts.Token.IsCancellationRequested)
             {
                 var task = new MyTask<T>(func, this);
                 actions.Enqueue(task.RunTask);
                 newTask.Set();
                 return task;
+
             }
+            throw new InvalidOperationException("Thread Pool was shut down");
         }
     }
 
@@ -201,6 +197,7 @@ public class MyThreadPool
                     while (continueWithTasks.Count > 0)
                     {
                         myThreadPool.Add(() => continueWithTasks.Dequeue());
+
                     }
                 }
             }

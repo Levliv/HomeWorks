@@ -56,7 +56,7 @@ public class BasicTests
     [Test]
     public void NumberOfThreadsTest()
     {
-        Assert.AreEqual(1, threadPool.ActiveThreads);
+        Assert.AreEqual(1, threadPool.TotolNumberOfThreads);
     }
     
     [Test]
