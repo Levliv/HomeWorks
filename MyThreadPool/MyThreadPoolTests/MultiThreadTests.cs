@@ -96,7 +96,6 @@ public class MultiThreadTests
         }
     }
 
-    /*
     [Test]
     public void TestAddTasksIsThreadSafe()
     {
@@ -120,5 +119,4 @@ public class MultiThreadTests
             Assert.AreEqual(10, result);
         }
     }
-    */
 }
