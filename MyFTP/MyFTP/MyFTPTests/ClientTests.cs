@@ -39,7 +39,7 @@ public class MyFtpTests
         Assert.AreEqual("127.0.0.1", client.IpString);
     }
 
-    [Test]
+    [Test, Order(1)]
     public async Task TestClientGetTextFile()
     {
         var fileDirectory = "../../../../Results";

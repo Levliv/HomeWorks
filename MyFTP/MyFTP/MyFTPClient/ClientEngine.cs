@@ -100,6 +100,7 @@ public class ClientEngine
             await destinationStream.WriteAsync(buffer, Cts.Token);
         }
 
+        destinationStream.Close();
         return messageLength;
     }
 }
