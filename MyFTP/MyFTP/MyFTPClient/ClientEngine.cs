@@ -39,7 +39,7 @@ public class ClientEngine
     /// </summary>
     /// <param name="path">provided path, where to look</param>
     /// <returns>Sequence of data in base ResponseFormat</returns>
-    public async Task<List<ResponseFormat>> ListAsync(string path)
+    public async Task<(int, List<(string, bool)>)> ListAsync(string path)
     {
         using var tcpClient = new TcpClient();
         await tcpClient.ConnectAsync(IpString, Port, Cts.Token);
@@ -47,27 +47,29 @@ public class ClientEngine
         using var streamWriter = new StreamWriter(networkStream) { AutoFlush = true };
         await streamWriter.WriteLineAsync($"1 {path}");
         using var streamReader = new StreamReader(networkStream);
-        var strings = streamReader.ReadLine()?.Split(" ");
-        var files = new List<ResponseFormat>();
+        var message = await streamReader.ReadLineAsync();
+        var strings = message.Split();
+        var files = new List<(string, bool)>();
         if (strings == null)
         {
-            return files;
+            return (-1, null);
         }
 
-        for (var i = 1; i < int.Parse(strings[0]) * 2; i += 2)
+        var numberOfObjectsFound = int.Parse(strings[0]);
+        for (var i = 1; i < numberOfObjectsFound * 2; i += 2)
         {
-            files.Add(new ResponseFormat(strings[i], strings[i + 1]));
+            files.Add((strings[i], bool.Parse(strings[i + 1])));
         }
 
-        return files;
+        return (numberOfObjectsFound, files);
     }
 
     /// <summary>
     /// Getting the file data, storing in the current file, by provided path.
     /// </summary>
     /// <param name="path"> provided relative path. </param>
-    /// <param name="pathOnClient"> Where file should be stored. </param>
-    /// <returns> Base struct GetResponseStruct.</returns>
+    /// <param name="destination"> Where file should be stored. </param>
+    /// <returns> Size of the received file.</returns>
     public async Task<int> GetAsync(string path, string destination)
     {
         using var tcpClient = new TcpClient();
@@ -88,9 +90,16 @@ public class ClientEngine
             size.Append((char)symbol);
         }
 
-        var destinationStream = File.Create(destination);
-        await networkStream.CopyToAsync(destinationStream, Cts.Token);
+        using var destinationStream = File.Create(destination);
         var messageLength = Convert.ToInt32(size.ToString());
+        var bufferSize = 1;
+        var buffer = new byte[bufferSize];
+        for (int i = 0; i < messageLength; i++)
+        {
+            await networkStream.ReadAsync(buffer, Cts.Token);
+            await destinationStream.WriteAsync(buffer, Cts.Token);
+        }
+
         return messageLength;
     }
 }

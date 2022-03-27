@@ -43,13 +43,26 @@ public class MyFtpTests
         Assert.AreEqual("127.0.0.1", client.IpString);
     }
 
+    [Test]
+    public async Task TestClientGetTextFile()
+    {
+        var fileDirectory = "../../../../Results";
+        Directory.CreateDirectory(fileDirectory);
+        var source = "../../../../Tests/Files/TestFile.txt";
+        var target = "../../../../Results/ResultFile.txt";
+        await client.GetAsync(source, target);
+        FileAssert.AreEqual(source, target);
+        Directory.Delete(fileDirectory, true);
+    }
+
     /// <summary>
     /// Testing List Request.
     /// </summary>
     [Test]
     public async Task TestClientRequestList()
     {
-        IEnumerable expectedFileNames = new[] { "./Tests/Files/TestFile.txt False", "./Tests/Files/TestDir True" };
+        var sourceDir = "../../../../Tests/Files/";
+        var expectedFileNames = "TestFile.txt False TestDir True ";
         var expectedString = new StringBuilder();
         foreach (var fileName in expectedFileNames)
         {
@@ -57,48 +70,15 @@ public class MyFtpTests
             expectedString.Append(' ');
         }
 
-        var result = await client.ListAsync("./Tests/Files");
+        var (size, result) = await client.ListAsync(sourceDir);
+        Assert.AreEqual(2, size);
         var resultString = new StringBuilder();
         foreach (var file in result)
         {
-            resultString.Append(file.Name);
-            resultString.Append(' ');
-            resultString.Append(file.IsDir);
+            resultString.Append(string.Join(" ", file.Item1,  file.Item2));
             resultString.Append(' ');
         }
 
-        Assert.IsTrue(expectedString.Equals(resultString));
-    }
-    
-    /// <summary>
-    /// Testing Get Request if file exists.
-    /// </summary>
-    [Test]
-    public async Task TestGet()
-    {
-        var fileStream = new MemoryStream();
-        //throw new Exception("Durty");
-        //await client.GetAsync("../../../../Tests/Files/TestFile.txt", "./fileStream.txt");
-        //Assert.AreEqual(21, size);
-        
-        //using var file = File.Open("../../../../Tests/Files/TestFile.txt", FileMode.Open);
-        //using var resultStream = new StreamReader(fileStream);
-        //var result = await resultStreamReader.ReadToEndAsync();
-        //using var answerStream = new StreamReader(file);
-        //var answer = await answerStream.ReadToEndAsync();
-        Assert.Pass();
-        //FileAssert.AreEqual(file, fileStream);
-    }
-    
-    /// <summary>
-    /// If file doesn't exist size of the message should be -1.
-    /// </summary>
-    [Test]
-    public async Task TestGetIfFileDoesNotExist()
-    {
-        var fileStream = new MemoryStream();
-        var writer = new StreamWriter(fileStream);
-        await server.GetServerAsync(writer, "../../../../Tests/Files/TestFile.txt");
-        Assert.AreEqual(-1, 12);
+        Assert.AreEqual(expectedFileNames, resultString.ToString());
     }
 }
