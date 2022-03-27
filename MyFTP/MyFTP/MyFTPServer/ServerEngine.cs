@@ -108,6 +108,10 @@ public class ServerEngine
         {
             await streamWriter.WriteLineAsync("-1 ");
         }
+        catch (IOException)
+        {
+            await streamWriter.WriteLineAsync("-1 ");
+        }
     }
 
     private async Task ServerMethod(Socket socket)
