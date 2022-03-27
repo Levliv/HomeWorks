@@ -84,7 +84,7 @@ public class ClientEngine
         {
             if (symbol == '-' && (char)streamReader.Read() == '1')
             {
-                break;
+                return -1;
             }
 
             size.Append((char)symbol);

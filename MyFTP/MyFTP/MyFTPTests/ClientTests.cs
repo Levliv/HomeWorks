@@ -3,15 +3,10 @@
 // </copyright>
 
 using NUnit.Framework;
-using System.Collections;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using System;
-using System.Net.Http;
-using System.Threading;
-using Microsoft.VisualBasic;
 
 namespace MyFTP;
 
@@ -23,6 +18,7 @@ public class MyFtpTests
     private const string ip = "127.0.0.1";
     private ServerEngine server = new (IPAddress.Parse(ip), 8000);
     private ClientEngine client = new (ip, 8000);
+
     /// <summary>
     /// Starting up the server to test Client's Get and List methods.
     /// </summary>
@@ -55,9 +51,18 @@ public class MyFtpTests
         Directory.Delete(fileDirectory, true);
     }
 
-    /// <summary>
-    /// Testing List Request.
-    /// </summary>
+    [Test]
+    public async Task TestClientGetIncorrectPath()
+    {
+        var fileDirectory = "../../../../Results";
+        Directory.CreateDirectory(fileDirectory);
+        var source = "../../../../Tests/Files/TestNoFile.txt";
+        var target = "../../../../Results/ResultFile.txt";
+        var size = await client.GetAsync(source, target);
+        Assert.AreEqual(-1, size);
+        Directory.Delete(fileDirectory, true);
+    }
+
     [Test]
     public async Task TestClientRequestList()
     {

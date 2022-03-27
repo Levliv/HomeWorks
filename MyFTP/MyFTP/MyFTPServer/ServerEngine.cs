@@ -96,7 +96,7 @@ public class ServerEngine
     /// <param name="path"> File path. </param>
     public async Task GetServerAsync(StreamWriter streamWriter, string path)
     {
-        if (File.Exists(path))
+        try
         {
             var size = new FileInfo(path).Length;
             await streamWriter.WriteAsync($"{size} ");
@@ -104,7 +104,7 @@ public class ServerEngine
             await fileStream.CopyToAsync(streamWriter.BaseStream);
             await streamWriter.WriteLineAsync();
         }
-        else
+        catch (FileNotFoundException)
         {
             await streamWriter.WriteLineAsync("-1 ");
         }
