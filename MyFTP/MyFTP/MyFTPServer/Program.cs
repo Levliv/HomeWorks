@@ -13,8 +13,8 @@ public static class Program
         if (args.Length == 2 && IPAddress.TryParse(args[0], out IPAddress? ip) && int.TryParse(args[1], out int port))
         {
             var server = new ServerEngine(ip, port);
-            await server.Run();
-            var command = string.Empty;
+            var task = server.Run();
+            var command = "";
             while (command != "exit")
             {
                 Console.WriteLine("To stop server write: \"exit\"");
@@ -22,6 +22,7 @@ public static class Program
             }
 
             server.Cts.Cancel();
+            await task;
         }
         else
         {

@@ -7,6 +7,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace MyFTP;
 
@@ -16,8 +17,8 @@ namespace MyFTP;
 public class MyFtpTests
 {
     private const string ip = "127.0.0.1";
-    private ServerEngine server = new (IPAddress.Parse(ip), 8000);
-    private ClientEngine client = new (ip, 8000);
+    private ServerEngine server = new(IPAddress.Parse(ip), 8000);
+    private ClientEngine client = new(ip, 8000);
 
     /// <summary>
     /// Starting up the server to test Client's Get and List methods.
@@ -39,7 +40,7 @@ public class MyFtpTests
         Assert.AreEqual("127.0.0.1", client.IpString);
     }
 
-    [Test, Order(1)]
+    [Test]
     public async Task TestClientGetTextFile()
     {
         var fileDirectory = "../../../../Results";
@@ -80,7 +81,7 @@ public class MyFtpTests
         var resultString = new StringBuilder();
         foreach (var file in result)
         {
-            resultString.Append(string.Join(" ", file.Item1,  file.Item2));
+            resultString.Append(string.Join(" ", file.Item1, file.Item2));
             resultString.Append(' ');
         }
 

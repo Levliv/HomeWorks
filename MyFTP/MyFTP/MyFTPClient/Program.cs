@@ -4,55 +4,69 @@
 
 using System.Net;
 using System.Text;
-using System;
 
-Console.WriteLine("Abc");
+namespace MyFTP;
 
-
-
-/*
-if (args.Length != 3)
-    {
-        Console.WriteLine($"CLI expects 3 arguments in the following order: ip, port, request ");
-        //return;
-    }
-
-if (int.TryParse(args[1], out int port) && IPAddress.TryParse(args[0], out IPAddress? ip) &&
-    int.TryParse(args[2], out int requestCode))
+internal static class Program
 {
-    var ipString = args[0];
-    Console.WriteLine($"port {port} and ip {ip} recognised successfully");
-    var path = args[2];
-    if (path == null || ip == null)
+    private static async Task Main(string[] args)
     {
-        throw new ArgumentNullException("Path should not be NULL");
-    }
-
-    var client = new ClientEngine(ipString, port);
-    /*if (requestCode == 2)
-    {
-        var getResponse = await client.GetAsync(path, "aaa");
-        if (getResponse.Data != null)
+        if (args.Length != 4 && args.Length != 5)
         {
-            Console.WriteLine(Encoding.UTF8.GetString(getResponse.Data));
+            Console.WriteLine("CLI expects 4 or 5 arguments in the following order: ip, port, request" +
+                " and one two option:\n 1.path to file for list request\n 2. source and destanation path for Get request");
+            return;
+        }
+
+        if (IPAddress.TryParse(args[0], out IPAddress? ip) && int.TryParse(args[1], out int port) &&
+            int.TryParse(args[2], out int requestCode))
+        {
+            var ipString = args[0];
+            Console.WriteLine($"port {port} and ip {ip} recognised successfully");
+            if (ip == null)
+            {
+                throw new ArgumentNullException("Ip should be not NULL");
+            }
+
+            var client = new ClientEngine(ipString, port);
+            switch (requestCode)
+            {
+                case 1:
+                    if (args.Length != 4)
+                    {
+                        break;
+                    }
+
+                    var path = args[3];
+                    var (size, result) = await client.ListAsync(path);
+                    var resultString = new StringBuilder();
+                    foreach (var file in result)
+                    {
+                        resultString.Append(string.Join(" ", file.Item1, file.Item2));
+                        resultString.Append(' ');
+                    }
+
+                    Console.WriteLine($"Found total: {size} files and dirs, Paths: {resultString.ToString()}");
+                    break;
+                case 2:
+                    if (args.Length != 5)
+                    {
+                        break;
+                    }
+
+                    var source = args[3];
+                    var destanation = args[4];
+                    var sizeFile = await client.GetAsync(source, destanation);
+                    Console.WriteLine($"Total number of {sizeFile} copied successfully");
+                    break;
+                default:
+                    Console.WriteLine("Command is not defined");
+                    break;
+            }
         }
         else
         {
-            Console.WriteLine("File is empty of does not exist");
-        }
-    }
-    else if (requestCode == 1)
-    {
-        var resultsOfListResponse = await client.ListAsync(path);
-        Console.Write(resultsOfListResponse.Count() + " ");
-        foreach (var item in resultsOfListResponse)
-        {
-            Console.WriteLine($"{item.Name} {item.IsDir} ");
+            Console.WriteLine($"port or ip is not recognised");
         }
     }
 }
-else
-{
-    Console.WriteLine($"port or ip is not recognised");
-}
-*/
