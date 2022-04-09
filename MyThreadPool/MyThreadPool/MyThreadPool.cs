@@ -2,8 +2,9 @@
 
 using System.Collections.Concurrent;
 using System;
+
 /// <summary>
-/// My TPL.
+/// My Thread Pool.
 /// </summary>
 public class MyThreadPool
 {
@@ -78,11 +79,6 @@ public class MyThreadPool
             shutDown.WaitOne();
         }
     }
-    private void EnqueueTask(Action task)
-    {
-        actions.Enqueue(task);
-        newTask.Set();
-    }
 
     /// <summary>
     /// Adding tasks in TaskQueue.
@@ -93,7 +89,7 @@ public class MyThreadPool
     {
         lock (cts)
         {
-            if ((activeThreads != 0) && (!cts.Token.IsCancellationRequested))
+            if (activeThreads != 0 && !cts.Token.IsCancellationRequested)
             {
                 var task = new MyTask<T>(func, this);
                 EnqueueTask(task.RunTask);
@@ -102,6 +98,12 @@ public class MyThreadPool
 
             throw new InvalidOperationException("Thread Pool was shut down");
         }
+    }
+
+    private void EnqueueTask(Action task)
+    {
+        actions.Enqueue(task);
+        newTask.Set();
     }
 
     private class MyTask<TResult> : IMyTask<TResult>
@@ -155,10 +157,7 @@ public class MyThreadPool
         /// </summary>
         public IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> func)
         {
-            if (func == null)
-            {
-                throw new ArgumentNullException(nameof(func));
-            }
+            ArgumentNullException.ThrowIfNull(func);
             if (myThreadPool.cts.Token.IsCancellationRequested)
             {
                 throw new InvalidOperationException("Thread Pool was shut down");
@@ -191,7 +190,7 @@ public class MyThreadPool
             }
             catch (Exception ex)
             {
-                gotException = new AggregateException(ex); ;
+                gotException = new AggregateException(ex);
             }
             finally
             {
