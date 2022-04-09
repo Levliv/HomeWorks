@@ -158,23 +158,26 @@ public class MyThreadPool
         public IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> func)
         {
             ArgumentNullException.ThrowIfNull(func);
-            if (myThreadPool.cts.Token.IsCancellationRequested)
+            lock (myThreadPool.cts)
             {
-                throw new InvalidOperationException("Thread Pool was shut down");
-            }
+                if (myThreadPool.cts.Token.IsCancellationRequested)
+                {
+                    throw new InvalidOperationException("Thread Pool was shut down");
+                }
 
-            var task = new MyTask<TNewResult>(() => func(Result), myThreadPool);
-            lock (continueWithTasks)
-            {
-                if (!IsCompleted)
+                var task = new MyTask<TNewResult>(() => func(Result), myThreadPool);
+                lock (continueWithTasks)
                 {
-                    continueWithTasks.Enqueue(task.RunTask);
+                    if (!IsCompleted)
+                    {
+                        continueWithTasks.Enqueue(task.RunTask);
+                    }
+                    else
+                    {
+                        myThreadPool.EnqueueTask(task.RunTask);
+                    }
+                    return task;
                 }
-                else
-                {
-                    myThreadPool.EnqueueTask(task.RunTask);
-                }
-                return task;
             }
         }
 
@@ -186,6 +189,10 @@ public class MyThreadPool
         {
             try
             {
+                if (func == null)
+                {
+                    throw new ArgumentNullException("Function to call must not be null");
+                }
                 result = func();
             }
             catch (Exception ex)
