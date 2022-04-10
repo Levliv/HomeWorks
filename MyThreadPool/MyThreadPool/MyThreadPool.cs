@@ -145,6 +145,7 @@ public class MyThreadPool
                 manualReset.WaitOne();
                 if (gotException == null)
                 {
+                    ArgumentNullException.ThrowIfNull(result);
                     return result;
                 }
 
