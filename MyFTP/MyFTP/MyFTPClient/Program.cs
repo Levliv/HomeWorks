@@ -23,10 +23,7 @@ internal static class Program
         {
             var ipString = args[0];
             Console.WriteLine($"port {port} and ip {ip} recognised successfully");
-            if (ip == null)
-            {
-                throw new ArgumentNullException("Ip should be not NULL");
-            }
+            ArgumentNullException.ThrowIfNull(ip);
 
             var client = new ClientEngine(ipString, port);
             switch (requestCode)
