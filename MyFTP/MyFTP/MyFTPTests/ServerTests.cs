@@ -32,7 +32,7 @@ internal class MyFtpServerTests
     public async Task<string> TestServerList()
     {
         string path = "../../../.." + "/Tests/Files";
-        var responseString = await server.ListAsync(path);
+        var responseString = server.List(path);
         return responseString;
     }
 }

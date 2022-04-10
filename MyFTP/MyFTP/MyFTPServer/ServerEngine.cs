@@ -66,7 +66,7 @@ public class ServerEngine
     /// </summary>
     /// <param name="path"> Path to the directory we need to look at. </param>
     /// <returns> -1 if files weren't found, else string with paths and meta info whether it is a directory </returns>
-    public async Task<string> ListAsync(string path)
+    public string List(string path)
     {
         try
         {
@@ -128,7 +128,7 @@ public class ServerEngine
         {
             case 1: // List request Case
                 {
-                    await streamWriter.WriteLineAsync(await ListAsync(path));
+                    await streamWriter.WriteLineAsync(List(path));
                     streamWriter.Close();
                     break;
                 }
