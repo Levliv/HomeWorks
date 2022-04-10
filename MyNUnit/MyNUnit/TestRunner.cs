@@ -77,7 +77,7 @@ public static class TestRunner
         var methodsWithAttribute = type.GetMethods().Where(x => Attribute.IsDefined(x, typeof(AttributeType)));
         if (typeof(AttributeType) == typeof(MyTestAttribute))
         {
-            test = x => MethodsWithMyTestInvoker(x, obj);
+            test = x => MethodsWithMyTestInvoker(x);
         }
         else if (typeof(AttributeType) == typeof(BeforeClassAttribute) || typeof(AttributeType) == typeof(AfterClassAttribute))
         {
@@ -98,9 +98,9 @@ public static class TestRunner
     /// <summary>
     /// Invoking Methods with MyTestAttribute.
     /// </summary>
-    public static void MethodsWithMyTestInvoker(MethodInfo methodInfo, object obj)
+    public static void MethodsWithMyTestInvoker(MethodInfo methodInfo)
     {
-        obj = Activator.CreateInstance(methodInfo.DeclaringType);
+       var  obj = Activator.CreateInstance(methodInfo.DeclaringType);
         var  attribute = (MyTestAttribute)methodInfo.GetCustomAttribute(typeof(MyTestAttribute), true);
         if (attribute.Ignore != null)
         {
@@ -112,9 +112,16 @@ public static class TestRunner
         var watch = Stopwatch.StartNew();
         try
         {
-            methodInfo.Invoke(obj, null);
+            var gotValue = methodInfo.Invoke(obj, null);
             watch.Stop();
-            MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isPassed: true, timeConsumed: watch.ElapsedMilliseconds));
+            if (gotValue == attribute.Expected)
+            {
+                MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isPassed: true, timeConsumed: watch.ElapsedMilliseconds));
+            }
+            else
+            {
+                MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isFailed: true));
+            }
         }
         catch (Exception exception)
         {
