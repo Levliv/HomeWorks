@@ -12,12 +12,12 @@ using MyThreadPool;
 public class MultiThreadTests
 {
     
-    private MyThreadPool threadPool;
-    private ManualResetEvent manualResetEvent;
-    private ConcurrentQueue<int> results;
+    private MyThreadPool? threadPool;
+    private ManualResetEvent? manualResetEvent;
+    private ConcurrentQueue<int>? results;
 
     private const int numberOfThreads = 2;
-    private Thread[] threads;
+    private Thread[]? threads;
 
     [SetUp]
     public void SetUp()
@@ -32,7 +32,6 @@ public class MultiThreadTests
     public void TestParallelThread()
     {
         int tasks = 100000;
-        int numberOfThreadsInThreadPool = 2;
         int numberOfThreadsOutThreadPool = 10;
         var task = () => 0;
         var threads = new Thread[numberOfThreadsOutThreadPool];

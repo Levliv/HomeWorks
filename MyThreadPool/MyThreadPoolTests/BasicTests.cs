@@ -9,7 +9,7 @@ using MyThreadPool;
 /// </summary>
 public class BasicTests
 {
-    private MyThreadPool threadPool;
+    private MyThreadPool? threadPool;
 
     [SetUp]
     public void Setup()
