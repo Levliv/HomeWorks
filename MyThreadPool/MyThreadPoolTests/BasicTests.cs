@@ -26,6 +26,7 @@ public class BasicTests
     [Test]
     public void SimpleTaskComputationTest()
     {
+        ArgumentNullException.ThrowIfNull(threadPool);
         var task1 = threadPool.Add(() => 1);
         Assert.AreEqual(1, task1.Result);
     }
@@ -33,6 +34,7 @@ public class BasicTests
     [Test]
     public void MultipleTasksComputationTests()
     {
+        ArgumentNullException.ThrowIfNull(threadPool);
         var task1 = threadPool.Add(() => 1);
         var task2 = threadPool.Add(() => 2);
         var task3 = threadPool.Add(() => 3);
@@ -44,6 +46,7 @@ public class BasicTests
     [Test]
     public void TaskAfterShutDownTest()
     {
+        ArgumentNullException.ThrowIfNull(threadPool);
         threadPool.ShutDown();
         Assert.Throws<InvalidOperationException>(() => threadPool.Add(() => 12));
     }
@@ -51,12 +54,14 @@ public class BasicTests
     [Test]
     public void NumberOfThreadsTest()
     {
+        ArgumentNullException.ThrowIfNull(threadPool);
         Assert.AreEqual(1, threadPool.TotalNumberOfThreads);
     }
     
     [Test]
     public void ContinueWithTest()
     {
+        ArgumentNullException.ThrowIfNull(threadPool);
         var task = threadPool.Add(() => 111);
         var task2 = task.ContinueWith((x) => 2*x);
         Assert.AreEqual(222, task2.Result);
@@ -66,6 +71,7 @@ public class BasicTests
     [Test]
     public void AfterShutDownTask()
     {
+        ArgumentNullException.ThrowIfNull(threadPool);
         var task1 = threadPool.Add(() => 1);
         var task2 = threadPool.Add(() => 2);
         var task3 = threadPool.Add(() => 3);
@@ -79,6 +85,7 @@ public class BasicTests
     [Test]
     public void ContinueWithAfterCancelTest()
     {
+        ArgumentNullException.ThrowIfNull(threadPool);
         var task = threadPool.Add(() => 111);
         threadPool.ShutDown();
         Assert.Throws<InvalidOperationException>(() => task.ContinueWith((x) => 222));
@@ -88,6 +95,7 @@ public class BasicTests
     [TearDown]
     public void ThreadPoolShutDown()
     {
+        ArgumentNullException.ThrowIfNull(threadPool);
         threadPool.ShutDown();
     }
 }
