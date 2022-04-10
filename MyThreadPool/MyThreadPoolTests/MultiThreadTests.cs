@@ -13,11 +13,11 @@ public class MultiThreadTests
 {
     
     private MyThreadPool? threadPool;
-    private ManualResetEvent? manualResetEvent;
+    private ManualResetEvent manualResetEvent = new (false);
     private ConcurrentQueue<int>? results;
 
     private const int numberOfThreads = 2;
-    private Thread[]? threads;
+    private Thread[] threads = new Thread[numberOfThreads];
 
     [SetUp]
     public void SetUp()
@@ -35,6 +35,8 @@ public class MultiThreadTests
         int numberOfThreadsOutThreadPool = 10;
         var task = () => 0;
         var threads = new Thread[numberOfThreadsOutThreadPool];
+        ArgumentNullException.ThrowIfNull(results);
+        ArgumentNullException.ThrowIfNull(threadPool);
         for (int i = 0; i < numberOfThreadsOutThreadPool; ++i)
         {
             threads[i] = new Thread(() =>
@@ -67,6 +69,8 @@ public class MultiThreadTests
     [Test]
     public void TestResultIsThreadSafe()
     {
+        ArgumentNullException.ThrowIfNull(threadPool);
+        ArgumentNullException.ThrowIfNull(results);
         var task = threadPool.Add(() =>
         {
             manualResetEvent.WaitOne();
@@ -98,6 +102,8 @@ public class MultiThreadTests
     [Test]
     public void TestAddTasksIsThreadSafe()
     {
+        ArgumentNullException.ThrowIfNull(threadPool);
+        ArgumentNullException.ThrowIfNull(results);
         for (var i = 0; i < numberOfThreads; ++i)
         {
             threads[i] = new Thread(() => results.Enqueue(threadPool.Add(() => 10).Result));
