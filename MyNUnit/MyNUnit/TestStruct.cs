@@ -44,7 +44,7 @@ public class TestStrcuct
     public object Expected { get; }
 
     /// <summary>
-    /// Gets the actual(returned from the method) value got by test invocation.
+    /// Gets the actual (returned from the method) value got by test invocation.
     /// </summary>
     public object Got { get; }
 
