@@ -30,9 +30,9 @@ public static class TestRunner
     }
 
     /// <summary>
-    /// Loadign the dll and starting the tests, Cheks for not repeated dlls.
+    /// Loading the dll and starting the tests, Checks for not repeated dlls.
     /// </summary>
-    /// <param name="path">Path to folder, loading all the dlls in all the directorieds beneath it as well.</param>
+    /// <param name="path">Path to folder, loading all the dlls in all the directories beneath it as well.</param>
     public static void Start(string path)
     {
         MyTests = new BlockingCollection<TestStrcuct>();
@@ -52,7 +52,7 @@ public static class TestRunner
         {
             var assembly = Assembly.LoadFrom(dll);
             var types = assembly.GetTypes();
-            Parallel.ForEach(types, TestStarter);
+            Parallel.ForEach(types, StartTests);
         });
     }
 
@@ -60,18 +60,18 @@ public static class TestRunner
     /// Starting the all the tests with BeforeClass - Before - MyTest - After - AfterClass atrributes.
     /// </summary>
     /// <param name="type">loaded assembly.</param>
-    public static void TestStarter(Type type)
+    public static void StartTests(Type type)
     {
-        MethodsInvoker<BeforeClassAttribute>(type);
-        MethodsInvoker<MyTestAttribute>(type);
-        MethodsInvoker<AfterClassAttribute>(type);
+        InvokeMethods<BeforeClassAttribute>(type);
+        InvokeMethods<MyTestAttribute>(type);
+        InvokeMethods<AfterClassAttribute>(type);
     }
 
     /// <summary>
-    /// Invokes the methods with attribues, calling methods corresponding to the attribute type.
+    /// Invokes the methods with attributes, calling methods corresponding to the attribute type.
     /// </summary>
     /// <typeparam name="AttributeType">BeforeClass - Before - MyTest - After - AfterClass atrributes.</typeparam>
-    public static void MethodsInvoker<AttributeType>(Type type, object obj = null)
+    public static void InvokeMethods<AttributeType>(Type type, object obj = null)
     {
         Action<MethodInfo> test;
         var methodsWithAttribute = type.GetMethods().Where(x => Attribute.IsDefined(x, typeof(AttributeType)));
@@ -79,13 +79,11 @@ public static class TestRunner
         {
             test = x => MethodsWithMyTestInvoker(x, obj);
         }
-        else
-        if (typeof(AttributeType) == typeof(BeforeClassAttribute) || typeof(AttributeType) == typeof(AfterClassAttribute))
+        else if (typeof(AttributeType) == typeof(BeforeClassAttribute) || typeof(AttributeType) == typeof(AfterClassAttribute))
         {
             test = x => MethodsWithBeforeAndAfterClassAttribute(x, obj);
         }
-        else
-        if (typeof(AttributeType) == typeof(BeforeAttribute) || typeof(AttributeType) == typeof(AfterAttribute))
+        else if (typeof(AttributeType) == typeof(BeforeAttribute) || typeof(AttributeType) == typeof(AfterAttribute))
         {
             test = x => MethodsWithAfterAndBeforeAttribute(x, obj);
         }
@@ -103,14 +101,14 @@ public static class TestRunner
     public static void MethodsWithMyTestInvoker(MethodInfo methodInfo, object obj)
     {
         obj = Activator.CreateInstance(methodInfo.DeclaringType);
-        MyTestAttribute attribute = (MyTestAttribute)methodInfo.GetCustomAttribute(typeof(MyTestAttribute), true);
+        var  attribute = (MyTestAttribute)methodInfo.GetCustomAttribute(typeof(MyTestAttribute), true);
         if (attribute.Ignore != null)
         {
             MyTests.Add(new TestStrcuct(methodInfo, isIgnored: true, ignoreMessage: attribute.Ignore));
             return;
         }
 
-        MethodsInvoker<BeforeAttribute>(methodInfo.DeclaringType, obj);
+        InvokeMethods<BeforeAttribute>(methodInfo.DeclaringType, obj);
         var watch = Stopwatch.StartNew();
         try
         {
@@ -130,7 +128,7 @@ public static class TestRunner
                 MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isFailed: true));
             }
         }
-        MethodsInvoker<AfterAttribute>(methodInfo.DeclaringType, obj);
+        InvokeMethods<AfterAttribute>(methodInfo.DeclaringType, obj);
     }
 
     /// <summary>
