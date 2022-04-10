@@ -29,7 +29,7 @@ internal class MyFtpServerTests
     /// Testing Server's List method.
     /// </summary>
     [TestCase(ExpectedResult = "2 TestFile.txt False TestDir True ")]
-    public async Task<string> TestServerList()
+    public string TestServerList()
     {
         string path = "../../../.." + "/Tests/Files";
         var responseString = server.List(path);
