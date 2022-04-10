@@ -10,7 +10,6 @@ public class Test4
     /// <summary>
     /// Testing expected with MyTest mark.
     /// </summary>
-    /// <returns></returns>
     [MyTest(Expected = typeof(ArgumentOutOfRangeException))]
     public int Test4Method()
     {

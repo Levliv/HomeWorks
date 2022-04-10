@@ -27,7 +27,6 @@ public class Test3
         checker[1] = true;
     }
 
-
     /// <summary>
     /// Second Before Method to chack that we run all of them if there are some
     /// </summary>

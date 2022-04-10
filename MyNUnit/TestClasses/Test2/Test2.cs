@@ -17,6 +17,7 @@ public class Test2
     {
         checker[1] = true;
     }
+
     [AfterClass]
     public static void AfterClassMethod()
     {

@@ -7,12 +7,12 @@ using System;
 
 public class MyNUnitTests
 {
-    private readonly string baseLoopBackDirecroty = "..\\..\\..\\..\\TestClasses\\";
+    private readonly string baseLoopBackDirectory = "..\\..\\..\\..\\TestClasses\\";
    
     [OneTimeSetUp]
     public void DllStarter()
     {
-        TestRunner.Start(baseLoopBackDirecroty);
+        TestRunner.Start(baseLoopBackDirectory);
     }
     
     /// <summary>

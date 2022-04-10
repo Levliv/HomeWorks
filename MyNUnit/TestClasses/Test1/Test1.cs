@@ -3,7 +3,7 @@
 using MyAttributes;
 
 /// <summary>
-/// The first class for test(testing simply method invokation with MyNUnit test mark)
+/// The first class for test (testing simply method invocation with MyNUnit test mark)
 /// </summary>
 public class Test1
 {
