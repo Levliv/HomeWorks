@@ -6,7 +6,7 @@ using System.Reflection;
 /// <summary>
 /// Template for data restored after test invocation.
 /// </summary>
-public class TestStrcuct
+public class TestStruct
 {
     /// <summary>
     /// Gets the information about the method Tested.
@@ -54,10 +54,10 @@ public class TestStrcuct
     public string IgnoreMessage { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TestStrcuct"/> class.
+    /// Initializes a new instance of the <see cref="TestStruct"/> class.
     /// Constructor to store the information about tests.
     /// </summary>
-    public TestStrcuct(MethodInfo methodInfo, bool isPassed = false, bool isFailed = false,
+    public TestStruct(MethodInfo methodInfo, bool isPassed = false, bool isFailed = false,
         bool isIgnored = false, long timeConsumed = 0, string? errorMessage = null, object? expected = null, object? got = null, string? ignoreMessage = null)
     {
         MethodInformation = methodInfo;

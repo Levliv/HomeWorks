@@ -13,7 +13,7 @@ public static class TestRunner
     /// <summary>
     /// Concurent collection to strore data about the tests.
     /// </summary>
-    public static BlockingCollection<TestStrcuct> MyTests { get; private set; }
+    public static BlockingCollection<TestStruct> MyTests { get; private set; }
 
     /// <summary>
     /// Printing the results of testing.
@@ -35,7 +35,7 @@ public static class TestRunner
     /// <param name="path">Path to folder, loading all the dlls in all the directories beneath it as well.</param>
     public static void Start(string path)
     {
-        MyTests = new BlockingCollection<TestStrcuct>();
+        MyTests = new BlockingCollection<TestStruct>();
         var dllFiles = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories);
         var dllFilesNotRepeated = new HashSet<string>();
         var downloadedDlls = new HashSet<string>();
@@ -104,7 +104,7 @@ public static class TestRunner
         var  attribute = (MyTestAttribute)methodInfo.GetCustomAttribute(typeof(MyTestAttribute), true);
         if (attribute.Ignore != null)
         {
-            MyTests.Add(new TestStrcuct(methodInfo, isIgnored: true, ignoreMessage: attribute.Ignore));
+            MyTests.Add(new TestStruct(methodInfo, isIgnored: true, ignoreMessage: attribute.Ignore));
             return;
         }
 
@@ -116,11 +116,11 @@ public static class TestRunner
             watch.Stop();
             if (gotValue == attribute.Expected)
             {
-                MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isPassed: true, timeConsumed: watch.ElapsedMilliseconds));
+                MyTests.Add(new TestStruct(methodInfo, expected: attribute.Expected, isPassed: true, timeConsumed: watch.ElapsedMilliseconds));
             }
             else
             {
-                MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isFailed: true));
+                MyTests.Add(new TestStruct(methodInfo, expected: attribute.Expected, isFailed: true));
             }
         }
         catch (Exception exception)
@@ -128,11 +128,11 @@ public static class TestRunner
             watch.Stop();
             if (attribute.Expected.Equals(exception.InnerException.GetType()))
             {
-                MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isPassed: true, timeConsumed: watch.ElapsedMilliseconds));
+                MyTests.Add(new TestStruct(methodInfo, expected: attribute.Expected, isPassed: true, timeConsumed: watch.ElapsedMilliseconds));
             }
             else
             {
-                MyTests.Add(new TestStrcuct(methodInfo, expected: attribute.Expected, isFailed: true));
+                MyTests.Add(new TestStruct(methodInfo, expected: attribute.Expected, isFailed: true));
             }
         }
         InvokeMethods<AfterAttribute>(methodInfo.DeclaringType, obj);
