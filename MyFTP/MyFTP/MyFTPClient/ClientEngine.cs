@@ -7,10 +7,13 @@ using System.Text;
 
 namespace MyFTP;
 
+/// <summary>
+/// Client part of FTP app.
+/// </summary>
 public class ClientEngine
 {
     /// <summary>
-    /// Gets stops the Client, all requests sent before cancellation will be processed.
+    /// Stops the Client, all requests sent before cancellation will be processed.
     /// </summary>
     public CancellationTokenSource Cts { get; private set; } = new ();
 
