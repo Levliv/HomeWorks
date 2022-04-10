@@ -185,7 +185,7 @@ public class MyThreadPool
         /// <summary>
         /// Runs a task from the taskQueue.
         /// </summary>
-        /// <exception cref="ArgumentException"> Throws in case shut down was requested before task was run. </exception>
+        /// <exception cref="ArgumentNullException"> Throws in case shut down was requested before task was run. </exception>
         public void RunTask()
         {
             try
