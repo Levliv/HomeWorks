@@ -13,7 +13,8 @@ namespace MyFTP;
 /// </summary>
 internal class MyFtpServerTests
 {
-    private ServerEngine server;
+
+    private ServerEngine server = new ServerEngine(IPAddress.Parse("127.0.0.1"), 8000);
 
     /// <summary>
     /// Setting up the server.
@@ -21,8 +22,6 @@ internal class MyFtpServerTests
     [OneTimeSetUp]
     public void ServerSetUp()
     {
-        IPAddress.TryParse("127.0.0.1", out IPAddress? ip);
-        server = new ServerEngine(ip, 8000);
         server.Run();
     }
 

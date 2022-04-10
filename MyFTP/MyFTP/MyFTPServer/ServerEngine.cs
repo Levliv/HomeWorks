@@ -120,6 +120,7 @@ public class ServerEngine
         using var streamReader = new StreamReader(networkStream);
         await using var streamWriter = new StreamWriter(networkStream) { AutoFlush = true };
         var data = await streamReader.ReadLineAsync();
+        ArgumentNullException.ThrowIfNull(data, "Client shouldn't send empty requests");
         var stringsCommandPath = data.Split(' ');
         var command = int.Parse(stringsCommandPath[0]);
         var path = stringsCommandPath[1];

@@ -51,11 +51,12 @@ public class ClientEngine
         await streamWriter.WriteLineAsync($"1 {path}");
         using var streamReader = new StreamReader(networkStream);
         var message = await streamReader.ReadLineAsync();
+        ArgumentNullException.ThrowIfNull(message, "Received an empty answer from server");
         var strings = message.Split();
         var files = new List<(string, bool)>();
         if (strings == null)
         {
-            return (-1, null);
+            return (-1, files);
         }
 
         var numberOfObjectsFound = int.Parse(strings[0]);
