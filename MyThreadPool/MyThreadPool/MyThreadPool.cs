@@ -190,10 +190,7 @@ public class MyThreadPool
         {
             try
             {
-                if (func == null)
-                {
-                    throw new ArgumentNullException("Function to call must not be null");
-                }
+                ArgumentNullException.ThrowIfNull(func);
                 result = func();
             }
             catch (Exception ex)
