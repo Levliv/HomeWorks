@@ -8,11 +8,11 @@ using System;
 public class MyNUnitTests
 {
     private readonly string baseLoopBackDirectory = "..\\..\\..\\..\\TestClasses\\";
-   
+    private TestRunner testRunner = new TestRunner();
     [OneTimeSetUp]
     public void DllStarter()
     {
-        TestRunner.Start(baseLoopBackDirectory);
+        testRunner.Start(baseLoopBackDirectory);
     }
     
     /// <summary>
@@ -40,7 +40,7 @@ public class MyNUnitTests
     [Test]
     public void TestingExpectedInMyTest()
     {
-        var methodsWithExpected = from i in TestRunner.MyTests where i.MethodInformation.Name == "Test4Method" select i;
+        var methodsWithExpected = from i in testRunner.MyTests where i.MethodInformation.Name == "Test4Method" select i;
         var methodWithExpected = methodsWithExpected.Last();
         Assert.AreEqual(typeof(ArgumentOutOfRangeException), methodWithExpected.Expected);
     }
@@ -51,7 +51,7 @@ public class MyNUnitTests
     [Test]
     public void TestingIgnoreInMyTest()
     {
-        var MethodsWithExpected = from i in TestRunner.MyTests where i.MethodInformation.Name == "Test5Method" select i;
+        var MethodsWithExpected = from i in testRunner.MyTests where i.MethodInformation.Name == "Test5Method" select i;
         var methodWithExpected = MethodsWithExpected.Last();
         Assert.True(methodWithExpected.IsIgnored);
         Assert.AreEqual("TestIgnoreMessage", methodWithExpected.IgnoreMessage);
@@ -63,7 +63,7 @@ public class MyNUnitTests
     [Test]
     public void TestingExpectedErrorInMyTest()
     {
-        var MethodsWithExpected = from i in TestRunner.MyTests where i.MethodInformation.Name == "Test6Method" select i;
+        var MethodsWithExpected = from i in testRunner.MyTests where i.MethodInformation.Name == "Test6Method" select i;
         var MethodWithExpected = MethodsWithExpected.Last();
         Assert.AreEqual(typeof(ArgumentException), MethodWithExpected.Expected);
     }

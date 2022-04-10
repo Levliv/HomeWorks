@@ -8,17 +8,17 @@ using System.Reflection;
 /// <summary>
 /// Class for MyNUnit Framework.
 /// </summary>
-public static class TestRunner
+public class TestRunner
 {
     /// <summary>
     /// Concurent collection to strore data about the tests.
     /// </summary>
-    public static BlockingCollection<TestStruct> MyTests { get; private set; }
+    public BlockingCollection<TestStruct> MyTests = new();
 
     /// <summary>
     /// Printing the results of testing.
     /// </summary>
-    public static void PrintTestResults()
+    public void PrintTestResults()
     {
         Console.WriteLine("Results");
         foreach (var testResult in MyTests)
@@ -33,7 +33,7 @@ public static class TestRunner
     /// Loading the dll and starting the tests, Checks for not repeated dlls.
     /// </summary>
     /// <param name="path">Path to folder, loading all the dlls in all the directories beneath it as well.</param>
-    public static void Start(string path)
+    public void Start(string path)
     {
         MyTests = new BlockingCollection<TestStruct>();
         var dllFiles = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories);
@@ -60,7 +60,7 @@ public static class TestRunner
     /// Starting the all the tests with BeforeClass - Before - MyTest - After - AfterClass atrributes.
     /// </summary>
     /// <param name="type">loaded assembly.</param>
-    public static void StartTests(Type type)
+    public void StartTests(Type type)
     {
         InvokeMethods<BeforeClassAttribute>(type);
         InvokeMethods<MyTestAttribute>(type);
@@ -71,7 +71,7 @@ public static class TestRunner
     /// Invokes the methods with attributes, calling methods corresponding to the attribute type.
     /// </summary>
     /// <typeparam name="AttributeType">BeforeClass - Before - MyTest - After - AfterClass atrributes.</typeparam>
-    public static void InvokeMethods<AttributeType>(Type type, object obj = null)
+    public void InvokeMethods<AttributeType>(Type type, object obj = null)
     {
         Action<MethodInfo> test;
         var methodsWithAttribute = type.GetMethods().Where(x => Attribute.IsDefined(x, typeof(AttributeType)));
@@ -98,7 +98,7 @@ public static class TestRunner
     /// <summary>
     /// Invoking Methods with MyTestAttribute.
     /// </summary>
-    public static void MethodsWithMyTestInvoker(MethodInfo methodInfo)
+    public void MethodsWithMyTestInvoker(MethodInfo methodInfo)
     {
        var  obj = Activator.CreateInstance(methodInfo.DeclaringType);
         var  attribute = (MyTestAttribute)methodInfo.GetCustomAttribute(typeof(MyTestAttribute), true);
@@ -141,7 +141,7 @@ public static class TestRunner
     /// <summary>
     /// Invoking methods with Before and After Attribute.
     /// </summary>
-    public static void MethodsWithAfterAndBeforeAttribute(MethodInfo methodInfo, object obj = null)
+    public void MethodsWithAfterAndBeforeAttribute(MethodInfo methodInfo, object obj = null)
     {
         methodInfo.Invoke(obj, null);
     }
@@ -149,7 +149,7 @@ public static class TestRunner
     /// <summary>
     /// Invoking methods with BeforeClass and AfterClass Attributes, without creating an instance, requires methods to be static.
     /// </summary>
-    public static void MethodsWithBeforeAndAfterClassAttribute(MethodInfo methodInfo, object obj)
+    public void MethodsWithBeforeAndAfterClassAttribute(MethodInfo methodInfo, object obj)
     {
         if (!methodInfo.IsStatic && ((methodInfo.GetCustomAttribute(typeof(BeforeClassAttribute)) != null) || (methodInfo.GetCustomAttribute(typeof(AfterClassAttribute)) != null)))
         {

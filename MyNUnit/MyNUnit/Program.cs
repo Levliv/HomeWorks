@@ -9,8 +9,9 @@ if (args.Length != 1)
 var path = args[0];
 try
 {
-    TestRunner.Start(path);
-    TestRunner.PrintTestResults();
+    var testRunner = new TestRunner();
+    testRunner.Start(path);
+    testRunner.PrintTestResults();
 }
 catch (DirectoryNotFoundException)
 {
