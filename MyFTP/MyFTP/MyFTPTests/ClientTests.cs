@@ -45,8 +45,8 @@ public class MyFtpTests
     {
         var fileDirectory = "../../../../Results";
         Directory.CreateDirectory(fileDirectory);
-        var source = "../../../../Tests/Files/TestFile.txt";
-        var target = "../../../../Results/ResultFile.txt";
+        var source = "../../../../Tests/Photos/terekhov.png";
+        var target = "../../../../Results/terekhov.png";
         await client.GetAsync(source, target);
         FileAssert.AreEqual(source, target);
         Directory.Delete(fileDirectory, true);
