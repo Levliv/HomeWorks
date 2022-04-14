@@ -13,7 +13,7 @@ public class TestRunner
     /// <summary>
     /// Concurent collection to strore data about the tests.
     /// </summary>
-    public BlockingCollection<TestStruct> MyTests = new();
+    public BlockingCollection<TestStruct> MyTests { private set; get; } = new();
 
     /// <summary>
     /// Printing the results of testing.
@@ -37,12 +37,12 @@ public class TestRunner
     {
         var dllFiles = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories);
         var dllFilesNotRepeated = new HashSet<string>();
-        var downloadedDlls = new HashSet<string>();
+        var loadedDlls = new HashSet<string>();
         foreach (var dll in dllFiles)
         {
-            if (!downloadedDlls.Contains(dll.Split("\\")[^1]))
+            if (!loadedDlls.Contains(dll.Split("\\")[^1]))
             {
-                downloadedDlls.Add(dll.Split("\\")[^1]);
+                loadedDlls.Add(dll.Split("\\")[^1]);
                 dllFilesNotRepeated.Add(dll);
             }
         }
@@ -69,8 +69,8 @@ public class TestRunner
     /// <summary>
     /// Invokes the methods with attributes, calling methods corresponding to the attribute type.
     /// </summary>
-    /// <typeparam name="AttributeType">BeforeClass - Before - MyTest - After - AfterClass atrributes.</typeparam>
-    public void InvokeMethods<AttributeType>(Type type, object? obj=null)
+    /// <typeparam name="AttributeType">BeforeClass - Before - MyTest - After - AfterClass aattributes.</typeparam>
+    public void InvokeMethods<AttributeType>(Type type, object? obj = null)
     {
         Action<MethodInfo> test;
         var methodsWithAttribute = type.GetMethods().Where(x => Attribute.IsDefined(x, typeof(AttributeType)));
@@ -100,10 +100,10 @@ public class TestRunner
     public void MethodsWithMyTestInvoker(MethodInfo methodInfo)
     {
         ArgumentNullException.ThrowIfNull(methodInfo.DeclaringType);
-        var  obj = Activator.CreateInstance(methodInfo.DeclaringType);
+        var obj = Activator.CreateInstance(methodInfo.DeclaringType);
         var customAttribute = methodInfo.GetCustomAttribute(typeof(MyTestAttribute), true);
         ArgumentNullException.ThrowIfNull(customAttribute);
-        var  attribute = (MyTestAttribute)customAttribute;
+        var attribute = (MyTestAttribute)customAttribute;
         ArgumentNullException.ThrowIfNull(attribute);
         if (attribute.Ignore != null)
         {
@@ -157,7 +157,7 @@ public class TestRunner
     {
         if (!methodInfo.IsStatic && ((methodInfo.GetCustomAttribute(typeof(BeforeClassAttribute)) != null) || (methodInfo.GetCustomAttribute(typeof(AfterClassAttribute)) != null)))
         {
-            throw new InvalidOperationException("Method to call must me static");
+            throw new InvalidOperationException("Method to call must be static");
         }
 
         methodInfo.Invoke(obj, null);

@@ -2,7 +2,8 @@
 
 if (args.Length != 1)
 {
-    Console.WriteLine("Wrong number of args has been entered, need: 1");
+    Console.WriteLine("Wrong number of args has been entered, need: 1\n" +
+        "Enter path to the directory with dll files and try again");
     return;
 }
 
@@ -15,7 +16,7 @@ try
 }
 catch (DirectoryNotFoundException)
 {
-    Console.WriteLine($"Path: {path} is invaild, couldn't file the file");
+    Console.WriteLine($"Path: {path} is invalid, directory wasn't found");
 }
 catch (FieldAccessException)
 {
@@ -23,5 +24,5 @@ catch (FieldAccessException)
 }
 catch (FileLoadException)
 {
-    Console.WriteLine("An error ocures while dll files loading");
+    Console.WriteLine("An error occured while dll files were loading");
 }

@@ -8,6 +8,7 @@ using System;
 public class MyNUnitTests
 {
     private TestRunner testRunner = new TestRunner();
+
     [SetUp]
     public void TestRunnerStart()
     {

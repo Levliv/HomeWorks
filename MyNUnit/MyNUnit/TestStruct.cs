@@ -14,7 +14,7 @@ public class TestStruct
     public MethodInfo MethodInformation { get; }
 
     /// <summary>
-    /// Gets the information about the error message, if case it occurs.
+    /// Gets the information about the error message, in case it has occured.
     /// </summary>
     public string? ErrorMessage { get; }
 
