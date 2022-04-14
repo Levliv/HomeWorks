@@ -101,7 +101,9 @@ public class TestRunner
     {
         ArgumentNullException.ThrowIfNull(methodInfo.DeclaringType);
         var  obj = Activator.CreateInstance(methodInfo.DeclaringType);
-        var  attribute = (MyTestAttribute)methodInfo.GetCustomAttribute(typeof(MyTestAttribute), true);
+        var customAttribute = methodInfo.GetCustomAttribute(typeof(MyTestAttribute), true);
+        ArgumentNullException.ThrowIfNull(customAttribute);
+        var  attribute = (MyTestAttribute)customAttribute;
         ArgumentNullException.ThrowIfNull(attribute);
         if (attribute.Ignore != null)
         {
