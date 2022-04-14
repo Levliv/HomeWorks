@@ -8,8 +8,8 @@ using System;
 public class MyNUnitTests
 {
     private TestRunner testRunner = new TestRunner();
-    [OneTimeSetUp]
-    public void DllStarter()
+    [SetUp]
+    public void TestRunnerStart()
     {
         testRunner.Start("..\\..\\..\\..\\TestClasses\\");
     }

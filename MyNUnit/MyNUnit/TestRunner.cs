@@ -35,7 +35,6 @@ public class TestRunner
     /// <param name="path">Path to folder, loading all the dlls in all the directories beneath it as well.</param>
     public void Start(string path)
     {
-        MyTests = new BlockingCollection<TestStruct>();
         var dllFiles = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories);
         var dllFilesNotRepeated = new HashSet<string>();
         var downloadedDlls = new HashSet<string>();
@@ -71,7 +70,7 @@ public class TestRunner
     /// Invokes the methods with attributes, calling methods corresponding to the attribute type.
     /// </summary>
     /// <typeparam name="AttributeType">BeforeClass - Before - MyTest - After - AfterClass atrributes.</typeparam>
-    public void InvokeMethods<AttributeType>(Type type, object obj = null)
+    public void InvokeMethods<AttributeType>(Type type, object? obj=null)
     {
         Action<MethodInfo> test;
         var methodsWithAttribute = type.GetMethods().Where(x => Attribute.IsDefined(x, typeof(AttributeType)));
@@ -100,8 +99,10 @@ public class TestRunner
     /// </summary>
     public void MethodsWithMyTestInvoker(MethodInfo methodInfo)
     {
-       var  obj = Activator.CreateInstance(methodInfo.DeclaringType);
+        ArgumentNullException.ThrowIfNull(methodInfo.DeclaringType);
+        var  obj = Activator.CreateInstance(methodInfo.DeclaringType);
         var  attribute = (MyTestAttribute)methodInfo.GetCustomAttribute(typeof(MyTestAttribute), true);
+        ArgumentNullException.ThrowIfNull(attribute);
         if (attribute.Ignore != null)
         {
             MyTests.Add(new TestStruct(methodInfo, isIgnored: true, ignoreMessage: attribute.Ignore));
@@ -112,9 +113,9 @@ public class TestRunner
         var watch = Stopwatch.StartNew();
         try
         {
-            var gotValue = methodInfo.Invoke(obj, null);
+            methodInfo.Invoke(obj, null);
             watch.Stop();
-            if (gotValue == attribute.Expected)
+            if (attribute.Expected == null)
             {
                 MyTests.Add(new TestStruct(methodInfo, expected: attribute.Expected, isPassed: true, timeConsumed: watch.ElapsedMilliseconds));
             }
@@ -126,7 +127,8 @@ public class TestRunner
         catch (Exception exception)
         {
             watch.Stop();
-            if (attribute.Expected.Equals(exception.InnerException.GetType()))
+            ArgumentNullException.ThrowIfNull(exception.InnerException);
+            if (attribute.Expected == exception.InnerException.GetType())
             {
                 MyTests.Add(new TestStruct(methodInfo, expected: attribute.Expected, isPassed: true, timeConsumed: watch.ElapsedMilliseconds));
             }
@@ -141,7 +143,7 @@ public class TestRunner
     /// <summary>
     /// Invoking methods with Before and After Attribute.
     /// </summary>
-    public void MethodsWithAfterAndBeforeAttribute(MethodInfo methodInfo, object obj = null)
+    public void MethodsWithAfterAndBeforeAttribute(MethodInfo methodInfo, object? obj)
     {
         methodInfo.Invoke(obj, null);
     }
@@ -149,7 +151,7 @@ public class TestRunner
     /// <summary>
     /// Invoking methods with BeforeClass and AfterClass Attributes, without creating an instance, requires methods to be static.
     /// </summary>
-    public void MethodsWithBeforeAndAfterClassAttribute(MethodInfo methodInfo, object obj)
+    public void MethodsWithBeforeAndAfterClassAttribute(MethodInfo methodInfo, object? obj)
     {
         if (!methodInfo.IsStatic && ((methodInfo.GetCustomAttribute(typeof(BeforeClassAttribute)) != null) || (methodInfo.GetCustomAttribute(typeof(AfterClassAttribute)) != null)))
         {
