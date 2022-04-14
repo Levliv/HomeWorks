@@ -11,7 +11,7 @@ using System.Reflection;
 public class TestRunner
 {
     /// <summary>
-    /// Concurent collection to strore data about the tests.
+    /// Concurrent collection to store data about the tests.
     /// </summary>
     public BlockingCollection<TestStruct> MyTests { private set; get; } = new();
 
@@ -59,7 +59,7 @@ public class TestRunner
     /// Starting the all the tests with BeforeClass - Before - MyTest - After - AfterClass atrributes.
     /// </summary>
     /// <param name="type">loaded assembly.</param>
-    public void StartTests(Type type)
+    private void StartTests(Type type)
     {
         InvokeMethods<BeforeClassAttribute>(type);
         InvokeMethods<MyTestAttribute>(type);
@@ -70,7 +70,7 @@ public class TestRunner
     /// Invokes the methods with attributes, calling methods corresponding to the attribute type.
     /// </summary>
     /// <typeparam name="AttributeType">BeforeClass - Before - MyTest - After - AfterClass aattributes.</typeparam>
-    public void InvokeMethods<AttributeType>(Type type, object? obj = null)
+    private void InvokeMethods<AttributeType>(Type type, object? obj = null)
     {
         Action<MethodInfo> test;
         var methodsWithAttribute = type.GetMethods().Where(x => Attribute.IsDefined(x, typeof(AttributeType)));
@@ -97,7 +97,7 @@ public class TestRunner
     /// <summary>
     /// Invoking Methods with MyTestAttribute.
     /// </summary>
-    public void MethodsWithMyTestInvoker(MethodInfo methodInfo)
+    private void MethodsWithMyTestInvoker(MethodInfo methodInfo)
     {
         ArgumentNullException.ThrowIfNull(methodInfo.DeclaringType);
         var obj = Activator.CreateInstance(methodInfo.DeclaringType);
@@ -145,7 +145,7 @@ public class TestRunner
     /// <summary>
     /// Invoking methods with Before and After Attribute.
     /// </summary>
-    public void MethodsWithAfterAndBeforeAttribute(MethodInfo methodInfo, object? obj)
+    private void MethodsWithAfterAndBeforeAttribute(MethodInfo methodInfo, object? obj)
     {
         methodInfo.Invoke(obj, null);
     }
@@ -153,7 +153,7 @@ public class TestRunner
     /// <summary>
     /// Invoking methods with BeforeClass and AfterClass Attributes, without creating an instance, requires methods to be static.
     /// </summary>
-    public void MethodsWithBeforeAndAfterClassAttribute(MethodInfo methodInfo, object? obj)
+    private void MethodsWithBeforeAndAfterClassAttribute(MethodInfo methodInfo, object? obj)
     {
         if (!methodInfo.IsStatic && ((methodInfo.GetCustomAttribute(typeof(BeforeClassAttribute)) != null) || (methodInfo.GetCustomAttribute(typeof(AfterClassAttribute)) != null)))
         {
