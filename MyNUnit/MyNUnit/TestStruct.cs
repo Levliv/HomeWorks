@@ -16,7 +16,7 @@ public class TestStruct
     /// <summary>
     /// Gets the information about the error message, if case it occurs.
     /// </summary>
-    public string ErrorMessage { get; }
+    public string? ErrorMessage { get; }
 
     /// <summary>
     /// Gets a value indicating whether test passed.
@@ -36,22 +36,22 @@ public class TestStruct
     /// <summary>
     /// Gets the inforaming about the time test consumed.
     /// </summary>
-    public long TimeConsumed { get; }
+    public long? TimeConsumed { get; }
 
     /// <summary>
     /// Gets the expected result of the test in case it is specified.
     /// </summary>
-    public object Expected { get; }
+    public object? Expected { get; }
 
     /// <summary>
     /// Gets the actual (returned from the method) value got by test invocation.
     /// </summary>
-    public object Got { get; }
+    public object? Got { get; }
 
     /// <summary>
     /// Gets message in case test is suppposed to be ignored.
     /// </summary>
-    public string IgnoreMessage { get; }
+    public string? IgnoreMessage { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TestStruct"/> class.
