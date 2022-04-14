@@ -16,7 +16,7 @@ public class MyNUnitTests
     }
     
     /// <summary>
-    /// Checking that when only method have attributes everything works fine
+    /// Checking that when only one method have attributes everything works fine
     /// </summary>
     [Test]
     public void OneMethodWithMyTestAttribute()
@@ -25,7 +25,7 @@ public class MyNUnitTests
     }
 
     /// <summary>
-    /// Multi before and after attrubutes
+    /// Multi before and after attributes
     /// </summary>
     [Test]
     public void MultiBeforeAndAfterAndMyTestAttribute()
