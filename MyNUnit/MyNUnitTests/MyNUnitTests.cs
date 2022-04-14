@@ -25,6 +25,16 @@ public class MyNUnitTests
     }
 
     /// <summary>
+    /// one with MyTest and one with before attribute
+    /// </summary>
+    [Test]
+    public void BeforeClassAndAfterClassAttribute()
+    {
+        var resultBlock = new bool[] { true, true, true };
+        Assert.AreEqual(resultBlock, Test2.Test2.checker);
+    }
+
+    /// <summary>
     /// Multi before and after attributes
     /// </summary>
     [Test]
@@ -66,15 +76,5 @@ public class MyNUnitTests
         var MethodsWithExpected = from i in testRunner.MyTests where i.MethodInformation.Name == "Test6Method" select i;
         var MethodWithExpected = MethodsWithExpected.Last();
         Assert.AreEqual(typeof(ArgumentException), MethodWithExpected.Expected);
-    }
-
-    /// <summary>
-    /// Checking, when there is one method with MyTest and one with before
-    /// </summary>
-    [Test]
-    public void BeforeClassAndAfterClassAttribute()
-    {
-        var resultBlock = new bool[] { true, true, true };
-        Assert.AreEqual(resultBlock, Test2.Test2.checker);
     }
 }
