@@ -17,19 +17,19 @@ public class ServerEngine
     private readonly Queue<Task> clientsTaskQueue = new ();
 
     /// <summary>
+    /// Gets cancellation token that can be used to stop the server.
+    /// </summary>
+    public CancellationTokenSource Cts { get; private set; } = new ();
+
+    /// <summary>
     /// Gets or sets port for the server.
     /// </summary>
-    private int Port { get; set; }
+    private int Port;
 
     /// <summary>
     /// Gets ip of the server.
     /// </summary>
-    private IPAddress Ip { get; set; }
-
-    /// <summary>
-    /// Gets stops the server, all requests received before cancellation will be processed.
-    /// </summary>
-    public CancellationTokenSource Cts { get; private set; } = new ();
+    private IPAddress Ip;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ServerEngine"/> class.
@@ -59,6 +59,9 @@ public class ServerEngine
         listener.Stop();
     }
 
+    /// <summary>
+    /// Stops the server with Cancellation token, all requests recivied before cancelletion will be processed.
+    /// </summary>
     public void Stop() => Cts.Cancel();
 
     /// <summary>
