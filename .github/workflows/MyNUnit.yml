@@ -1,0 +1,28 @@
+name: github_actions_basics_for_.NET
+on:
+  push:
+    branches: [ master, hometask5 ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      
+    - name: set up
+      uses: actions/setup-dotnet@v1
+      with:
+          dotnet-version: '6.0'
+          
+    - name: dotnet check
+      run:  dotnet --version
+    - name: Restore
+      run: nuget restore MyNunit/MyNunit/MyNUnit.sln
+      
+    - name: building
+      run: dotnet build MyNunit/MyNunit/MyNUnit.csproj
+    - name: building
+      run: dotnet build MyNunit/MyNunitTests/MyNUnitTests.csproj
+    - name: test
+      run: dotnet test MyNunit/MyNunit/MyNUnit.sln
